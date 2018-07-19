@@ -1,0 +1,19 @@
+{
+  "name": "wikidocumentaries-topic-search-api",
+  "version": "0.0.1",
+  "description": "Provide access to Mediawiki APIs that require custom User-Agent header",
+  "main": "rest.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wikidocumentaries/wikidocumentaries-topic-search-api"
+  },
+  "author": "Erno Mäkinen (ernoma@gmail.com)",
+  "license": "GPL-2.0-or-later",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "express": "^4.16.3"
+  }
+}
