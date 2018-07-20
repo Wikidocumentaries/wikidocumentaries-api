@@ -8,4 +8,4 @@ npm install
 
 ## Run
 
-node rest.js
+npm run dev
