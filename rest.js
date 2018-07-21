@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 const axios = require('axios')
 const cheerio = require('cheerio')
+const turf = require('@turf/turf');
+//console.log(turf);
 
 if (process.env.WIKIDOCUMENTARIES_API_USER_AGENT == undefined) {
     console.log("Set environment variable WIKIDOCUMENTARIES_API_USER_AGENT to e.g. your email. Please, see: https://en.wikipedia.org/api/rest_v1/");
@@ -481,6 +483,23 @@ app.get('/images', function(req, res) {
             }
         }
 
+        // Remove images too faraway from the provided coordinates if they and maxdistance given 
+        if (req.query.lat != undefined && 
+            req.query.lon != undefined &&
+            req.query.maxradius != undefined) {
+
+                var filter = 
+                    '{!geofilt sfield=location_geo pt=' +
+                    req.query.lat +
+                    ',' +
+                    req.query.lon +
+                    ' d=' +
+                    req.query.maxradius / 1000 +
+                    '}';
+
+                requestConfig.params['filter[2]'] = filter;
+        }
+
         //console.log(requestConfig);
 
         return axios.request(requestConfig);
@@ -496,11 +515,21 @@ app.get('/images', function(req, res) {
                 method: "flickr.photos.search",
                 api_key: process.env.FLICKR_KEY,
                 text: topic.split('_').join('+'),
-                per_page: 10,
+                per_page: 100,
                 format: "json",
                 nojsoncallback: 1
             }
         }
+
+        // Remove images too faraway from the provided coordinates if they and maxdistance given 
+        // if (req.query.lat != undefined && 
+        //     req.query.lon != undefined &&
+        //     req.query.maxradius != undefined) {
+
+        //         requestConfig.params.lat = req.query.lat;
+        //         requestConfig.params.lon = req.query.lon;
+        //         requestConfig.params.radius = req.query.maxradius / 1000;
+        // }
 
         //console.log(requestConfig);
 
@@ -570,6 +599,17 @@ app.get('/images', function(req, res) {
                         };
 
                         if (photoInfo.location != undefined) {
+                            // Remove images too faraway from the provided coordinates if they and maxdistance given 
+                            if (req.query.lat != undefined && 
+                                req.query.lon != undefined &&
+                                req.query.maxradius != undefined) {
+
+                                    var distance =
+                                        turf.distance([req.query.lon, req.query.lat], [photoInfo.location.longitude, photoInfo.location.latitude]);
+                                    if (distance > req.query.maxradius / 1000) {
+                                        return;
+                                    }
+                            }
 
                             image.location = photoInfo.location.locality._content;
 
@@ -652,6 +692,18 @@ app.get('/images', function(req, res) {
                     }
 
                     if (page.imageinfo[0].extmetadata.GPSLatitude != undefined && page.imageinfo[0].extmetadata.GPSLongitude != undefined) {
+
+                        if (req.query.lat != undefined && 
+                            req.query.lon != undefined &&
+                            req.query.maxradius != undefined) {
+
+                                var distance =
+                                    turf.distance([req.query.lon, req.query.lat], [page.imageinfo[0].extmetadata.GPSLongitude.value, page.imageinfo[0].extmetadata.GPSLatitude.value]);
+                                if (distance > req.query.maxradius / 1000) {
+                                    return;
+                                }
+                        }
+
                         image.geoLocations.push("POINT(" + page.imageinfo[0].extmetadata.GPSLongitude.value + " " + page.imageinfo[0].extmetadata.GPSLatitude.value + ")")
                     }
 
@@ -741,7 +793,8 @@ app.get('/images', function(req, res) {
             //     orig: imagesFromFlickrWithTitle,
             //     images: images
             // }
-            // res.send(data);
+            // res.send(data);            
+
             res.send(images);
         }));
 

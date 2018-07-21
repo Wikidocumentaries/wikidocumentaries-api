@@ -15,6 +15,7 @@
   "author": "Erno Mäkinen (ernoma@gmail.com)",
   "license": "GPL-2.0-or-later",
   "dependencies": {
+    "@turf/turf": "^5.1.6",
     "axios": "^0.18.0",
     "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.3",
