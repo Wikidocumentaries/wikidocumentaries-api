@@ -7,6 +7,9 @@ if (process.env.WIKIDOCUMENTARIES_API_USER_AGENT == undefined) {
     console.log("Set environment variable WIKIDOCUMENTARIES_API_USER_AGENT to e.g. your email. Please, see: https://en.wikipedia.org/api/rest_v1/");
     process.exit();
 }
+if (process.env.FLICKR_KEY == undefined) {
+    console.log("Set environment variable FLICKR_KEY to your FLICKR key. Please, see: https://www.flickr.com/services/apps/create/apply/");
+}
 
 
 app.use(function(req, res, next) {
@@ -483,11 +486,134 @@ app.get('/images', function(req, res) {
         return axios.request(requestConfig);
     }
 
-    axios.all([getImagesFromCommonsWithTitle(), getImagesFromFinnaWithTitle()])
-        .then(axios.spread(function (imagesFromCommonsWithTitleResponse, imagesFromFinnaWithTitleResponse) {
+    var getImagesFromFlickrWithTitle = function() {
+
+        var requestConfig = {
+            baseURL: "https://api.flickr.com/",
+            url: "/services/rest/",
+            method: "get",
+            params: {
+                method: "flickr.photos.search",
+                api_key: process.env.FLICKR_KEY,
+                text: topic.split('_').join('+'),
+                per_page: 10,
+                format: "json",
+                nojsoncallback: 1
+            }
+        }
+
+        //console.log(requestConfig);
+
+        return axios.request(requestConfig).then((response) => {
+            var photos = response.data.photos.photo;
+            
+            var axiosFlickrPhotoInfoRequests = [];
+            photos.forEach((photo) => {
+
+                var requestConfig = {
+                    baseURL: "https://api.flickr.com/",
+                    url: "/services/rest/",
+                    method: "get",
+                    params: {
+                        method: "flickr.photos.getInfo",
+                        api_key: process.env.FLICKR_KEY,
+                        photo_id: photo.id,
+                        secret: photo.secret,
+                        format: "json",
+                        nojsoncallback: 1
+                    }
+                }
+
+                axiosFlickrPhotoInfoRequests.push(axios.request(requestConfig));
+            });
+
+            return axios.all(axiosFlickrPhotoInfoRequests).then((responses) => {
+                //console.log(responses.length);
+
+                var images = [];
+
+                responses.forEach((response) => {
+
+                    var photoInfo = response.data.photo;
+
+                    //console.log(photoInfo);
+
+                    if (photoInfo.license != 0) { // 0 = All rights reserved
+                        var imageURLPrefix = "https://farm" + 
+                            photoInfo.farm +
+                            ".staticflickr.com/" +
+                            photoInfo.server +
+                            "/" +
+                            photoInfo.id +
+                            "_" +
+                            photoInfo.secret;
+                            
+                        //console.log(photoInfo.urls);
+
+                        var infoURL = photoInfo.urls.url[0]._content;
+
+                        //console.log(photoInfo.urls);
+
+                        var image = {
+                            id: photoInfo.id,
+                            source: 'Flickr',
+                            imageURL: imageURLPrefix + ".jpg",
+                            thumbURL: imageURLPrefix + "_m.jpg",
+                            title: photoInfo.title._content,
+                            authors: photoInfo.owner.username,
+                            institutions: "",
+                            infoURL: infoURL,
+                            location: null,
+                            geoLocations: [],
+                            year: null,
+                            license: "?"
+                        };
+
+                        if (photoInfo.location != undefined) {
+
+                            image.location = photoInfo.location.locality._content;
+
+                            var geoLocation =
+                                "POINT(" + 
+                                photoInfo.location.longitude +
+                                " " +
+                                photoInfo.location.latitude +
+                                ")";
+
+                            image.geoLocations.push(geoLocation);
+                        }
+
+                        var dateString = photoInfo.dates.taken;
+                        var year = parseInt(dateString.substr(0, 4), 10);
+                        if (year != NaN) {
+                            image.year = year;
+                        }
+
+                        for (var i = 0; i < flickrLicenses.length; i++) {
+                            if (flickrLicenses[i].id == photoInfo.license) {
+                                image.license = flickrLicenses[i].name;
+                                break;
+                            }
+                        }
+
+                        images.push(image);
+                    }
+                });
+
+                return images;
+            });
+        });
+
+    }
+
+    axios.all([getImagesFromCommonsWithTitle(), getImagesFromFinnaWithTitle(), getImagesFromFlickrWithTitle()])
+        .then(axios.spread(function (imagesFromCommonsWithTitleResponse, imagesFromFinnaWithTitleResponse, imagesFromFlickrWithTitle) {
+            //console.log(imagesFromFlickrWithTitle);
+            //console.log(imagesFromFlickrWithTitleResponse.data);
             //console.log(imagesFromFinnaWithTitleResponse.data);
             //console.log(imagesFromCommonsWithTitleResponse.data);
             //res.send(imagesFromCommonsWithTitleResponse.data);
+
 
             var images = [];
 
@@ -586,7 +712,7 @@ app.get('/images', function(req, res) {
 
                         var image = {
                             id: record.id,
-                            source: "finna",
+                            source: "Finna",
                             title: record.title,
                             geoLocations: (record.geoLocations != undefined ? record.geoLocations : []),
                             imageURL: "https://api.finna.fi" + record.images[0],
@@ -609,6 +735,13 @@ app.get('/images', function(req, res) {
                 }
             }
 
+            images = images.concat(imagesFromFlickrWithTitle);
+
+            // var data = {
+            //     orig: imagesFromFlickrWithTitle,
+            //     images: images
+            // }
+            // res.send(data);
             res.send(images);
         }));
 
@@ -641,3 +774,17 @@ const findLabel = function (entities, id, language) {
 
     return label;
 }
+
+const flickrLicenses = [ // TODO update once per day or so
+      { "id": 0, "name": "All Rights Reserved", "url": "" },
+      { "id": 4, "name": "Attribution License", "url": "https:\/\/creativecommons.org\/licenses\/by\/2.0\/" },
+      { "id": 6, "name": "Attribution-NoDerivs License", "url": "https:\/\/creativecommons.org\/licenses\/by-nd\/2.0\/" },
+      { "id": 3, "name": "Attribution-NonCommercial-NoDerivs License", "url": "https:\/\/creativecommons.org\/licenses\/by-nc-nd\/2.0\/" },
+      { "id": 2, "name": "Attribution-NonCommercial License", "url": "https:\/\/creativecommons.org\/licenses\/by-nc\/2.0\/" },
+      { "id": 1, "name": "Attribution-NonCommercial-ShareAlike License", "url": "https:\/\/creativecommons.org\/licenses\/by-nc-sa\/2.0\/" },
+      { "id": 5, "name": "Attribution-ShareAlike License", "url": "https:\/\/creativecommons.org\/licenses\/by-sa\/2.0\/" },
+      { "id": 7, "name": "No known copyright restrictions", "url": "https:\/\/www.flickr.com\/commons\/usage\/" },
+      { "id": 8, "name": "United States Government Work", "url": "http:\/\/www.usa.gov\/copyright.shtml" },
+      { "id": 9, "name": "Public Domain Dedication (CC0)", "url": "https:\/\/creativecommons.org\/publicdomain\/zero\/1.0\/" },
+      { "id": 10, "name": "Public Domain Mark", "url": "https:\/\/creativecommons.org\/publicdomain\/mark\/1.0\/" }
+    ];
