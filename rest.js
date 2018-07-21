@@ -18,7 +18,6 @@ app.use(function(req, res, next) {
 app.get('/wiki', function(req, res) {
 
     var language = req.query.language;
-
     var topic = req.query.topic;
     console.log(topic);
     var encodedTopic = encodeURIComponent(topic);
@@ -379,6 +378,247 @@ app.get('/wiki', function(req, res) {
         res.send({});
     });
 });
+
+
+app.get('/images', function(req, res) {
+
+    console.log(req.originalUrl);
+
+    var language = req.query.language;
+    var topic = req.query.topic;
+    console.log(topic);
+    var encodedTopic = encodeURIComponent(topic);
+
+    var getImagesFromCommonsWithTitle = function() {
+        var requestConfig = {
+            baseURL: "https://commons.wikimedia.org/",
+            url: "/w/api.php",
+            method: "get",
+            params: {
+                action: "query",
+                generator: "search",
+                prop: "imageinfo",
+                iiprop: "url",
+                iiurlwidth: 400,
+                iiurlheight: 400,
+                redirects: "resolve",
+                gsrsearch: topic,
+                gsrnamespace: 6,
+                iiprop: "timestamp|user|userid|comment|url|size|dimensions|mime|extmetadata",
+                format: "json"
+            }
+        };
+
+        return axios.request(requestConfig);
+    }
+
+    var getImagesFromCommonsWithRadius = null;
+    var coords = null;
+
+    if (req.query.lat != undefined && req.query.lon != undefined) {
+        coords = {
+            lat: req.query.lat,
+            lon: req.query.lon
+        }
+
+        getImagesFromCommonsWithRadius = function() { 
+            var requestConfig = {
+                baseURL: "https://commons.wikimedia.org/",
+                url: "/w/api.php",
+                method: "get",
+                params: {
+                    action: "query",
+                    generator: "geosearch",
+                    ggsprimary: "all",
+                    ggsnamespace: 6,
+                    ggsradius: 500,
+                    ggscoord: coords.lat + '|' + coords.lon,
+                    ggslimit: 10,
+                    prop: "imageinfo",
+                    iilimit: 10,
+                    iiprop: "url",
+                    iiurlwidth: 400,
+                    iiurlheight: 400,
+                    format: "json"
+                }
+            };
+
+            return axios.request(requestConfig);
+        }
+    }
+
+
+    var getImagesFromFinnaWithTitle = function() {
+        var requestConfig = {
+            baseURL: "https://api.finna.fi/",
+            url: "/v1/search",
+            method: "get",
+            params: {
+                lookfor: topic.split('_').join('+'),
+                type: 'AllFields',
+                limit: 10,
+                "filter[0]": '~format:"0/Image/"',
+                "filter[1]": 'online_boolean:"1"',
+                "field[0]": 'id',
+                "field[1]": 'title',
+                "field[2]": 'geoLocations',
+                "field[3]": 'images',
+                "field[4]": 'year',
+                "field[5]": 'publisher',
+                "field[6]": 'authors',
+                "field[7]": 'institutions',
+                "field[8]": 'events',
+                "field[9]": 'imageRights',
+                "field[10]": 'summary',
+                "field[11]": 'onlineUrls',
+                "field[12]": 'nonPresenterAuthors',
+            //    field[]=collections&
+            //    field[]=buildings&
+            //    field[]=thumbnail&
+            }
+        }
+
+        //console.log(requestConfig);
+
+        return axios.request(requestConfig);
+    }
+
+    axios.all([getImagesFromCommonsWithTitle(), getImagesFromFinnaWithTitle()])
+        .then(axios.spread(function (imagesFromCommonsWithTitleResponse, imagesFromFinnaWithTitleResponse) {
+            //console.log(imagesFromFinnaWithTitleResponse.data);
+            //console.log(imagesFromCommonsWithTitleResponse.data);
+            //res.send(imagesFromCommonsWithTitleResponse.data);
+
+            var images = [];
+
+            if (imagesFromCommonsWithTitleResponse.data.query != undefined && imagesFromCommonsWithTitleResponse.data.query.pages != undefined) {
+
+                var pages = Object.keys(imagesFromCommonsWithTitleResponse.data.query.pages).map(function(e) {
+                    return imagesFromCommonsWithTitleResponse.data.query.pages[e];
+                });
+
+                //console.log(pages);
+
+                //res.send(pages);
+
+                pages.forEach((page) => {
+
+                    var image = {
+                        id: page.title,
+                        source: 'Wikimedia Commons',
+                        imageURL: page.imageinfo[0].url,
+                        thumbURL: page.imageinfo[0].thumburl,
+                        title: "",
+                        authors: page.imageinfo[0].user,
+                        institutions: "",
+                        infoURL: page.imageinfo[0].descriptionurl,
+                        location: "",
+                        geoLocations: [],
+                        year: null,
+                        license: null
+                    };
+
+                    if ( page.imageinfo[0].extmetadata.ImageDescription != undefined) {
+                        var origHTML = page.imageinfo[0].extmetadata.ImageDescription.value;
+                        const $ = cheerio.load(origHTML);
+                        var title = $.text();
+                        image.title = title;
+                    }
+
+                    if (page.imageinfo[0].extmetadata.GPSLatitude != undefined && page.imageinfo[0].extmetadata.GPSLongitude != undefined) {
+                        image.geoLocations.push("POINT(" + page.imageinfo[0].extmetadata.GPSLongitude.value + " " + page.imageinfo[0].extmetadata.GPSLatitude.value + ")")
+                    }
+
+                    if (page.imageinfo[0].extmetadata.DateTimeOriginal != undefined) {
+                        var dateString = page.imageinfo[0].extmetadata.DateTimeOriginal.value;
+                        var year = parseInt(dateString.substr(0, 4), 10);
+                        if (year != NaN) {
+                            image.year = year;
+                        }
+                    }
+
+                    if (page.imageinfo[0].extmetadata.LicenseShortName != undefined) {
+                        image.license = page.imageinfo[0].extmetadata.LicenseShortName.value;
+                    }
+
+                    images.push(image);
+                });
+
+                // var data = {
+                //     orig: imagesFromCommonsWithTitleResponse.data,
+                //     images: images
+                // }
+                // res.send(data);
+            }
+            else {
+                // nothing to do
+            }
+
+            if (imagesFromFinnaWithTitleResponse.data.records != undefined) {
+                for (var i = 0; i < imagesFromFinnaWithTitleResponse.data.records.length; i++) {
+                    var record = imagesFromFinnaWithTitleResponse.data.records[i];
+                    if (record.images != undefined && record.images.length > 0) {
+
+                        var authors = "";
+                        if (record.authors != undefined) {
+                            for (var author in record.authors) {
+                                if (record.authors.hasOwnProperty(author)) {
+                                    //console.log(author);
+                                    for (var key in record.authors[author]) {
+                                        //console.log(key);
+                                        if (record.authors[author].hasOwnProperty(key)) {
+                                            authors += key + ", ";
+                                        }
+                                    }
+                                }
+                            }
+                            authors = authors.slice(0, -2);
+                        }
+
+                        var institutions = "";
+                        if (record.institutions != undefined) {
+                            for (var j = 0; j < record.institutions.length; j++) {
+                                institutions += record.institutions[j].translated + ', ';
+                            }
+
+                            institutions = institutions.slice(0, -2);
+                        }
+
+                        var image = {
+                            id: record.id,
+                            source: "finna",
+                            title: record.title,
+                            geoLocations: (record.geoLocations != undefined ? record.geoLocations : []),
+                            imageURL: "https://api.finna.fi" + record.images[0],
+                            thumbURL: "https://api.finna.fi" + record.images[0],
+                            year: record.year,
+                            publisher: record.publisher,
+                            authors: authors,
+                            institutions: institutions,
+                            //events: record.events,
+                            imageRights: record.imageRights,
+                            license: (record.imageRights != undefined ? record.imageRights.copyright : "Luvanvarainen käyttö / ei tiedossa"),
+                            //summary: record.summary,
+                            infoURL: "https://www.finna.fi/Record/" + encodeURIComponent(record.id)
+                        }
+
+                        //console.log(image);
+
+                        images.push(image);
+                    }
+                }
+            }
+
+            res.send(images);
+        }));
+
+    // axios.all([getImagesFromCommonsWithRadius(),])
+    //     .then(axios.spread(function (imagesFromCommonsWithRadiusResponse) {
+    //         console.log(imagesFromCommonsWithRadiusResponse.data);
+    //         res.send(imagesFromCommonsWithRadiusResponse.data);
+    //     }));
+});
+
 
 app.listen(3000, () => console.log('Listening on port 3000'));
 
