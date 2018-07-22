@@ -156,15 +156,17 @@ app.get('/wiki', function(req, res) {
             return responseData;
 
     })).then((responseData) => {
-        //console.dir(responses);
-        if (responseData.wikidataRaw != null) {
+        //console.dir(responseData);
+        if (responseData.wikidataRaw != null && responseData.wikidataRaw.claims != null &&
+            Object.keys(responseData.wikidataRaw.claims).length > 0) {
 
             var claims = Object.keys(responseData.wikidataRaw.claims).map(function(e) {
                 return responseData.wikidataRaw.claims[e];
             });
 
-            responseData.wikidataRaw = claims;
-            //console.dir(claims[0]);
+            responseData.wikidataRaw = claims; // needed below
+            
+            //console.dir(claims);
 
             var ids = [];
 
@@ -196,7 +198,7 @@ app.get('/wiki', function(req, res) {
             }
 
             ids = ids.join('|');
-            console.dir(ids);
+            //console.dir(ids);
 
             var requestConfig = {
                 baseURL: "https://www.wikidata.org/w/api.php",
@@ -329,15 +331,37 @@ app.get('/wiki', function(req, res) {
                     }
                     else if (mainsnak.datavalue.type == "time") {
 
-                        var timeString = mainsnak.datavalue.value.time.substring(1);
+                        var timeString =
+                            mainsnak.datavalue.value.time;
 
-                        var date = new Date(timeString);
+                        //timeString = "-0050-00-00T00:00:00Z";
+                        
+                        //console.log(timeString);
+
+                        var date = new Date();
+
+                        var year = parseInt((timeString.indexOf('-') != 0 ? timeString.substr(1, 4) : timeString.substr(0, 5)), 10);
+                        var month = parseInt(timeString.substr(6, 2));
+                        var day = parseInt(timeString.substr(9, 2));
+                        var hour = parseInt(timeString.substr(12, 2));
+                        var mintutes = parseInt(timeString.substr(15, 2));
+                        var seconds = parseInt(timeString.substr(18, 2));
+
+                        date.setFullYear(year, month, day);
+                        date.setHours(hour);
+                        date.setMinutes(mintutes);
+                        date.setSeconds(seconds);
+                        // console.log(date.getFullYear());
+
+                        //var date = new Date(timeString);
+                        //console.log("isNaN(date)", isNaN(date));
                         //var dateFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
                         var statement = {
                             id: mainsnak.property,
                             label: null,
-                            value: date.toLocaleDateString(language + "-" + language.toUpperCase()/*, dateFormatOptions*/),
+                            //value: date.format('l'),
+                            value: (year < 0 ? year + "-" + month + "-" + day : date.toLocaleDateString(language + "-" + language.toUpperCase()/*, dateFormatOptions*/)),
                             url: null
                         }
 
