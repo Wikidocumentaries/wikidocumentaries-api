@@ -5,6 +5,7 @@ const cheerio = require('cheerio')
 const turf = require('@turf/turf');
 //console.log(turf);
 
+
 if (process.env.WIKIDOCUMENTARIES_API_USER_AGENT == undefined) {
     console.log("Set environment variable WIKIDOCUMENTARIES_API_USER_AGENT to e.g. your email. Please, see: https://en.wikipedia.org/api/rest_v1/");
     process.exit();
@@ -13,12 +14,15 @@ if (process.env.FLICKR_KEY == undefined) {
     console.log("Set environment variable FLICKR_KEY to your FLICKR key. Please, see: https://www.flickr.com/services/apps/create/apply/");
 }
 
-
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
   });
+
+axios.defaults.timeout = 1000;
+
+
 
 app.get('/wiki', function(req, res) {
 
@@ -855,6 +859,10 @@ app.get('/images', function(req, res) {
                         images.push(image);
                     }
                 });
+
+                if (images.length > 30) { // https://www.flickr.com/services/api/tos/
+                    images = images.slice(0, 30);
+                }
 
                 return images;
 
