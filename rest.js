@@ -417,7 +417,10 @@ app.get('/wiki', function(req, res) {
         }
     }).catch(function (error) {
         console.log(error);
-        res.send({});
+        res.send({
+            wikipedia: null,
+            wikidata: null
+        });
     });
 });
 
