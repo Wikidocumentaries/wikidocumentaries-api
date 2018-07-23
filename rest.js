@@ -177,6 +177,8 @@ app.get('/wiki', function(req, res) {
 
             var ids = [];
 
+            //console.log(ids);
+
             claims.forEach((claim) => {
                 //console.dir(claim[0]);
                 if (claim[0].mainsnak.snaktype == "value") {
@@ -187,19 +189,23 @@ app.get('/wiki', function(req, res) {
                 }
             });
 
+            //console.log(ids);
+
             if (ids.length > 50) {
                 origIDs = ids;
                 ids = ids.slice(0, 50);
 
                 // Make sure instance of and coordinates are always included if they are in the original ids
                 if (ids.indexOf('P31') == -1 && origIDs.indexOf('P31') != -1) {
-                    ids = ids.slice(0, 49).unshift('P31');
+                    ids = ids.slice(0, 49);
+                    ids.unshift('P31');
                 }
                 if (ids.indexOf('P625') == -1 && origIDs.indexOf('P625') != -1) {
-                    ids = ids.slice(0, 49).push('P625');
+                    ids = ids.slice(0, 49);
+                    ids.push('P625');
                 }
             }
-
+            //console.log(ids);
             ids = ids.join('|');
             //console.dir(ids);
 
@@ -337,37 +343,18 @@ app.get('/wiki', function(req, res) {
                         }
                         else if (mainsnak.datavalue.type == "time") {
 
-                            var timeString =
-                                mainsnak.datavalue.value.time;
+                            // See also: https://www.wikidata.org/wiki/Help:Dates
 
-                            //timeString = "-0050-00-00T00:00:00Z";
-                            
-                            //console.log(timeString);
+                            //console.log(mainsnak);
 
-                            var date = new Date();
-
-                            var year = parseInt((timeString.indexOf('-') != 0 ? timeString.substr(1, 4) : timeString.substr(0, 5)), 10);
-                            var month = parseInt(timeString.substr(6, 2));
-                            var day = parseInt(timeString.substr(9, 2));
-                            var hour = parseInt(timeString.substr(12, 2));
-                            var mintutes = parseInt(timeString.substr(15, 2));
-                            var seconds = parseInt(timeString.substr(18, 2));
-
-                            date.setFullYear(year, month, day);
-                            date.setHours(hour);
-                            date.setMinutes(mintutes);
-                            date.setSeconds(seconds);
-                            // console.log(date.getFullYear());
-
+                            dateString = getFormattedDateString(mainsnak.datavalue.value, language);
                             //var date = new Date(timeString);
                             //console.log("isNaN(date)", isNaN(date));
-                            //var dateFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
                             var statement = {
                                 id: mainsnak.property,
                                 label: null,
-                                //value: date.format('l'),
-                                value: (year < 0 ? year + "-" + month + "-" + day : date.toLocaleDateString(language + "-" + language.toUpperCase()/*, dateFormatOptions*/)),
+                                value: dateString,
                                 url: null
                             }
 
@@ -377,23 +364,17 @@ app.get('/wiki', function(req, res) {
                             }
 
                             var dateItem = {
-                                date: timeString,
                                 wikidata_property: mainsnak.property,
-                                type: null
+                                value: mainsnak.datavalue.value
                             }
-                            if (mainsnak.property == 'P569') {
-                                dateItem.type = "date_of_birth";
-                            }
-                            else if (mainsnak.property == 'P570') {
-                                dateItem.type = "date_of_death";
-                            }
-                            else if (mainsnak.property == 'P571') {
-                                dateItem.type = "inception"; // date founded
-                            }
+
                             wikidata.dates.push(dateItem);
 
                         }
                         else if (mainsnak.datavalue.type == "quantity") {
+
+                            //console.log(mainsnak);
+
                             var statement = {
                                 id: mainsnak.property,
                                 label: null,
@@ -697,8 +678,8 @@ app.get('/images', function(req, res) {
                             geoLocations: (record.geoLocations != undefined ? record.geoLocations : []),
                             imageURL: "https://api.finna.fi" + record.images[0],
                             thumbURL: "https://api.finna.fi" + record.images[0],
-                            year: record.year,
-                            publisher: record.publisher,
+                            year: (record.year != undefined ? parseInt(record.year, 10) : null),
+                            publisher: (record.publisher != undefined ? record.publisher : null),
                             authors: authors,
                             institutions: institutions,
                             //events: record.events,
@@ -1011,6 +992,63 @@ const flickrLicenses = [ // TODO update once per day or so
       { "id": 10, "name": "Public Domain Mark", "url": "https:\/\/creativecommons.org\/publicdomain\/mark\/1.0\/" }
 ];
 
+
+function getFormattedDateString(dateWikidataValue, language) {
+    var timeString = dateWikidataValue.time;
+
+    //timeString = "-0050-00-00T00:00:00Z";
+
+    //console.log(timeString);
+
+    var year = parseInt((timeString.indexOf('-') != 0 ? timeString.substring(1, timeString.indexOf('-')) : timeString.substring(0, timeString.indexOf('-', 1))), 10);
+    var month = parseInt(timeString.substr(6, 2));
+    var day = parseInt(timeString.substr(9, 2));
+    var hour = parseInt(timeString.substr(12, 2));
+    var mintutes = parseInt(timeString.substr(15, 2));
+    var seconds = parseInt(timeString.substr(18, 2));
+
+    var formattedDateString = "";
+
+    switch (dateWikidataValue.precision) {
+    case 11:         
+        var date = new Date();
+        date.setFullYear(year, month, day);
+        date.setHours(hour);
+        date.setMinutes(mintutes);
+        date.setSeconds(seconds);
+        // console.log(date.getFullYear());
+
+        //var dateFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        formattedDateString = (year < 0 ? year + "-" + month + "-" + day : date.toLocaleDateString(language + "-" + language.toUpperCase()/*, dateFormatOptions*/));
+        break;
+    case 10:
+        formattedDateString = year + "-" + month;
+        break;
+    case 9:
+        formattedDateString = year.toString();
+        break;
+    case 8:
+        formattedDateString = year + " - " + (year + 9);
+        break;
+    case 7:
+        formattedDateString = year + " - " + (year + 999);
+        break;
+    case 6:
+        formattedDateString = "~" + year;
+        break;
+    case 4:
+    case 3:
+    case 2:
+    case 1:
+    case 0:
+        formattedDateString = year;
+        break;
+    default:
+        formattedDateString = timeString;
+    }
+
+    return formattedDateString;
+}
 
 function getFirstGeoLocation(image) {
     var geoLocation = null;
