@@ -20,7 +20,7 @@ app.use(function(req, res, next) {
     next();
   });
 
-axios.defaults.timeout = 1000;
+axios.defaults.timeout = 2000;
 
 
 
@@ -404,6 +404,19 @@ app.get('/wiki', function(req, res) {
                             wikidata.statements.push(statement);
                         }
                     }
+                    else if (mainsnak.datavalue.type == "monolingualtext") {
+                        var statement = {
+                            id: mainsnak.property,
+                            label: null,
+                            value: mainsnak.datavalue.value.text,
+                            url: null
+                        }
+
+                        statement.label = findLabel(entities, mainsnak.property, language);
+                        if (statement.label != "" && statement.value != null) {
+                            wikidata.statements.push(statement);
+                        }
+                    }
                     else {
                         // TODO ?
                         console.log("unhandled entity:", mainsnak);
@@ -447,7 +460,6 @@ app.get('/images', function(req, res) {
                 action: "query",
                 generator: "search",
                 prop: "imageinfo",
-                iiprop: "url",
                 iiurlwidth: 400,
                 iiurlheight: 400,
                 redirects: "resolve",
@@ -534,7 +546,7 @@ app.get('/images', function(req, res) {
             return images;
         }).catch(error => {
             console.log("error in getImagesFromCommonsWithTitle");
-            //console.log(error.response.status);
+            console.log(error.response.status);
             return [];
             //return Promise.reject(error);
         });
