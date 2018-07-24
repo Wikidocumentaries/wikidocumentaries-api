@@ -130,7 +130,8 @@ app.get('/wiki', function(req, res) {
                 //console.log(href);
                 if (href.indexOf('/wiki') == 0) {
                     //$(this).attr('href', '#' + href + "?language=" + language);
-                    $(this).attr('href', href + "?language=" + language);
+                    var noHashPart = href.split('#')[0];
+                    $(this).attr('href', noHashPart + "?language=" + language);
                 }
                 else if (href.indexOf('#cite_') == 0) {
                     $(this).attr('href', 'https://' + language + '.wikipedia.org/wiki/' + topic + href);
@@ -152,6 +153,13 @@ app.get('/wiki', function(req, res) {
             });
             $("sup").each(function(index) {
                 $(this).remove();
+            });
+            $("div").each(function(index) {
+                div_class = $(this).attr('class');
+                console.log(div_class);
+                if (div_class == undefined || div_class != 'noprint') {
+                    $(this).remove();
+                }
             });
 
             var responseData = {
