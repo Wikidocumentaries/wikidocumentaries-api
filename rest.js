@@ -369,15 +369,14 @@ app.get('/wiki', function(req, res) {
                             statement.label = findLabel(entities, mainsnak.property, language);
                             if (statement.label != "" && statement.value != null) {
                                 wikidata.statements.push(statement);
+
+                                var dateItem = {
+                                    wikidata_property: mainsnak.property,
+                                    value: mainsnak.datavalue.value,
+                                    label: statement.label
+                                }
+                                wikidata.dates.push(dateItem);
                             }
-
-                            var dateItem = {
-                                wikidata_property: mainsnak.property,
-                                value: mainsnak.datavalue.value
-                            }
-
-                            wikidata.dates.push(dateItem);
-
                         }
                         else if (mainsnak.datavalue.type == "quantity") {
 
