@@ -533,7 +533,13 @@ app.get('/images', function(req, res) {
                 // nothing to do
             }    
 
+            if (images.length > 30) { // Good practice
+                images = images.slice(0, 30);
+            }
+
             return images;
+
+            
         }).catch(error => {
             console.log("error in getImagesFromCommonsWithTitle");
             console.log(error.response.status);
@@ -701,6 +707,10 @@ app.get('/images', function(req, res) {
                     }
                 }
             }  
+
+            if (images.length > 30) { // Good practice
+                images = images.slice(0, 30);
+            }
 
             return images;
 
