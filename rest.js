@@ -153,6 +153,9 @@ app.get('/wiki', function(req, res) {
             $("sup").each(function(index) {
                 $(this).remove();
             });
+            $("ul").each(function(index) {
+                $(this).remove();
+            });
             $("div").each(function(index) {
                 div_class = $(this).attr('class');
                 console.log(div_class);
@@ -539,7 +542,7 @@ app.get('/images', function(req, res) {
 
             return images;
 
-            
+
         }).catch(error => {
             console.log("error in getImagesFromCommonsWithTitle");
             console.log(error.response.status);
@@ -951,7 +954,7 @@ function getFormattedDateString(dateWikidataValue, language) {
 
     //timeString = "-0050-00-00T00:00:00Z";
 
-    //console.log(timeString);
+    //console.log(dateWikidataValue);
 
     var year = parseInt((timeString.indexOf('-') != 0 ? timeString.substring(1, timeString.indexOf('-')) : timeString.substring(0, timeString.indexOf('-', 1))), 10);
     var month = parseInt(timeString.substr(6, 2));
@@ -984,7 +987,12 @@ function getFormattedDateString(dateWikidataValue, language) {
         formattedDateString = year + " - " + (year + 9);
         break;
     case 7:
-        formattedDateString = year + " - " + (year + 999);
+        if (year % 100 == 0) {
+            formattedDateString = (year - 100) + " - " + (year - 100 + 99);
+        }
+        else {
+            formattedDateString = year + " - " + (year + 98);
+        }
         break;
     case 6:
         formattedDateString = "~" + year;
