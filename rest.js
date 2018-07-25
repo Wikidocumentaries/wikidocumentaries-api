@@ -23,8 +23,7 @@ app.use(function(req, res, next) {
     next();
   });
 
-axios.defaults.timeout = 2000;
-
+axios.defaults.timeout = 3000;
 
 
 app.get('/wiki', function(req, res) {
@@ -456,7 +455,7 @@ app.get('/images', function(req, res) {
                 redirects: "resolve",
                 gsrsearch: topic,
                 gsrnamespace: 6,
-                iiprop: "timestamp|user|userid|comment|url|size|dimensions|mime|extmetadata",
+                iiprop: "user|url|extmetadata",
                 format: "json"
             }
         };
@@ -723,163 +722,100 @@ app.get('/images', function(req, res) {
                 method: "flickr.photos.search",
                 api_key: process.env.FLICKR_KEY,
                 text: topic.split('_').join('+'),
+                extras: "license,owner_name,geo,url_o,url_m,path_alias,date_taken",
                 per_page: 100,
                 format: "json",
                 nojsoncallback: 1
             }
         }
 
-        // Remove images too faraway from the provided coordinates if they and maxdistance given 
-        // if (req.query.lat != undefined && 
-        //     req.query.lon != undefined &&
-        //     req.query.maxradius != undefined) {
-
-        //         requestConfig.params.lat = req.query.lat;
-        //         requestConfig.params.lon = req.query.lon;
-        //         requestConfig.params.radius = req.query.maxradius / 1000;
-        // }
-
-        //console.log(requestConfig);
-
         return axios.request(requestConfig).then((response) => {
             var photos = response.data.photos.photo;
             
-            var axiosFlickrPhotoInfoRequests = [];
-            photos.forEach((photo) => {
+            //console.log(photos);
 
-                var requestConfig = {
-                    baseURL: "https://api.flickr.com/",
-                    url: "/services/rest/",
-                    method: "get",
-                    params: {
-                        method: "flickr.photos.getInfo",
-                        api_key: process.env.FLICKR_KEY,
-                        photo_id: photo.id,
-                        secret: photo.secret,
-                        format: "json",
-                        nojsoncallback: 1
-                    }
-                }
+            var images = [];
 
-                axiosFlickrPhotoInfoRequests.push(axios.request(requestConfig).then(response => {
-                    var photoInfo = response.data.photo;
+            photos.forEach((photoInfo) => {
 
-                    //console.log(photoInfo.license);
+                //console.log(photoInfo);
 
-                    var image = null;
+                var image = null;
 
-                    if (photoInfo.license != 0) { // 0 = All rights reserved
-                        var imageURLPrefix = "https://farm" + 
-                            photoInfo.farm +
-                            ".staticflickr.com/" +
-                            photoInfo.server +
-                            "/" +
-                            photoInfo.id +
-                            "_" +
-                            photoInfo.secret;
-                            
-                        //console.log(photoInfo.urls);
+                if (photoInfo.license != 0) { // 0 = All rights reserved
+                    //console.log(photoInfo.urls);
 
-                        var infoURL = photoInfo.urls.url[0]._content;
+                    var infoURL = "https://www.flickr.com/photos/" + photoInfo.pathalias + "/" + photoInfo.id;
 
-                        //console.log(photoInfo.urls);
+                    image = {
+                        id: photoInfo.id,
+                        source: 'Flickr',
+                        imageURL: photoInfo.url_o,
+                        thumbURL: photoInfo.url_m,
+                        title: photoInfo.title,
+                        authors: photoInfo.ownername,
+                        institutions: "",
+                        infoURL: infoURL,
+                        location: null,
+                        geoLocations: [],
+                        year: null,
+                        license: "?"
+                    };
 
-                        image = {
-                            id: photoInfo.id,
-                            source: 'Flickr',
-                            imageURL: imageURLPrefix + ".jpg",
-                            thumbURL: imageURLPrefix + "_m.jpg",
-                            title: photoInfo.title._content,
-                            authors: photoInfo.owner.username,
-                            institutions: "",
-                            infoURL: infoURL,
-                            location: null,
-                            geoLocations: [],
-                            year: null,
-                            license: "?"
-                        };
+                    if (photoInfo.latitude != 0 && photoInfo.longitude != 0 && photoInfo.geo_is_public == 1) {
+                        // Remove images too faraway from the provided coordinates if they and maxdistance given 
+                        if (req.query.lat != undefined && 
+                            req.query.lon != undefined &&
+                            req.query.maxradius != undefined) {
 
-                        if (photoInfo.location != undefined) {
-                            // Remove images too faraway from the provided coordinates if they and maxdistance given 
-                            if (req.query.lat != undefined && 
-                                req.query.lon != undefined &&
-                                req.query.maxradius != undefined) {
-
-                                    var distance =
-                                        turf.distance([req.query.lon, req.query.lat], [photoInfo.location.longitude, photoInfo.location.latitude]);
-                                    if (distance > req.query.maxradius / 1000) {
-                                        //console.log("distance too big", distance);
-                                        return null;
-                                    }
-                            }
-
-                            image.location = photoInfo.location.locality._content;
-
-                            var geoLocation =
-                                "POINT(" + 
-                                photoInfo.location.longitude +
-                                " " +
-                                photoInfo.location.latitude +
-                                ")";
-
-                            image.geoLocations.push(geoLocation);
+                                var distance =
+                                    turf.distance([req.query.lon, req.query.lat], [photoInfo.longitude, photoInfo.latitude]);
+                                if (distance > req.query.maxradius / 1000) {
+                                    //console.log("distance too big", distance);
+                                    return null;
+                                }
                         }
 
-                        var dateString = photoInfo.dates.taken;
+                        var geoLocation =
+                            "POINT(" + 
+                            photoInfo.longitude +
+                            " " +
+                            photoInfo.latitude +
+                            ")";
+
+                        image.geoLocations.push(geoLocation);
+                    }
+
+                    if (photoInfo.datetakenunknown == 0) {
+                        var dateString = photoInfo.datetaken;
                         var year = parseInt(dateString.substr(0, 4), 10);
                         if (year != NaN) {
                             image.year = year;
                         }
+                    }
 
-                        for (var i = 0; i < flickrLicenses.length; i++) {
-                            if (flickrLicenses[i].id == photoInfo.license) {
-                                image.license = flickrLicenses[i].name;
-                                break;
-                            }
+                    for (var i = 0; i < flickrLicenses.length; i++) {
+                        if (flickrLicenses[i].id == photoInfo.license) {
+                            image.license = flickrLicenses[i].name;
+                            break;
                         }
                     }
-                    
-                    return image;
 
-                }).catch(error => {
-                    console.log("error in flickr.photos.getInfo");
-                    //console.log(error.response.status);
-                    return null;
-                    //return Promise.reject(error);
-                }));
-            });
-
-            return axios.all(axiosFlickrPhotoInfoRequests).then((data) => {
-                //console.log(responses.length);
-
-                //console.log(data);
-
-                var images = [];
-
-                data.forEach((image) => {
-                    if (image != null) {
-                        //console.log(image);
-                        images.push(image);
-                    }
-                });
-
-                if (images.length > 30) { // https://www.flickr.com/services/api/tos/
-                    images = images.slice(0, 30);
+                    images.push(image);
                 }
-
-                return images;
-
-            }).catch(error => {
-                console.log("error in axiosFlickrPhotoInfoRequests");
-                //console.log(error.response.status);
-                return [];
-                //return Promise.reject(error);
             });
+
+            if (images.length > 30) { // https://www.flickr.com/services/api/tos/
+                images = images.slice(0, 30);
+            }
+
+            return images;
+
         }).catch(error => {
             console.log("error in getImagesFromFlickrWithTitle");
             //console.log(error.response);
             //console.log(error.response.status);
-            return [];
+            return images;
             //return Promise.reject(error);
         });
 

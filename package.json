@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --icu-data-dir=node_modules/full-icu rest.js",
-    "dev": "nodemon --exec npm start"
+      "dev": "nodemon --exec npm start"
   },
   "repository": {
     "type": "git",
@@ -23,5 +23,8 @@
   },
   "devDependencies": {
     "nodemon": "^1.18.3"
+  },
+  "engines": {
+    "node": ">= 8.11.3"
   }
 }
