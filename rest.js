@@ -545,7 +545,7 @@ app.get('/images', function(req, res) {
 
         }).catch(error => {
             console.log("error in getImagesFromCommonsWithTitle");
-            console.log(error.response.status);
+            console.log(error);
             return [];
             //return Promise.reject(error);
         });
@@ -870,6 +870,119 @@ app.get('/images', function(req, res) {
     //     }));
 });
 
+app.get('/basemaps', function(req, res) {
+
+    console.log(req.originalUrl);
+
+    var leftLon = req.query.leftLon;
+    var bottomLat = req.query.bottomLat;
+    var rightLon = req.query.rightLon;
+    var topLat = req.query.topLat;
+
+    var requestConfig = {
+        baseURL: "http://warper.wmflabs.org/",
+        url: "/api/v1/maps.json",
+        method: "get",
+        params: {
+            show_warped: 1,
+            bbox: leftLon + "," + bottomLat + "," + rightLon + "," + topLat,
+            per_page: 30
+        }
+    };
+
+    axios.request(requestConfig).then(response => {
+        //console.log(response.data);
+        var warpedMaps = response.data.data;
+
+        var commonsTitles = [];
+
+        for (var i = 0; i < warpedMaps.length; i++) {
+            commonsTitles.push(warpedMaps[i].attributes.title);
+        }
+
+        var titles = commonsTitles.join('|');
+
+        var requestConfig = {
+            baseURL: "https://commons.wikimedia.org/",
+            url: "/w/api.php",
+            method: "get",
+            timeout: 10000,
+            params: {
+                action: "query",
+                titles: titles,
+                iiurlwidth: 400,
+                iiurlheight: 400,
+                prop: "imageinfo",
+                iiprop: "user|url|extmetadata",
+                redirects: "resolve",
+                format: "json"
+            }
+        };
+
+        axios.request(requestConfig).then(response => {
+            //console.log(response.data);
+         
+            var pages = Object.keys(response.data.query.pages).map(function(e) {
+                return response.data.query.pages[e];
+            });
+
+            var basemaps = [];
+
+            for (var i = 0; i < warpedMaps.length; i++) {
+                for (var j = 0; j < pages.length; j++) {
+                    if (warpedMaps[i].attributes.title == pages[j].title &&
+                        pages[j].imageinfo != undefined) {
+                        var page = pages[j];
+                        //console.log(page);
+                        //console.log(page.imageinfo);
+                        var basemap = {
+                            id: page.title,
+                            title: "",
+                            imageURL: page.imageinfo[0].url,
+                            thumbURL: page.imageinfo[0].thumburl,
+                            commonsInfoURL: page.imageinfo[0].descriptionurl,
+                            year: null,
+                            license: null,
+                            server: "http://warper.wmflabs.org/",
+                            warperID: parseInt(warpedMaps[i].id, 10),
+                            bbox: warpedMaps[i].attributes.bbox
+                        }
+    
+                        if (page.imageinfo[0].extmetadata.ImageDescription != undefined) {
+                            var origHTML = page.imageinfo[0].extmetadata.ImageDescription.value;
+                            const $ = cheerio.load(origHTML);
+                            var title = $.text();
+                            basemap.title = title;
+                        }
+    
+                        if (page.imageinfo[0].extmetadata.DateTimeOriginal != undefined) {
+                            var dateString = page.imageinfo[0].extmetadata.DateTimeOriginal.value;
+                            var year = parseInt(dateString.substr(0, 4), 10);
+                            if (year != NaN) {
+                                basemap.year = year;
+                            }
+                        }
+    
+                        if (page.imageinfo[0].extmetadata.LicenseShortName != undefined) {
+                            basemap.license = page.imageinfo[0].extmetadata.LicenseShortName.value;
+                        }
+    
+                        basemaps.push(basemap);
+                    }
+                } 
+            }
+
+            res.send(basemaps);
+
+            // var data = {
+            //     mapsWarperData: warpedMaps,
+            //     commonsData: pages
+            // }
+            // res.send(data);
+
+        });
+    });
+});
 
 app.get('/geocode', function(req, res) {
 
@@ -988,7 +1101,7 @@ function getFormattedDateString(dateWikidataValue, language) {
         break;
     case 7:
         if (year % 100 == 0) {
-            formattedDateString = (year - 100) + " - " + (year - 100 + 99);
+            formattedDateString = (year - 99) + " - " + year;
         }
         else {
             formattedDateString = year + " - " + (year + 98);
