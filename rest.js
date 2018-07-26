@@ -158,7 +158,7 @@ app.get('/wiki', function(req, res) {
             });
             $("div").each(function(index) {
                 div_class = $(this).attr('class');
-                console.log(div_class);
+                //console.log(div_class);
                 if (div_class == undefined || div_class != 'noprint') {
                     $(this).remove();
                 }
@@ -735,6 +735,7 @@ app.get('/images', function(req, res) {
                 method: "flickr.photos.search",
                 api_key: process.env.FLICKR_KEY,
                 text: topic.split('_').join('+'),
+                license: "1,2,3,4,5,6,7,8,9,10",
                 extras: "license,owner_name,geo,url_o,url_m,path_alias,date_taken",
                 per_page: 100,
                 format: "json",
@@ -758,7 +759,7 @@ app.get('/images', function(req, res) {
                 if (photoInfo.license != 0) { // 0 = All rights reserved
                     //console.log(photoInfo.urls);
 
-                    var infoURL = "https://www.flickr.com/photos/" + photoInfo.pathalias + "/" + photoInfo.id;
+                    var infoURL = "https://www.flickr.com/photos/" + photoInfo.owner + "/" + photoInfo.id;
 
                     image = {
                         id: photoInfo.id,
