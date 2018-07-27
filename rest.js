@@ -229,7 +229,7 @@ app.get('/wiki', function(req, res) {
                 params: {
                     action: "wbgetentities",
                     ids: ids,
-                    props: "labels",
+                    props: "labels|sitelinks",
                     languages: (language != "en" ? language + "|en" : "en"),
                     format: "json"
                 }
@@ -258,6 +258,9 @@ app.get('/wiki', function(req, res) {
                     dates : []
 
                 }
+
+                //console.log(responseData.wikidataRaw);
+                //console.log(entities);
 
                 for (var i = 0; i < responseData.wikidataRaw.length; i++) {
                     //console.log(responseData.wikidataRaw[i][0]);
@@ -337,11 +340,33 @@ app.get('/wiki', function(req, res) {
                             }
                         }
                         else if (mainsnak.datavalue.type == "wikibase-entityid") {
+                            //console.log(responseData.wikidataRaw[i]);
+                            //console.log(mainsnak);
                             var statement = {
                                 id: mainsnak.property,
                                 label: null,
                                 value: null,
-                                url: 'https://www.wikidata.org/wiki/' + mainsnak.datavalue.value.id
+                                url: 'https://www.wikidata.org/wiki/' + mainsnak.datavalue.value.id,
+                                sitelinks: {}
+                            }
+
+                            for (var j = 0; j < entities.length; j++) {
+                                if (entities[j].id == mainsnak.datavalue.value.id) {
+                                    var entity = entities[j];
+                                    //console.log(statement.url);
+                                    //console.log(entity.sitelinks);
+
+                                    if (entity.sitelinks[language + 'wiki'] != undefined) {
+                                        statement.sitelinks[language + 'wiki'] = 
+                                            entity.sitelinks[language + 'wiki'].title;
+                                    }
+                                    if (language != 'en' && entity.sitelinks.enwiki != undefined) {
+                                        statement.sitelinks.enwiki = 
+                                            entity.sitelinks.enwiki.title;
+                                    }
+
+                                    break;
+                                }
                             }
 
                             statement.label = findLabel(entities, mainsnak.property, language);
