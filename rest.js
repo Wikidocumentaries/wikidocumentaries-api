@@ -135,6 +135,7 @@ app.get('/wiki', function(req, res) {
                 else if (href.indexOf('#cite_') == 0) {
                     $(this).attr('href', 'https://' + language + '.wikipedia.org/wiki/' + topic + href);
                     $(this).attr('target', '_blank');
+                    $(this).attr('style', 'color: #52758b;');
                 }
                 else {
                     //https://fi.wikipedia.org/wiki/Vapaamuurarin_hauta#cite_note-1
