@@ -122,15 +122,27 @@ app.get('/wiki', function(req, res) {
 
             var origHTML = wikipediaHTMLResponse.data.lead.sections[0].text;
 
+            if (wikipediaHTMLResponse.data.lead.disambiguation != undefined && wikipediaHTMLResponse.data.lead.disambiguation == true) {
+                wikipediaHTMLResponse.data.remaining.sections.forEach(section => {
+                    origHTML += section.text;
+                });
+            }
+
+
             const $ = cheerio.load(origHTML);
 
             $("a").each(function(index) {
                 href = $(this).attr('href');
                 //console.log(href);
-                if (href.indexOf('/wiki') == 0) {
+                if (href.indexOf('/wiki') == 0 && href.indexOf('/wiki/Special:') == -1) {
                     //$(this).attr('href', '#' + href + "?language=" + language);
                     var noHashPart = href.split('#')[0];
                     $(this).attr('href', noHashPart + "?language=" + language);
+                }
+                else if (href.indexOf('/wiki') == 0 && href.indexOf('/wiki/Special:') != -1) {
+                    $(this).attr('href', 'https://' + language + '.wikipedia.org' + href);
+                    $(this).attr('target', '_blank');
+                    $(this).attr('style', 'color: #52758b;');
                 }
                 else if (href.indexOf('#cite_') == 0) {
                     $(this).attr('href', 'https://' + language + '.wikipedia.org/wiki/' + topic + href);
@@ -139,7 +151,9 @@ app.get('/wiki', function(req, res) {
                 }
                 else {
                     //https://fi.wikipedia.org/wiki/Vapaamuurarin_hauta#cite_note-1
-                    $(this).replaceWith($(this).html());
+                    $(this).attr('target', '_blank');
+                    $(this).attr('style', 'color: #52758b;');
+                    //$(this).replaceWith($(this).html());
                 }
             });
             $("table").each(function(index) {
@@ -154,9 +168,9 @@ app.get('/wiki', function(req, res) {
             $("sup").each(function(index) {
                 $(this).remove();
             });
-            $("ul").each(function(index) {
-                $(this).remove();
-            });
+            // $("ul").each(function(index) {
+            //     $(this).remove();
+            // });
             $("div").each(function(index) {
                 div_class = $(this).attr('class');
                 //console.log(div_class);
@@ -357,13 +371,15 @@ app.get('/wiki', function(req, res) {
                                     //console.log(statement.url);
                                     //console.log(entity.sitelinks);
 
-                                    if (entity.sitelinks[language + 'wiki'] != undefined) {
-                                        statement.sitelinks[language + 'wiki'] = 
-                                            entity.sitelinks[language + 'wiki'].title;
-                                    }
-                                    if (language != 'en' && entity.sitelinks.enwiki != undefined) {
-                                        statement.sitelinks.enwiki = 
-                                            entity.sitelinks.enwiki.title;
+                                    if (entity.sitelinks != undefined) {
+                                        if (entity.sitelinks[language + 'wiki'] != undefined) {
+                                            statement.sitelinks[language + 'wiki'] = 
+                                                entity.sitelinks[language + 'wiki'].title;
+                                        }
+                                        if (language != 'en' && entity.sitelinks.enwiki != undefined) {
+                                            statement.sitelinks.enwiki = 
+                                                entity.sitelinks.enwiki.title;
+                                        }
                                     }
 
                                     break;
