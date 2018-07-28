@@ -487,23 +487,45 @@ app.get('/images', function(req, res) {
     var encodedTopic = encodeURIComponent(topic);
 
     var getImagesFromCommonsWithTitle = function() {
-        var requestConfig = {
-            baseURL: "https://commons.wikimedia.org/",
-            url: "/w/api.php",
-            method: "get",
-            params: {
-                action: "query",
-                generator: "search",
-                prop: "imageinfo",
-                iiurlwidth: 400,
-                iiurlheight: 400,
-                redirects: "resolve",
-                gsrsearch: topic,
-                gsrnamespace: 6,
-                iiprop: "user|url|extmetadata",
-                format: "json"
-            }
-        };
+
+        if (req.query.commons_category != undefined) {
+            var requestConfig = {
+                baseURL: "https://commons.wikimedia.org/",
+                url: "/w/api.php",
+                method: "get",
+                params: {
+                    action: "query",
+                    generator: "categorymembers",
+                    gcmtype: "file",
+                    gcmtitle: "Category:" + req.query.commons_category,
+                    prop: "imageinfo",
+                    iiurlwidth: 400,
+                    iiurlheight: 400,
+                    redirects: "resolve",
+                    iiprop: "user|url|extmetadata",
+                    format: "json"
+                }
+            };
+        }
+        else {
+            var requestConfig = {
+                baseURL: "https://commons.wikimedia.org/",
+                url: "/w/api.php",
+                method: "get",
+                params: {
+                    action: "query",
+                    generator: "search",
+                    prop: "imageinfo",
+                    iiurlwidth: 400,
+                    iiurlheight: 400,
+                    redirects: "resolve",
+                    gsrsearch: topic,
+                    gsrnamespace: 6,
+                    iiprop: "user|url|extmetadata",
+                    format: "json"
+                }
+            };
+        }
 
         return axios.request(requestConfig).then(response => {
 
