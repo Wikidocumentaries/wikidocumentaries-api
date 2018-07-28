@@ -1010,7 +1010,9 @@ app.get('/basemaps', function(req, res) {
                             basemap.license = page.imageinfo[0].extmetadata.LicenseShortName.value;
                         }
     
-                        basemaps.push(basemap);
+                        if (basemap.year != null && basemap.year < 2000) {
+                            basemaps.push(basemap);
+                        }
                     }
                 } 
             }
