@@ -159,7 +159,7 @@ app.get('/wiki', function(req, res) {
                     }
                 });
 
-                console.log(remainingOrigHTML.length);
+                //console.log(remainingOrigHTML.length);
 
                 if (remainingOrigHTML.length > 5000) { // Small count of HTML should be with the leading section
                     remainingHTML = convertToWikidocumentariesHTML(remainingOrigHTML, topic, language);
@@ -708,8 +708,9 @@ app.get('/images', function(req, res) {
                             req.query.lon != undefined &&
                             req.query.maxradius != undefined &&
                             record.geoLocations != undefined) {
-
+                                //console.log(record.geoLocations);
                                 var location = getFirstGeoLocationAsPoint(record);
+                                //console.log(location);
                                 if (location != null) {                                
                                     var distance =
                                         turf.distance([req.query.lon, req.query.lat], [location[0], location[1]]);
@@ -777,7 +778,7 @@ app.get('/images', function(req, res) {
 
         }).catch(error => {
             console.log("error in getImagesFromFinnaWithTitle");
-            //console.log(error.response.status);
+            //console.log(error);
             return [];
             //return Promise.reject(error);
         });
@@ -1264,6 +1265,7 @@ function getFirstGeoLocation(image) {
         }
         else if (wkt.indexOf("POLYGON") != -1) {
             // "POLYGON((24.7828131 60.0999549, 24.8356577 60.130414, 24.8513844 60.2249765, 24.8419098 60.2212043, 24.8347825 60.2585099, 24.8677628 60.2523073, 24.9473908 60.2784652, 24.9731653 60.2643801, 25.0209862 60.2893227, 25.0882105 60.2713417, 25.0823359 60.2496391, 25.1358461 60.2372286, 25.1598757 60.2488133, 25.1425242 60.2697779, 25.2545116 60.2952274, 25.2509121 60.2734979, 25.2273451 60.2611057, 25.240926 60.246305, 25.2014099 60.2181613, 25.2204176 60.1997262, 25.1800446 60.0987408, 25.1693516 59.9434386, 24.9423061 59.922486, 24.7828131 60.0999549))"
+            //console.log(wkt);
             geoLocation = [];
             var parenthesisPart = wkt.substring(wkt.indexOf('('));
             //console.log(parenthesisPart);
@@ -1276,8 +1278,9 @@ function getFirstGeoLocation(image) {
             var partsWithoutParenthesis = [];
             for (var i = 0; i < parts.length; i++) {
                 var part = null;
-                if (parts[i].substr(parts[i].length -1, 1) == ',') {
-                    part = parts[i].substr(0, parts[i].length - 1);
+                var trimmed = parts[i].trim();
+                if (trimmed.substr(trimmed.length - 1, 1) == ',') {
+                    part = trimmed.substr(0, trimmed.length - 1);
                 }
                 else {
                     part = parts[i];
@@ -1342,7 +1345,10 @@ function getFirstGeoLocationAsPoint(image) {
 }
 
 function getCentroid(coords) {
+    //console.log(coords);
     var center = coords.reduce(function (x,y) {
+        //console.log('x[1]: ', x[1]);
+        //console.log('y[1]: ', y[1]);
         return [x[0] + y[0]/coords.length, x[1] + y[1]/coords.length]; 
     }, [0,0])
     return center;
