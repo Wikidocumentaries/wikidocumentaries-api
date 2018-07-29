@@ -28,6 +28,8 @@ axios.defaults.timeout = 3000;
 
 app.get('/wiki', function(req, res) {
 
+    console.log(req.originalUrl);
+
     var language = req.query.language;
     var topic = req.query.topic;
     console.log(topic);
@@ -210,7 +212,7 @@ app.get('/wiki', function(req, res) {
 
             //console.log(ids);
 
-            if (ids.length > 50) {
+            if (ids.length > 50) { // "Maximum number of values is 50" https://www.wikidata.org/w/api.php?action=help&modules=wbgetentities
                 origIDs = ids;
                 ids = ids.slice(0, 50);
 
@@ -451,8 +453,15 @@ app.get('/wiki', function(req, res) {
                         }
                     }
                 }
+                //console.log(wikidata.statements);
+                // DEV
+                //responseData.wikipedia = undefined;
+                //responseData.wikipediaExcerptHTML = undefined;
+                //responseData.wikipediaRemainingHTML = undefined;
                 responseData.wikidataRaw = undefined;
                 //responseData.wikidataEntities = wikidataEntitiesResponse.data;
+                // END DEV
+
                 responseData.wikidata = wikidata;
                 res.send(responseData);
             });
@@ -1043,6 +1052,79 @@ app.get('/basemaps', function(req, res) {
             // res.send(data);
 
         });
+    }).catch(error => {
+        console.log("error in /basemaps");
+        console.log(error);
+        res.send([]);
+        //return Promise.reject(error);
+    });
+});
+
+app.get('/wiki/items/by/latlon', function(req, res) {
+
+    console.log(req.originalUrl);
+
+    var language = req.query.language;
+
+    var requestConfig = {
+        baseURL: "https://tools.wmflabs.org/",
+        url: "/articles-by-lat-lon-without-images/index.php",
+        method: "get",
+        params: {
+            wiki: 'wikidata',
+            lat: req.query.lat,
+            lon: req.query.lon,
+            radius: req.query.radius
+        }
+    };
+
+    axios.request(requestConfig).then(response => {
+        //console.log(response.data);
+
+        var ids = [];
+
+        for (var i = 0; i < response.data.length; i++) {
+            ids.push('Q' + response.data[i].id);
+        }
+        
+        if (ids.length > 50) { // "Maximum number of values is 50" https://www.wikidata.org/w/api.php?action=help&modules=wbgetentities
+            ids = ids.slice(0, 50);
+        }
+
+        //console.log(ids);
+        ids = ids.join('|');
+        //console.dir(ids);
+
+        var requestConfig = {
+            baseURL: "https://www.wikidata.org/w/api.php",
+            method: "get",
+            responseType: 'json',
+            headers: {
+                'Api-User-Agent': process.env.WIKIDOCUMENTARIES_API_USER_AGENT
+            },
+            params: {
+                action: "wbgetentities",
+                ids: ids,
+                props: "labels|sitelinks",
+                languages: (language != "en" ? language + "|en" : "en"),
+                format: "json"
+            }
+        }
+
+        axios.request(requestConfig).then((wikidataEntitiesResponse) => {
+            //console.log(wikidataEntitiesResponse.data);
+            var entities = Object.keys(wikidataEntitiesResponse.data.entities).map(function(e) {
+                return wikidataEntitiesResponse.data.entities[e];
+            });
+
+            res.send(entities);
+        });
+
+    }).catch(error => {
+        console.log("error in /wiki/articles/by/latlon");
+        console.log(error);
+        res.send([]);
+        //return Promise.reject(error);
     });
 });
 
@@ -1086,6 +1168,7 @@ app.get('/geocode', function(req, res) {
         //return Promise.reject(error);
     });
 });
+
 
 app.listen(3000, () => console.log('Listening on port 3000'));
 
