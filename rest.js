@@ -122,66 +122,60 @@ app.get('/wiki', function(req, res) {
 
             var origHTML = wikipediaHTMLResponse.data.lead.sections[0].text;
 
+            var remainingHTML = null;
+
             if (wikipediaHTMLResponse.data.lead.disambiguation != undefined && wikipediaHTMLResponse.data.lead.disambiguation == true) {
                 wikipediaHTMLResponse.data.remaining.sections.forEach(section => {
                     origHTML += section.text;
                 });
             }
+            else {
+                var remainingOrigHTML = "";
 
+                wikipediaHTMLResponse.data.remaining.sections.forEach(section => {
+                    if (section.isReferenceSection == undefined) {
+                        var sectionHeaderStartTag = "";
+                        var sectionHeaderEndTag = "";
+                        switch(section.toclevel) {
+                        case 1:
+                            sectionHeaderStartTag = "<h2 class='h2'>";
+                            sectionHeaderEndTag = "</h2>";
+                            break;
+                        case 2:
+                            sectionHeaderStartTag = "<h3 class='h3'>";
+                            sectionHeaderEndTag = "</h3>";
+                            break;
+                        case 3:
+                            sectionHeaderStartTag = "<h4 class='h4'>";
+                            sectionHeaderEndTag = "</h4>";
+                            break;
+                        case 4:
+                            sectionHeaderStartTag = "<h5 class='h5'>";
+                            sectionHeaderEndTag = "</h5>";
+                            break;
+                        }
+                        remainingOrigHTML += sectionHeaderStartTag + section.line + sectionHeaderEndTag;
+                        remainingOrigHTML += section.text;
+                    }
+                });
 
-            const $ = cheerio.load(origHTML);
+                console.log(remainingOrigHTML.length);
 
-            $("a").each(function(index) {
-                href = $(this).attr('href');
-                //console.log(href);
-                if (href.indexOf('/wiki') == 0 && href.indexOf('/wiki/Special:') == -1) {
-                    //$(this).attr('href', '#' + href + "?language=" + language);
-                    var noHashPart = href.split('#')[0];
-                    $(this).attr('href', noHashPart + "?language=" + language);
-                }
-                else if (href.indexOf('/wiki') == 0 && href.indexOf('/wiki/Special:') != -1) {
-                    $(this).attr('href', 'https://' + language + '.wikipedia.org' + href);
-                    $(this).attr('target', '_blank');
-                    $(this).attr('style', 'color: #52758b;');
-                }
-                else if (href.indexOf('#cite_') == 0) {
-                    $(this).attr('href', 'https://' + language + '.wikipedia.org/wiki/' + topic + href);
-                    $(this).attr('target', '_blank');
-                    $(this).attr('style', 'color: #52758b;');
+                if (remainingOrigHTML.length > 5000) { // Small count of HTML should be with the leading section
+                    remainingHTML = convertToWikidocumentariesHTML(remainingOrigHTML, topic, language);
                 }
                 else {
-                    //https://fi.wikipedia.org/wiki/Vapaamuurarin_hauta#cite_note-1
-                    $(this).attr('target', '_blank');
-                    $(this).attr('style', 'color: #52758b;');
-                    //$(this).replaceWith($(this).html());
+                    origHTML += remainingOrigHTML;
                 }
-            });
-            $("table").each(function(index) {
-                $(this).remove();
-            });
-            $("figure").each(function(index) {
-                $(this).remove();
-            });
-            $("figure-inline").each(function(index) {
-                $(this).remove();
-            });
-            $("sup").each(function(index) {
-                $(this).remove();
-            });
-            // $("ul").each(function(index) {
-            //     $(this).remove();
-            // });
-            $("div").each(function(index) {
-                div_class = $(this).attr('class');
-                //console.log(div_class);
-                if (div_class == undefined || div_class != 'noprint') {
-                    $(this).remove();
-                }
-            });
+            }
+
+            var excerptHTML = convertToWikidocumentariesHTML(origHTML, topic, language);
 
             var responseData = {
                 wikipedia: wikipediaSummaryResponse.data,
-                wikipediaExcerptHTML: $.html(),
+                //wikipediaDevData: wikipediaHTMLResponse.data,
+                wikipediaExcerptHTML: excerptHTML,
+                wikipediaRemainingHTML: remainingHTML,
                 wikidataRaw: wikidataItemIDResponse.data
             }
 
@@ -1094,6 +1088,64 @@ app.get('/geocode', function(req, res) {
 
 app.listen(3000, () => console.log('Listening on port 3000'));
 
+
+const convertToWikidocumentariesHTML = function(origHTML, topic, language) {
+    const $ = cheerio.load(origHTML);
+
+    $("a").each(function(index) {
+        href = $(this).attr('href');
+        //console.log(href);
+        if (href.indexOf('/wiki') == 0 && href.indexOf('/wiki/Special:') == -1) {
+            //$(this).attr('href', '#' + href + "?language=" + language);
+            var noHashPart = href.split('#')[0];
+            $(this).attr('href', noHashPart + "?language=" + language);
+        }
+        else if (href.indexOf('/wiki') == 0 && href.indexOf('/wiki/Special:') != -1) {
+            $(this).attr('href', 'https://' + language + '.wikipedia.org' + href);
+            $(this).attr('target', '_blank');
+            $(this).attr('style', 'color: #52758b;');
+        }
+        else if (href.indexOf('#cite_') == 0) {
+            $(this).attr('href', 'https://' + language + '.wikipedia.org/wiki/' + topic + href);
+            $(this).attr('target', '_blank');
+            $(this).attr('style', 'color: #52758b;');
+        }
+        else {
+            //https://fi.wikipedia.org/wiki/Vapaamuurarin_hauta#cite_note-1
+            $(this).attr('target', '_blank');
+            $(this).attr('style', 'color: #52758b;');
+            //$(this).replaceWith($(this).html());
+        }
+    });
+    $("table").each(function(index) {
+        $(this).remove();
+    });
+    $("figure").each(function(index) {
+        $(this).remove();
+    });
+    $("figure-inline").each(function(index) {
+        $(this).remove();
+    });
+    $("sup").each(function(index) {
+        $(this).remove();
+    });
+    $("ul").each(function(index) {
+        var div_class = $(this).attr('class');
+        //console.log(div_class);
+        if (div_class != undefined && div_class.indexOf('gallery') != -1) {
+            $(this).remove();
+        }
+    });
+    $("div").each(function(index) {
+        var div_class = $(this).attr('class');
+        //console.log(div_class);
+        if (div_class == undefined || div_class != 'noprint') {
+            $(this).remove();
+        }
+    });
+
+    return $.html();
+}
 
 const findLabel = function (entities, id, language) {
     var label = "";
