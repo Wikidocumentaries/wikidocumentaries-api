@@ -202,57 +202,28 @@ app.get('/wiki', function(req, res) {
 
             claims.forEach((claim) => {
                 //console.dir(claim[0]);
-                if (claim[0].mainsnak.snaktype == "value") {
-                    ids.push(claim[0].mainsnak.property);
-                    if (claim[0].mainsnak.datavalue.type == "wikibase-entityid") {
-                        ids.push(claim[0].mainsnak.datavalue.value.id);
+                claim.forEach(statement => {
+                    if (statement.mainsnak.snaktype == "value") {
+                        if (ids.indexOf(statement.mainsnak.property) == -1) {
+                            ids.push(statement.mainsnak.property);
+                        }
+                        if (statement.mainsnak.datavalue.type == "wikibase-entityid") {
+                            if (ids.indexOf(statement.mainsnak.datavalue.value.id) == -1) {
+                                ids.push(statement.mainsnak.datavalue.value.id);
+                            }
+                        }
                     }
-                }
+                });
             });
 
             //console.log(ids);
+            //console.log(ids.length);
 
-            if (ids.length > 50) { // "Maximum number of values is 50" https://www.wikidata.org/w/api.php?action=help&modules=wbgetentities
-                origIDs = ids;
-                ids = ids.slice(0, 50);
+            // TODO get 50 ids at a time
 
-                // Make sure instance of and coordinates are always included if they are in the original ids
-                if (ids.indexOf('P31') == -1 && origIDs.indexOf('P31') != -1) {
-                    ids = ids.slice(0, 49);
-                    ids.unshift('P31');
-                }
-                if (ids.indexOf('P625') == -1 && origIDs.indexOf('P625') != -1) {
-                    ids = ids.slice(0, 49);
-                    ids.push('P625');
-                }
-            }
-            //console.log(ids);
-            ids = ids.join('|');
-            //console.dir(ids);
+            collectWikidataInfo(ids, language).then(entities => {
 
-            var requestConfig = {
-                baseURL: "https://www.wikidata.org/w/api.php",
-                method: "get",
-                responseType: 'json',
-                headers: {
-                    'Api-User-Agent': process.env.WIKIDOCUMENTARIES_API_USER_AGENT
-                },
-                params: {
-                    action: "wbgetentities",
-                    ids: ids,
-                    props: "labels|sitelinks",
-                    languages: (language != "en" ? language + "|en" : "en"),
-                    format: "json"
-                }
-            }
-
-            axios.request(requestConfig).then((wikidataEntitiesResponse) => {
-                //console.log(wikidataEntitiesResponse.data);
-                var entities = Object.keys(wikidataEntitiesResponse.data.entities).map(function(e) {
-                    return wikidataEntitiesResponse.data.entities[e];
-                });
-
-                //console.log(entities);
+                //console.log("entities returned from collectWikidataInfo", entities);
 
                 var wikidata = {
                     id: wikidataItemID,
@@ -458,10 +429,10 @@ app.get('/wiki', function(req, res) {
                 //responseData.wikipedia = undefined;
                 //responseData.wikipediaExcerptHTML = undefined;
                 //responseData.wikipediaRemainingHTML = undefined;
-                responseData.wikidataRaw = undefined;
                 //responseData.wikidataEntities = wikidataEntitiesResponse.data;
                 // END DEV
 
+                responseData.wikidataRaw = undefined;
                 responseData.wikidata = wikidata;
                 res.send(responseData);
             });
@@ -955,7 +926,7 @@ app.get('/basemaps', function(req, res) {
         params: {
             show_warped: 1,
             bbox: leftLon + "," + bottomLat + "," + rightLon + "," + topLat,
-            per_page: 30
+            per_page: 50
         }
     };
 
@@ -1314,6 +1285,58 @@ const flickrLicenses = [ // TODO update once per day or so
       { "id": 9, "name": "Public Domain Dedication (CC0)", "url": "https:\/\/creativecommons.org\/publicdomain\/zero\/1.0\/" },
       { "id": 10, "name": "Public Domain Mark", "url": "https:\/\/creativecommons.org\/publicdomain\/mark\/1.0\/" }
 ];
+
+const collectWikidataInfo = async function(allIDs, language) {
+    var index = 0;
+    var parts = [];
+    //console.log(part.length);
+    while (index < allIDs.length) {
+        //console.log(index);
+        var part = allIDs.slice(index, index + 50);
+        //console.log(part.length);
+        //console.log(part);
+        parts.push(part);
+        index += 50;
+    }
+
+    //console.log(parts);
+
+    var allEntities = [];
+
+    for (var i = 0; i < parts.length; i++) {
+        //console.log(ids);
+        ids = parts[i].join('|');
+        //console.dir(ids);
+
+        var requestConfig = {
+            baseURL: "https://www.wikidata.org/w/api.php",
+            method: "get",
+            responseType: 'json',
+            headers: {
+                'Api-User-Agent': process.env.WIKIDOCUMENTARIES_API_USER_AGENT
+            },
+            params: {
+                action: "wbgetentities",
+                ids: ids,
+                props: "labels|sitelinks",
+                languages: (language != "en" ? language + "|en" : "en"),
+                format: "json"
+            }
+        }
+
+        var wikidataEntitiesResponse = await axios.request(requestConfig);
+
+        //console.log(wikidataEntitiesResponse.data);
+        var entities = Object.keys(wikidataEntitiesResponse.data.entities).map(function(e) {
+            return wikidataEntitiesResponse.data.entities[e];
+        });
+        //console.log(entities);
+        allEntities = allEntities.concat(entities);
+    }
+    //console.log("collectWikidataInfo, allEntities", allEntities);
+
+    return allEntities;
+}
 
 
 function getFormattedDateString(dateWikidataValue, language) {
