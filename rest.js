@@ -213,6 +213,24 @@ app.get('/wiki', function(req, res) {
                             }
                         }
                     }
+                    if (statement.qualifiers != undefined) {
+                        //console.log(statement.qualifiers);
+                        var qualifiers = Object.keys(statement.qualifiers).map(function(e) {
+                            return statement.qualifiers[e];
+                        });
+                        //console.log(qualifiers);
+                        qualifiers.forEach(qualifier => {
+                            //console.log(qualifier);
+                            if (ids.indexOf(qualifier[0].property) == -1) {
+                                ids.push(qualifier[0].property);
+                            }
+                            if (qualifier[0].snaktype == "value" && qualifier[0].datavalue.type == "wikibase-entityid") {
+                                if (ids.indexOf(qualifier[0].datavalue.value.id) == -1) {
+                                    ids.push(qualifier[0].datavalue.value.id);
+                                }
+                            }
+                        });
+                    } 
                 });
             });
 
@@ -246,140 +264,139 @@ app.get('/wiki', function(req, res) {
 
                 for (var i = 0; i < responseData.wikidataRaw.length; i++) {
                     //console.log(responseData.wikidataRaw[i][0]);
-                    var mainsnak = responseData.wikidataRaw[i][0].mainsnak;
-                    if (mainsnak.snaktype == "value") {
-                        if (mainsnak.property == 'P31') { // instance_of
-                            if (mainsnak.datavalue.type == "wikibase-entityid") {
-                                for (var j = 0; j < entities.length; j++) {
-                                    if (entities[j].id == mainsnak.datavalue.value.id) {
-                                        //console.log(entities[j]);
-                                        label = entities[j].labels[language] != undefined ? entities[j].labels[language].value : "";
-                                        if (label == "") {
-                                            label = entities[j].labels.en != undefined ? entities[j].labels.en.value : "";
+                    var statement = {
+                        id: null,
+                        label: null,
+                        values: []
+                    }
+                    
+
+                    for (var j = 0; j < responseData.wikidataRaw[i].length; j++) {
+                        var mainsnak = responseData.wikidataRaw[i][j].mainsnak;
+
+                        if (statement.id == null) {
+                            statement.id = mainsnak.property;
+                        }
+                        if (statement.label == null) {
+                            statement.label = findLabel(entities, mainsnak.property, language);
+                        }
+
+                        var valueWasAdded = true;
+
+                        if (mainsnak.snaktype == "value") {
+                            if (mainsnak.property == 'P31') { // instance_of
+                                if (mainsnak.datavalue.type == "wikibase-entityid") {
+                                    for (var k = 0; k < entities.length; k++) {
+                                        if (entities[k].id == mainsnak.datavalue.value.id) {
+                                            //console.log(entities[k]);
+                                            label = entities[k].labels[language] != undefined ? entities[k].labels[language].value : "";
+                                            if (label == "") {
+                                                label = entities[k].labels.en != undefined ? entities[k].labels.en.value : "";
+                                            }
+                                            if (wikidata.instance_of.id == null) { // The first instance of definition
+                                                wikidata.instance_of.value = label;
+                                                wikidata.instance_of.id = entities[k].id;
+                                                wikidata.instance_of.url += entities[k].id;
+                                            }
+                                            var value = {
+                                                value: label,
+                                                url: 'https://www.wikidata.org/wiki/' + entities[k].id
+                                            }
+                                            statement.values.push(value);
+                                            break;
                                         }
-                                        wikidata.instance_of.value = label;
-                                        wikidata.instance_of.id = entities[j].id;
-                                        wikidata.instance_of.url += entities[j].id;
+                                    }
+                                }
+                                else {
+                                    // TODO ?
+                                }
+                            }
+                            else if (mainsnak.property == 'P625') { // coordinates
+                                var value = {
+                                    value: mainsnak.datavalue.value.latitude + ", " + mainsnak.datavalue.value.longitude,
+                                    url: 'https://tools.wmflabs.org/geohack/geohack.php?params=' + mainsnak.datavalue.value.latitude + '_N_' + mainsnak.datavalue.value.longitude + '_E_globe:earth&language=' + language
+                                }
+                                
+                                statement.values.push(value);
+
+                                wikidata.geo.lat = mainsnak.datavalue.value.latitude;
+                                wikidata.geo.lon = mainsnak.datavalue.value.longitude;
+                            }
+                            else if (mainsnak.property == 'P373') { // commons class
+                                var value = {
+                                    value: mainsnak.datavalue.value,
+                                    url: 'https://commons.wikimedia.org/wiki/Category:' + mainsnak.datavalue.value.split(' ').join('_')
+                                }
+
+                                statement.values.push(value);
+                            }
+                            else if (mainsnak.property == 'P18') { // commons media
+                                var value = {
+                                    value: mainsnak.datavalue.value,
+                                    url: 'https://commons.wikimedia.org/wiki/File:' + mainsnak.datavalue.value.split(' ').join('_')
+                                }
+
+                                statement.values.push(value);
+                            }
+                            else if (mainsnak.datavalue.type == "string") {
+                                var value = {
+                                    value: mainsnak.datavalue.value,
+                                    url: null
+                                }
+
+                                statement.values.push(value);
+                            }
+                            else if (mainsnak.datavalue.type == "wikibase-entityid") {
+                                //console.log(responseData.wikidataRaw[i]);
+                                //console.log(mainsnak);
+                                var value = {
+                                    value: null,
+                                    url: 'https://www.wikidata.org/wiki/' + mainsnak.datavalue.value.id,
+                                    sitelinks: {}
+                                }
+
+                                for (var k = 0; k < entities.length; k++) {
+                                    if (entities[k].id == mainsnak.datavalue.value.id) {
+                                        var entity = entities[k];
+                                        //console.log(statement.url);
+                                        //console.log(entity.sitelinks);
+
+                                        if (entity.sitelinks != undefined) {
+                                            if (entity.sitelinks[language + 'wiki'] != undefined) {
+                                                value.sitelinks[language + 'wiki'] = 
+                                                    entity.sitelinks[language + 'wiki'].title;
+                                            }
+                                            if (language != 'en' && entity.sitelinks.enwiki != undefined) {
+                                                value.sitelinks.enwiki = 
+                                                    entity.sitelinks.enwiki.title;
+                                            }
+                                        }
+
                                         break;
                                     }
                                 }
-                            }
-                            else {
-                                // TODO ?
-                            }
-                        }
-                        else if (mainsnak.property == 'P625') { // coordinates
-                            var statement = {
-                                id: mainsnak.property,
-                                label: null,
-                                value: mainsnak.datavalue.value.latitude + ", " + mainsnak.datavalue.value.longitude,
-                                url: 'https://tools.wmflabs.org/geohack/geohack.php?params=' + mainsnak.datavalue.value.latitude + '_N_' + mainsnak.datavalue.value.longitude + '_E_globe:earth&language=' + language
-                            }
 
-                            statement.label = findLabel(entities, mainsnak.property, language);
-                            wikidata.statements.push(statement);
-
-                            wikidata.geo.lat = mainsnak.datavalue.value.latitude;
-                            wikidata.geo.lon = mainsnak.datavalue.value.longitude;
-                        }
-                        else if (mainsnak.property == 'P373') { // commons class
-                            var statement = {
-                                id: mainsnak.property,
-                                label: null,
-                                value: mainsnak.datavalue.value,
-                                url: 'https://commons.wikimedia.org/wiki/Category:' + mainsnak.datavalue.value.split(' ').join('_')
+                                //console.log(mainsnak.datavalue.value);
+                                value.value = findLabel(entities, mainsnak.datavalue.value.id, language);
+                                
+                                statement.values.push(value);
                             }
+                            else if (mainsnak.datavalue.type == "time") {
 
-                            statement.label = findLabel(entities, mainsnak.property, language);
-                            if (statement.label != "" && statement.value != null && statement.url != null) {
-                                wikidata.statements.push(statement);
-                            }
-                        }
-                        else if (mainsnak.property == 'P18') { // commons media
-                            var statement = {
-                                id: mainsnak.property,
-                                label: null,
-                                value: mainsnak.datavalue.value,
-                                url: 'https://commons.wikimedia.org/wiki/File:' + mainsnak.datavalue.value.split(' ').join('_')
-                            }
+                                // See also: https://www.wikidata.org/wiki/Help:Dates
 
-                            statement.label = findLabel(entities, mainsnak.property, language);
-                            if (statement.label != "" && statement.value != null && statement.url != null) {
-                                wikidata.statements.push(statement);
-                            }
-                        }
-                        else if (mainsnak.datavalue.type == "string") {
-                            var statement = {
-                                id: mainsnak.property,
-                                label: null,
-                                value: mainsnak.datavalue.value,
-                                url: null
-                            }
+                                //console.log(mainsnak);
 
-                            statement.label = findLabel(entities, mainsnak.property, language);
-                            if (statement.label != "" && statement.value != null && statement.url != null) {
-                                wikidata.statements.push(statement);
-                            }
-                        }
-                        else if (mainsnak.datavalue.type == "wikibase-entityid") {
-                            //console.log(responseData.wikidataRaw[i]);
-                            //console.log(mainsnak);
-                            var statement = {
-                                id: mainsnak.property,
-                                label: null,
-                                value: null,
-                                url: 'https://www.wikidata.org/wiki/' + mainsnak.datavalue.value.id,
-                                sitelinks: {}
-                            }
+                                dateString = getFormattedDateString(mainsnak.datavalue.value, language);
+                                //var date = new Date(timeString);
+                                //console.log("isNaN(date)", isNaN(date));
 
-                            for (var j = 0; j < entities.length; j++) {
-                                if (entities[j].id == mainsnak.datavalue.value.id) {
-                                    var entity = entities[j];
-                                    //console.log(statement.url);
-                                    //console.log(entity.sitelinks);
-
-                                    if (entity.sitelinks != undefined) {
-                                        if (entity.sitelinks[language + 'wiki'] != undefined) {
-                                            statement.sitelinks[language + 'wiki'] = 
-                                                entity.sitelinks[language + 'wiki'].title;
-                                        }
-                                        if (language != 'en' && entity.sitelinks.enwiki != undefined) {
-                                            statement.sitelinks.enwiki = 
-                                                entity.sitelinks.enwiki.title;
-                                        }
-                                    }
-
-                                    break;
+                                var value = {
+                                    value: dateString,
+                                    url: null
                                 }
-                            }
 
-                            statement.label = findLabel(entities, mainsnak.property, language);
-                            //console.log(mainsnak.datavalue.value);
-                            statement.value = findLabel(entities, mainsnak.datavalue.value.id, language);
-                            if (statement.label != "" && statement.value != null && statement.url != null) {
-                                wikidata.statements.push(statement);
-                            }
-                        }
-                        else if (mainsnak.datavalue.type == "time") {
-
-                            // See also: https://www.wikidata.org/wiki/Help:Dates
-
-                            //console.log(mainsnak);
-
-                            dateString = getFormattedDateString(mainsnak.datavalue.value, language);
-                            //var date = new Date(timeString);
-                            //console.log("isNaN(date)", isNaN(date));
-
-                            var statement = {
-                                id: mainsnak.property,
-                                label: null,
-                                value: dateString,
-                                url: null
-                            }
-
-                            statement.label = findLabel(entities, mainsnak.property, language);
-                            if (statement.label != "" && statement.value != null) {
-                                wikidata.statements.push(statement);
+                                statement.values.push(value);
 
                                 var dateItem = {
                                     wikidata_property: mainsnak.property,
@@ -388,48 +405,88 @@ app.get('/wiki', function(req, res) {
                                 }
                                 wikidata.dates.push(dateItem);
                             }
-                        }
-                        else if (mainsnak.datavalue.type == "quantity") {
+                            else if (mainsnak.datavalue.type == "quantity") {
 
-                            //console.log(mainsnak);
+                                //console.log(mainsnak);
 
-                            var statement = {
-                                id: mainsnak.property,
-                                label: null,
-                                value: Number(mainsnak.datavalue.value.amount),
-                                url: null
+                                var value = {
+                                    value: Number(mainsnak.datavalue.value.amount),
+                                    url: null
+                                }
+
+                                statement.values.push(value);
+                            }
+                            else if (mainsnak.datavalue.type == "monolingualtext") {
+                                var value = {
+                                    value: mainsnak.datavalue.value.text,
+                                    url: null
+                                }
+
+                                statement.values.push(value);
+                            }
+                            else {
+                                // TODO
+                                console.log("unhandled entity:", mainsnak);
+                                valueWasAdded = false;
                             }
 
-                            statement.label = findLabel(entities, mainsnak.property, language);
-                            if (statement.label != "" && statement.value != null) {
-                                wikidata.statements.push(statement);
-                            }
-                        }
-                        else if (mainsnak.datavalue.type == "monolingualtext") {
-                            var statement = {
-                                id: mainsnak.property,
-                                label: null,
-                                value: mainsnak.datavalue.value.text,
-                                url: null
-                            }
+                            if (valueWasAdded && responseData.wikidataRaw[i][j].qualifiers != undefined) {
+                                statement.values[statement.values.length -1].qualifiers = [];
 
-                            statement.label = findLabel(entities, mainsnak.property, language);
-                            if (statement.label != "" && statement.value != null) {
-                                wikidata.statements.push(statement);
+                                var qualifiers = Object.keys(responseData.wikidataRaw[i][j].qualifiers).map(function(e) {
+                                    return responseData.wikidataRaw[i][j].qualifiers[e];
+                                });
+    
+                                qualifiers.forEach(qualifier => {
+                                    //console.log(qualifier);
+                                    if (qualifier[0].snaktype == "value") {
+
+                                        var q = {
+                                            value: null,
+                                            label: null,
+                                            url: null 
+                                        }
+
+                                        q.label = findLabel(entities, qualifier[0].property, language);
+
+                                        if (qualifier[0].datavalue.type == "string") {
+                                            q.value = qualifier[0].datavalue.value;
+                                        }
+                                        else if(qualifier[0].datavalue.type == "time") {
+                                            dateString = getFormattedDateString(qualifier[0].datavalue.value, language);
+                                            q.value = dateString;
+                                        }
+                                        else if (qualifier[0].datavalue.type == "wikibase-entityid") {
+                                            //console.log(responseData.wikidataRaw[i]);
+                                            //console.log(mainsnak);
+                                            q.url = 'https://www.wikidata.org/wiki/' + qualifier[0].datavalue.value.id;
+            
+                                            //console.log(qualifier[0].datavalue.value);
+                                            q.value = findLabel(entities, qualifier[0].datavalue.value.id, language);
+                                        }
+                                        else {
+                                            // TODO
+                                            console.log("unhandled qualifier:", qualifier);
+                                        }
+
+                                        if (q.value != null) {
+                                            statement.values[statement.values.length -1].qualifiers.push(q);
+                                        }
+                                    }
+                                });
                             }
                         }
-                        else {
-                            // TODO ?
-                            console.log("unhandled entity:", mainsnak);
-                        }
+                    }
+
+                    if (statement.id != null && statement.label != null && statement.values.length > 0) {
+                        wikidata.statements.push(statement);
                     }
                 }
                 //console.log(wikidata.statements);
                 // DEV
-                //responseData.wikipedia = undefined;
-                //responseData.wikipediaExcerptHTML = undefined;
-                //responseData.wikipediaRemainingHTML = undefined;
-                //responseData.wikidataEntities = wikidataEntitiesResponse.data;
+                // responseData.wikipedia = undefined;
+                // responseData.wikipediaExcerptHTML = undefined;
+                // responseData.wikipediaRemainingHTML = undefined;
                 // END DEV
 
                 responseData.wikidataRaw = undefined;
