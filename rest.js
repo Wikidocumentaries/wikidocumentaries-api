@@ -212,6 +212,14 @@ app.get('/wiki', function(req, res) {
                                 ids.push(statement.mainsnak.datavalue.value.id);
                             }
                         }
+                        else if (statement.mainsnak.datavalue.type == "quantity" && statement.mainsnak.datavalue.value.unit.indexOf("/entity/Q") != -1) {
+                            var index = statement.mainsnak.datavalue.value.unit.lastIndexOf('/') + 1;
+                            var id = statement.mainsnak.datavalue.value.unit.substring(index);
+                            //console.log(id);
+                            if (ids.indexOf(id) == -1) {
+                                ids.push(id);
+                            }
+                        }
                     }
                     if (statement.qualifiers != undefined) {
                         //console.log(statement.qualifiers);
@@ -344,6 +352,10 @@ app.get('/wiki', function(req, res) {
                                     url: null
                                 }
 
+                                if (mainsnak.property == 'P856' && mainsnak.datavalue.value.indexOf('http') == 0) { // official website
+                                    value.url = mainsnak.datavalue.value;
+                                }
+
                                 statement.values.push(value);
                             }
                             else if (mainsnak.datavalue.type == "wikibase-entityid") {
@@ -414,6 +426,16 @@ app.get('/wiki', function(req, res) {
                                     url: null
                                 }
 
+                                if (mainsnak.datavalue.value.unit.indexOf("/entity/Q") != -1) {
+                                    //console.log("found");
+                                    var index = mainsnak.datavalue.value.unit.lastIndexOf('/') + 1;
+                                    var id = mainsnak.datavalue.value.unit.substring(index);
+                                    //console.log(id);
+                                    var label = findLabel(entities, id, language);
+                                    //console.log(label);
+                                    value.unit = label;
+                                }
+
                                 statement.values.push(value);
                             }
                             else if (mainsnak.datavalue.type == "monolingualtext") {
@@ -463,6 +485,12 @@ app.get('/wiki', function(req, res) {
             
                                             //console.log(qualifier[0].datavalue.value);
                                             q.value = findLabel(entities, qualifier[0].datavalue.value.id, language);
+                                        }
+                                        else if (qualifier[0].datavalue.type == "quantity") {
+                                            q.value = Number(qualifier[0].datavalue.value.amount);
+                                        }
+                                        else if (qualifier[0].datavalue.type == "monolingualtext") {
+                                            q.value = qualifier[0].datavalue.value.text;
                                         }
                                         else {
                                             // TODO
@@ -815,7 +843,7 @@ app.get('/images', function(req, res) {
 
         }).catch(error => {
             console.log("error in getImagesFromFinnaWithTitle");
-            //console.log(error);
+            console.log(error);
             return [];
             //return Promise.reject(error);
         });
