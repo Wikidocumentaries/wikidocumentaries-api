@@ -163,7 +163,7 @@ app.get('/wiki', function(req, res) {
 
                 //console.log(remainingOrigHTML.length);
 
-                if (remainingOrigHTML.length > 5000) { // Small count of HTML should be with the leading section
+                if (remainingOrigHTML.length > 3000) { // Small count of HTML should be with the leading section
                     remainingHTML = convertToWikidocumentariesHTML(remainingOrigHTML, topic, language);
                 }
                 else {
@@ -354,6 +354,7 @@ app.get('/wiki', function(req, res) {
 
                                 if (mainsnak.property == 'P856' && mainsnak.datavalue.value.indexOf('http') == 0) { // official website
                                     value.url = mainsnak.datavalue.value;
+                                    value.value = value.value.substring(value.value.indexOf('/') + 2);
                                 }
 
                                 statement.values.push(value);
