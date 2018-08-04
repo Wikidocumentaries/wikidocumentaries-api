@@ -536,6 +536,124 @@ app.get('/wiki', function(req, res) {
     });
 });
 
+app.get('/wiki/items/by/latlon', function(req, res) {
+
+    console.log(req.originalUrl);
+
+    var language = req.query.language;
+    var topic = req.query.topic;
+    //console.log(topic);
+
+    var requestConfig = {
+        baseURL: 'https://query.wikidata.org/',
+        url: '/bigdata/namespace/wdq/sparql?query=SELECT%3Fitem(SAMPLE(%3Fitem_label)as%3Flabel)(SAMPLE(%3Flocation)as%3Flocation)WHERE%7BSERVICE%20wikibase%3Aaround%7B%3Fitem%20wdt%3AP625%3Flocation.bd%3AserviceParam%20wikibase%3Acenter"Point(' + req.query.lon + '%20' + req.query.lat + ')"%5E%5Egeo%3AwktLiteral.%20bd%3AserviceParam%20wikibase%3Aradius"' + req.query.radius / 1000 + '".%7DOPTIONAL%7B%3Fitem%20rdfs%3Alabel%3Fitem_label.%7D%7DGROUP%20BY%20%3Fitem',
+        timeout: 20000,
+        method: "get",
+        params: {
+            format: 'json'
+        }
+    };
+
+    axios.request(requestConfig).then(response => {
+        //console.log(response.data);
+
+        // res.send(response.data);
+        // return;
+
+        var wikiItems = [];
+
+        for(var i = 0; i < response.data.results.bindings.length; i++) {
+            var index = response.data.results.bindings[i].item.value.lastIndexOf('/') + 1;
+            id = response.data.results.bindings[i].item.value.substring(index);
+            var startIndex = response.data.results.bindings[i].location.value.indexOf('(') + 1;
+            var endIndex = response.data.results.bindings[i].location.value.indexOf(')');
+            var parts = response.data.results.bindings[i].location.value.substring(startIndex, endIndex).split(' ');
+            var lat = parts[1];
+            var lon = parts[0];
+
+            wikiItems.push({
+                id: id,
+                title: response.data.results.bindings[i].label.value,
+                lat: Number(lat),
+                lon: Number(lon)
+            });
+        }
+
+        //console.log(wikiItems);
+
+        var ids = [];
+
+        for (var i = 0; i < wikiItems.length; i++) {
+            ids.push(wikiItems[i].id);
+        }
+
+        if (ids.length == 0) {
+            res.send([]);
+        }
+        else {
+            if (ids.length > 50) { // "Maximum number of values is 50" https://www.wikidata.org/w/api.php?action=help&modules=wbgetentities
+                ids = ids.slice(0, 50);
+            }
+
+            //console.log(ids);
+            ids = ids.join('|');
+            //console.dir(ids);
+
+            var requestConfig = {
+                baseURL: "https://www.wikidata.org/w/api.php",
+                method: "get",
+                responseType: 'json',
+                headers: {
+                    'Api-User-Agent': process.env.WIKIDOCUMENTARIES_API_USER_AGENT
+                },
+                params: {
+                    action: "wbgetentities",
+                    ids: ids,
+                    props: "labels|sitelinks",
+                    languages: (language != "en" ? language + "|en" : "en"),
+                    format: "json"
+                }
+            }
+
+            var items = [];
+
+            axios.request(requestConfig).then((wikidataEntitiesResponse) => {
+                //console.log(wikidataEntitiesResponse.data);
+                var entities = Object.keys(wikidataEntitiesResponse.data.entities).map(function(e) {
+                    return wikidataEntitiesResponse.data.entities[e];
+                });
+                //console.dir(entities);
+                for (var i = 0; i < wikiItems.length; i++) {
+                    for (var j = 0; j < entities.length; j++) {
+                        if (wikiItems[i].id == entities[j].id) {
+                            if (entities[j].sitelinks[language + 'wiki'] != undefined &&
+                            entities[j].sitelinks[language + 'wiki'].title == topic) {
+                                // Do not include the topic item itself
+                                //console.log(entities[j].sitelinks[language + 'wiki'].title);
+                            }
+                            else {
+                                var item = {
+                                    title: wikiItems[i].title,
+                                    position: [wikiItems[i].lon, wikiItems[i].lat],
+                                    wikidata: entities[j]
+                                }
+                                items.push(item);
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                res.send(items);
+            });
+        }
+    }).catch(error => {
+        console.log("error in /wiki/articles/by/latlon");
+        console.log(error);
+        res.send([]);
+        //return Promise.reject(error);
+    });
+});
 
 app.get('/images', function(req, res) {
 
@@ -543,7 +661,7 @@ app.get('/images', function(req, res) {
 
     var language = req.query.language;
     var topic = req.query.topic;
-    console.log(topic);
+    //console.log(topic);
     var encodedTopic = encodeURIComponent(topic);
 
     var getImagesFromCommonsWithTitle = function() {
@@ -1117,124 +1235,6 @@ app.get('/basemaps', function(req, res) {
     });
 });
 
-app.get('/wiki/items/by/latlon', function(req, res) {
-
-    console.log(req.originalUrl);
-
-    var language = req.query.language;
-    var topic = req.query.topic;
-    //console.log(topic);
-
-    var requestConfig = {
-        baseURL: 'https://query.wikidata.org/',
-        url: '/bigdata/namespace/wdq/sparql?query=SELECT%3Fitem(SAMPLE(%3Fitem_label)as%3Flabel)(SAMPLE(%3Flocation)as%3Flocation)WHERE%7BSERVICE%20wikibase%3Aaround%7B%3Fitem%20wdt%3AP625%3Flocation.bd%3AserviceParam%20wikibase%3Acenter"Point(' + req.query.lon + '%20' + req.query.lat + ')"%5E%5Egeo%3AwktLiteral.%20bd%3AserviceParam%20wikibase%3Aradius"' + req.query.radius / 1000 + '".%7DOPTIONAL%7B%3Fitem%20rdfs%3Alabel%3Fitem_label.%7D%7DGROUP%20BY%20%3Fitem',
-        timeout: 20000,
-        method: "get",
-        params: {
-            format: 'json'
-        }
-    };
-
-    axios.request(requestConfig).then(response => {
-        //console.log(response.data);
-
-        // res.send(response.data);
-        // return;
-
-        var wikiItems = [];
-
-        for(var i = 0; i < response.data.results.bindings.length; i++) {
-            var index = response.data.results.bindings[i].item.value.lastIndexOf('/') + 1;
-            id = response.data.results.bindings[i].item.value.substring(index);
-            var startIndex = response.data.results.bindings[i].location.value.indexOf('(') + 1;
-            var endIndex = response.data.results.bindings[i].location.value.indexOf(')');
-            var parts = response.data.results.bindings[i].location.value.substring(startIndex, endIndex).split(' ');
-            var lat = parts[1];
-            var lon = parts[0];
-
-            wikiItems.push({
-                id: id,
-                title: response.data.results.bindings[i].label.value,
-                lat: Number(lat),
-                lon: Number(lon)
-            });
-        }
-
-        //console.log(wikiItems);
-
-        var ids = [];
-
-        for (var i = 0; i < wikiItems.length; i++) {
-            ids.push(wikiItems[i].id);
-        }
-
-        if (ids.length == 0) {
-            res.send([]);
-        }
-        else {
-            if (ids.length > 50) { // "Maximum number of values is 50" https://www.wikidata.org/w/api.php?action=help&modules=wbgetentities
-                ids = ids.slice(0, 50);
-            }
-
-            //console.log(ids);
-            ids = ids.join('|');
-            //console.dir(ids);
-
-            var requestConfig = {
-                baseURL: "https://www.wikidata.org/w/api.php",
-                method: "get",
-                responseType: 'json',
-                headers: {
-                    'Api-User-Agent': process.env.WIKIDOCUMENTARIES_API_USER_AGENT
-                },
-                params: {
-                    action: "wbgetentities",
-                    ids: ids,
-                    props: "labels|sitelinks",
-                    languages: (language != "en" ? language + "|en" : "en"),
-                    format: "json"
-                }
-            }
-
-            var items = [];
-
-            axios.request(requestConfig).then((wikidataEntitiesResponse) => {
-                //console.log(wikidataEntitiesResponse.data);
-                var entities = Object.keys(wikidataEntitiesResponse.data.entities).map(function(e) {
-                    return wikidataEntitiesResponse.data.entities[e];
-                });
-                //console.dir(entities);
-                for (var i = 0; i < wikiItems.length; i++) {
-                    for (var j = 0; j < entities.length; j++) {
-                        if (wikiItems[i].id == entities[j].id) {
-                            if (entities[j].sitelinks[language + 'wiki'] != undefined &&
-                            entities[j].sitelinks[language + 'wiki'].title == topic) {
-                                // Do not include the topic item itself
-                                //console.log(entities[j].sitelinks[language + 'wiki'].title);
-                            }
-                            else {
-                                var item = {
-                                    title: wikiItems[i].title,
-                                    position: [wikiItems[i].lon, wikiItems[i].lat],
-                                    wikidata: entities[j]
-                                }
-                                items.push(item);
-                            }
-                            break;
-                        }
-                    }
-                }
-
-                res.send(items);
-            });
-        }
-    }).catch(error => {
-        console.log("error in /wiki/articles/by/latlon");
-        console.log(error);
-        res.send([]);
-        //return Promise.reject(error);
-    });
-});
 
 app.get('/geocode', function(req, res) {
 
