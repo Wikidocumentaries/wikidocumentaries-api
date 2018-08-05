@@ -1435,23 +1435,31 @@ function getFormattedDateString(dateWikidataValue, language) {
     var year = parseInt((timeString.indexOf('-') != 0 ? timeString.substring(1, timeString.indexOf('-')) : timeString.substring(0, timeString.indexOf('-', 1))), 10);
     var month = parseInt(timeString.substr(6, 2));
     var day = parseInt(timeString.substr(9, 2));
-    var hour = parseInt(timeString.substr(12, 2));
-    var mintutes = parseInt(timeString.substr(15, 2));
-    var seconds = parseInt(timeString.substr(18, 2));
+    // var hour = parseInt(timeString.substr(12, 2));
+    // var mintutes = parseInt(timeString.substr(15, 2));
+    // var seconds = parseInt(timeString.substr(18, 2));
 
     var formattedDateString = "";
 
     switch (dateWikidataValue.precision) {
     case 11:         
         var date = new Date();
-        date.setFullYear(year, month, day);
-        date.setHours(hour);
-        date.setMinutes(mintutes);
-        date.setSeconds(seconds);
+        date.setFullYear(year, month - 1, day);
+        // date.setHours(hour);
+        // date.setMinutes(mintutes);
+        // date.setSeconds(seconds);
         // console.log(date.getFullYear());
+        // console.log(date.getMonth());
+        // console.log(date.getDate());
+        // console.log("month", month);
+        // console.log("day", day);
+        // console.log("hour", hour);
+        // console.log("mintutes", mintutes);
+        // console.log("seconds", seconds);
 
         //var dateFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         formattedDateString = (year < 0 ? year + "-" + month + "-" + day : date.toLocaleDateString(language + "-" + language.toUpperCase()/*, dateFormatOptions*/));
+        //console.log(formattedDateString);
         break;
     case 10:
         formattedDateString = year + "-" + month;
