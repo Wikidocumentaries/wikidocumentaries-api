@@ -667,15 +667,18 @@ app.get('/images', function(req, res) {
     var getImagesFromCommonsWithTitle = function() {
 
         if (req.query.commons_category != undefined) {
+            //console.log("commons_category", req.query.commons_category);
             var requestConfig = {
                 baseURL: "https://commons.wikimedia.org/",
                 url: "/w/api.php",
                 method: "get",
+                timeout: 10000,
                 params: {
                     action: "query",
                     generator: "categorymembers",
                     gcmtype: "file",
                     gcmtitle: "Category:" + req.query.commons_category,
+                    gcmlimit: 30,
                     prop: "imageinfo",
                     iiurlwidth: 400,
                     iiurlheight: 400,
@@ -709,18 +712,20 @@ app.get('/images', function(req, res) {
 
             var images = [];
 
+            //console.log(response.data);
+
             if (response.data.query != undefined && response.data.query.pages != undefined) {
 
                 var pages = Object.keys(response.data.query.pages).map(function(e) {
                     return response.data.query.pages[e];
                 });
 
-                //console.log(pages);
+                //console.log(pages.length);
 
                 //res.send(pages);
 
-                pages.forEach((page) => {
-
+                pages.forEach((page, index) => {
+                    //console.log(index);
                     var image = {
                         id: page.title,
                         source: 'Wikimedia Commons',
@@ -745,16 +750,16 @@ app.get('/images', function(req, res) {
 
                     if (page.imageinfo[0].extmetadata.GPSLatitude != undefined && page.imageinfo[0].extmetadata.GPSLongitude != undefined) {
 
-                        if (req.query.lat != undefined && 
-                            req.query.lon != undefined &&
-                            req.query.maxradius != undefined) {
+                        // if (req.query.lat != undefined && 
+                        //     req.query.lon != undefined &&
+                        //     req.query.maxradius != undefined) {
 
-                                var distance =
-                                    turf.distance([req.query.lon, req.query.lat], [page.imageinfo[0].extmetadata.GPSLongitude.value, page.imageinfo[0].extmetadata.GPSLatitude.value]);
-                                if (distance > req.query.maxradius / 1000) {
-                                    return;
-                                }
-                        }
+                        //         var distance =
+                        //             turf.distance([req.query.lon, req.query.lat], [page.imageinfo[0].extmetadata.GPSLongitude.value, page.imageinfo[0].extmetadata.GPSLatitude.value]);
+                        //         if (distance > req.query.maxradius / 1000) {
+                        //             return;
+                        //         }
+                        // }
 
                         image.geoLocations.push("POINT(" + page.imageinfo[0].extmetadata.GPSLongitude.value + " " + page.imageinfo[0].extmetadata.GPSLatitude.value + ")")
                     }
@@ -771,12 +776,15 @@ app.get('/images', function(req, res) {
                         image.license = page.imageinfo[0].extmetadata.LicenseShortName.value;
                     }
 
+                    //console.log(index);
                     images.push(image);
                 });
             }
             else {
                 // nothing to do
             }    
+
+            //console.log(images.length);
 
             if (images.length > 30) { // Good practice
                 images = images.slice(0, 30);
