@@ -23,8 +23,7 @@ app.use(function(req, res, next) {
     next();
   });
 
-axios.defaults.timeout = 3000;
-
+axios.defaults.timeout = 5000;
 
 app.get('/wiki', function(req, res) {
 
@@ -32,11 +31,89 @@ app.get('/wiki', function(req, res) {
 
     var language = req.query.language;
     var topic = req.query.topic;
+    var wikidata = req.query.wikidata;
+
+    var wikidataByItemIdPromise = function(wikidata) { 
+        var requestConfig = {
+            baseURL: "https://www.wikidata.org/w/api.php",
+            method: "get",
+            responseType: 'json',
+            headers: {
+                'Api-User-Agent': process.env.WIKIDOCUMENTARIES_API_USER_AGENT
+            },
+            params: {
+                action: "wbgetentities",
+                ids: wikidata,
+                format: "json"
+            }
+        };
+        return axios.request(requestConfig).then((response) => {
+            var item=response.data.entities[wikidata];
+            combineResults(res, language, wikidata, item);
+        });
+    };
+    if (wikidata != undefined) {
+        wikidataByItemIdPromise(wikidata);
+    }
+    else
+    {
+        var getWikidataItemIDPromise = function () {
+            var requestConfig = {
+                baseURL: "https://" + language + ".wikipedia.org/w/api.php",
+                method: "get",
+                responseType: 'json',
+                headers: {
+                    'Api-User-Agent': process.env.WIKIDOCUMENTARIES_API_USER_AGENT
+                },
+                params: {
+                    action: "query",
+                    prop: "pageprops",
+                    ppprop: "wikibase_item",
+                    redirects: "resolve",
+                    titles: topic,
+                    format: "json"
+                }
+            };
+
+            return axios.request(requestConfig).then((response) => {
+                if (response.data.query != undefined)
+                {
+                    var key=Object.keys(response.data.query.pages)[0];
+                    var page=response.data.query.pages[key];
+                    if (page["pageprops"] != undefined && page["pageprops"]["wikibase_item"]!=undefined)
+                    {
+                        wikidata=page["pageprops"]["wikibase_item"];
+                        wikidataByItemIdPromise(wikidata);
+                    }
+                }
+            });
+        }
+        getWikidataItemIDPromise();
+    }
+});
+
+function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
+    var topic="";
+    var wikidatatitle="";
+    var wikidatadescription="";
+    if ( wikidataItemResponse != undefined) {
+         if (wikidataItemResponse["sitelinks"][language +"wiki"]!= undefined ) {
+	    topic=wikidataItemResponse["sitelinks"][language +"wiki"]["title"];
+         }
+         if (wikidataItemResponse["labels"][language]!= undefined ) {
+	    wikidatatitle=wikidataItemResponse["labels"][language]["value"];
+         }
+         if (wikidataItemResponse["descriptions"][language]!= undefined ) {
+	    wikidatadescription=wikidataItemResponse["descriptions"][language]["value"];
+         }
+    }
+
+
     console.log(topic);
+    var encodedLanguage = encodeURIComponent(language);
     var encodedTopic = encodeURIComponent(topic);
 
-    var wikipediaSummaryPromise = function() { 
-
+    var wikipediaSummaryPromise = function() {
         var requestConfig = {
             baseURL: "https://" + language + ".wikipedia.org/api/rest_v1/",
             url: "/page/summary/" + encodedTopic,
@@ -46,8 +123,8 @@ app.get('/wiki', function(req, res) {
                 'Api-User-Agent': process.env.WIKIDOCUMENTARIES_API_USER_AGENT
             },
         };
-
-        return axios.request(requestConfig);
+        if (encodedTopic == "") return ""; 
+        else return axios.request(requestConfig);
     };
 
     var wikipediaHTMLPromise = function() { 
@@ -61,124 +138,76 @@ app.get('/wiki', function(req, res) {
                 'Api-User-Agent': process.env.WIKIDOCUMENTARIES_API_USER_AGENT
             },
         };
-
-        return axios.request(requestConfig);
+        if (encodedTopic == "") return ""; 
+        else return axios.request(requestConfig);
     };
 
-    var wikidataItemID = null;
 
-    var wikidataItemIDPromise = function () {
-        
-        var requestConfig = {
-            baseURL: "https://" + language + ".wikipedia.org/w/api.php",
-            method: "get",
-            responseType: 'json',
-            headers: {
-                'Api-User-Agent': process.env.WIKIDOCUMENTARIES_API_USER_AGENT
-            },
-            params: {
-                action: "query",
-                prop: "pageprops",
-                ppprop: "wikibase_item",
-                redirects: "resolve",
-                titles: topic,
-                format: "json"
+    axios.all([wikipediaSummaryPromise(), wikipediaHTMLPromise(), wikidataItemResponse ])
+        .then(axios.spread(function (wikipediaSummaryResponse, wikipediaHTMLResponse, wikidataItemResponse ) {
+
+            if (wikipediaHTMLResponse.data == undefined ) {
+                // No wikipedia article
+                excerptHTML="";
+                remainingHTML=null;
             }
-        }
+            else {
+                var origHTML = wikipediaHTMLResponse.data.lead.sections[0].text;
+                var remainingHTML = null;
 
-        return axios.request(requestConfig).then((response) => {
-
-            var pages = Object.keys(response.data.query.pages).map(function(e) {
-                return response.data.query.pages[e];
-            });
-            //console.log(pages);
-
-            if (pages[0].pageprops != undefined && pages[0].pageprops.wikibase_item) {
-
-                wikidataItemID = pages[0].pageprops.wikibase_item;
-
-                var requestConfig = {
-                    baseURL: "https://www.wikidata.org/w/api.php",
-                    method: "get",
-                    responseType: 'json',
-                    headers: {
-                        'Api-User-Agent': process.env.WIKIDOCUMENTARIES_API_USER_AGENT
-                    },
-                    params: {
-                        action: "wbgetclaims",
-                        entity: wikidataItemID,
-                        format: "json"
-                    }
+                if (wikipediaHTMLResponse.data.lead.disambiguation != undefined && wikipediaHTMLResponse.data.lead.disambiguation == true) {
+                    wikipediaHTMLResponse.data.remaining.sections.forEach(section => {
+                        origHTML += section.text;
+                    });
                 }
-                return axios.request(requestConfig);
-            }
-            else {
-                return { data: null };
-            }
-        });
-    };
+                else {
+                    var remainingOrigHTML = "";
 
-    axios.all([wikipediaSummaryPromise(), wikipediaHTMLPromise(), wikidataItemIDPromise() ])
-        .then(axios.spread(function (wikipediaSummaryResponse, wikipediaHTMLResponse, wikidataItemIDResponse) {
-            //console.log(wikidataItemIDResponse);
-
-            var origHTML = wikipediaHTMLResponse.data.lead.sections[0].text;
-
-            var remainingHTML = null;
-
-            if (wikipediaHTMLResponse.data.lead.disambiguation != undefined && wikipediaHTMLResponse.data.lead.disambiguation == true) {
-                wikipediaHTMLResponse.data.remaining.sections.forEach(section => {
-                    origHTML += section.text;
-                });
-            }
-            else {
-                var remainingOrigHTML = "";
-
-                wikipediaHTMLResponse.data.remaining.sections.forEach(section => {
-                    if (section.isReferenceSection == undefined) {
-                        var sectionHeaderStartTag = "";
-                        var sectionHeaderEndTag = "";
-                        switch(section.toclevel) {
-                        case 1:
-                            sectionHeaderStartTag = "<h2 class='h2'>";
-                            sectionHeaderEndTag = "</h2>";
-                            break;
-                        case 2:
-                            sectionHeaderStartTag = "<h3 class='h3'>";
-                            sectionHeaderEndTag = "</h3>";
-                            break;
-                        case 3:
-                            sectionHeaderStartTag = "<h4 class='h4'>";
-                            sectionHeaderEndTag = "</h4>";
-                            break;
-                        case 4:
-                            sectionHeaderStartTag = "<h5 class='h5'>";
-                            sectionHeaderEndTag = "</h5>";
-                            break;
+                    wikipediaHTMLResponse.data.remaining.sections.forEach(section => {
+                        if (section.isReferenceSection == undefined) {
+                            var sectionHeaderStartTag = "";
+                            var sectionHeaderEndTag = "";
+                            switch(section.toclevel) {
+                            case 1:
+                                sectionHeaderStartTag = "<h2 class='h2'>";
+                                sectionHeaderEndTag = "</h2>";
+                                break;
+                            case 2:
+                                sectionHeaderStartTag = "<h3 class='h3'>";
+                                sectionHeaderEndTag = "</h3>";
+                                break;
+                            case 3:
+                                sectionHeaderStartTag = "<h4 class='h4'>";
+                                sectionHeaderEndTag = "</h4>";
+                                break;
+                            case 4:
+                                sectionHeaderStartTag = "<h5 class='h5'>";
+                                sectionHeaderEndTag = "</h5>";
+                                break;
+                            }
+                            remainingOrigHTML += sectionHeaderStartTag + section.line + sectionHeaderEndTag;
+                            remainingOrigHTML += section.text;
                         }
-                        remainingOrigHTML += sectionHeaderStartTag + section.line + sectionHeaderEndTag;
-                        remainingOrigHTML += section.text;
-                    }
-                });
+                    });
 
                 //console.log(remainingOrigHTML.length);
 
-                if (remainingOrigHTML.length > 3000) { // Small count of HTML should be with the leading section
-                    remainingHTML = convertToWikidocumentariesHTML(remainingOrigHTML, topic, language);
+                    if (remainingOrigHTML.length > 3000) { // Small count of HTML should be with the leading section
+                        remainingHTML = convertToWikidocumentariesHTML(remainingOrigHTML, topic, language);
+                    }
+                    else {
+                        origHTML += remainingOrigHTML;
+                    }
                 }
-                else {
-                    origHTML += remainingOrigHTML;
-                }
+                var excerptHTML = convertToWikidocumentariesHTML(origHTML, topic, language);
             }
-
-            var excerptHTML = convertToWikidocumentariesHTML(origHTML, topic, language);
 
             var responseData = {
                 wikipedia: wikipediaSummaryResponse.data,
                 //wikipediaDevData: wikipediaHTMLResponse.data,
                 wikipediaExcerptHTML: excerptHTML,
                 wikipediaRemainingHTML: remainingHTML,
-                wikidataRaw: wikidataItemIDResponse.data
+                wikidataRaw: wikidataItemResponse
             }
 
             return responseData;
@@ -253,6 +282,8 @@ app.get('/wiki', function(req, res) {
 
                 var wikidata = {
                     id: wikidataItemID,
+                    title: wikidatatitle,
+                    description: wikidatadescription,
                     instance_of: {
                         id: null,
                         value: null,
@@ -534,7 +565,9 @@ app.get('/wiki', function(req, res) {
             wikidata: null
         });
     });
-});
+}//);
+
+
 
 app.get('/wiki/items/by/latlon', function(req, res) {
 
