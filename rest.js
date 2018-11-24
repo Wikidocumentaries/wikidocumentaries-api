@@ -878,7 +878,7 @@ app.get('/images', function(req, res) {
             params: {
                 lookfor: topic.split('_').join('+'),
                 type: 'AllFields',
-                limit: 10,
+                limit: 15,
                 "filter[0]": '~format:"0/Image/"',
                 "filter[1]": 'online_boolean:"1"',
                 "field[0]": 'id',
