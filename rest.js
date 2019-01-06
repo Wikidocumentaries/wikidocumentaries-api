@@ -1401,16 +1401,16 @@ const findLabel = function (entities, id, language) {
 
 const flickrLicenses = [ // TODO update once per day or so
       { "id": 0, "name": "All Rights Reserved", "url": "" },
-      { "id": 4, "name": "Attribution License", "url": "https:\/\/creativecommons.org\/licenses\/by\/2.0\/" },
-      { "id": 6, "name": "Attribution-NoDerivs License", "url": "https:\/\/creativecommons.org\/licenses\/by-nd\/2.0\/" },
-      { "id": 3, "name": "Attribution-NonCommercial-NoDerivs License", "url": "https:\/\/creativecommons.org\/licenses\/by-nc-nd\/2.0\/" },
-      { "id": 2, "name": "Attribution-NonCommercial License", "url": "https:\/\/creativecommons.org\/licenses\/by-nc\/2.0\/" },
-      { "id": 1, "name": "Attribution-NonCommercial-ShareAlike License", "url": "https:\/\/creativecommons.org\/licenses\/by-nc-sa\/2.0\/" },
-      { "id": 5, "name": "Attribution-ShareAlike License", "url": "https:\/\/creativecommons.org\/licenses\/by-sa\/2.0\/" },
+      { "id": 4, "name": "CC BY 2.0", "url": "https:\/\/creativecommons.org\/licenses\/by\/2.0\/" },
+      { "id": 6, "name": "CC BY-ND 2.0", "url": "https:\/\/creativecommons.org\/licenses\/by-nd\/2.0\/" },
+      { "id": 3, "name": "CC BY-NC-ND 2.0", "url": "https:\/\/creativecommons.org\/licenses\/by-nc-nd\/2.0\/" },
+      { "id": 2, "name": "CC BY-NC 2.0", "url": "https:\/\/creativecommons.org\/licenses\/by-nc\/2.0\/" },
+      { "id": 1, "name": "CC BY-NC-SA 2.0", "url": "https:\/\/creativecommons.org\/licenses\/by-nc-sa\/2.0\/" },
+      { "id": 5, "name": "CC BY-SA 2.0", "url": "https:\/\/creativecommons.org\/licenses\/by-sa\/2.0\/" },
       { "id": 7, "name": "No known copyright restrictions", "url": "https:\/\/www.flickr.com\/commons\/usage\/" },
       { "id": 8, "name": "United States Government Work", "url": "http:\/\/www.usa.gov\/copyright.shtml" },
-      { "id": 9, "name": "Public Domain Dedication (CC0)", "url": "https:\/\/creativecommons.org\/publicdomain\/zero\/1.0\/" },
-      { "id": 10, "name": "Public Domain Mark", "url": "https:\/\/creativecommons.org\/publicdomain\/mark\/1.0\/" }
+      { "id": 9, "name": "CC0", "url": "https:\/\/creativecommons.org\/publicdomain\/zero\/1.0\/" },
+      { "id": 10, "name": "Public Domain", "url": "https:\/\/creativecommons.org\/publicdomain\/mark\/1.0\/" }
 ];
 
 const collectWikidataInfo = async function(allIDs, language) {
