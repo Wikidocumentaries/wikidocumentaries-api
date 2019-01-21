@@ -92,20 +92,33 @@ app.get('/wiki', function(req, res) {
     }
 });
 
+var languageFallback = ["en", "fi", "sv", "es"];
+
+function getI18n(locale, languageMap) {
+    if (languageMap[locale]) {
+        return languageMap[locale];
+    }
+    for (var i = 0; i < languageFallback.length; i++) {
+        if (languageMap[languageFallback[i]]) {
+            return languageMap[languageFallback[i]];
+        }
+    }
+    if (languageMap["en"]) {
+        return languageMap["en"];
+    }
+    return languageMap.values[0];
+}
+
 function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
     var topic="";
     var wikidatatitle="";
     var wikidatadescription="";
-    if ( wikidataItemResponse != undefined) {
-         if (wikidataItemResponse["sitelinks"][language +"wiki"]!= undefined ) {
-	    topic=wikidataItemResponse["sitelinks"][language +"wiki"]["title"];
-         }
-         if (wikidataItemResponse["labels"][language]!= undefined ) {
-	    wikidatatitle=wikidataItemResponse["labels"][language]["value"];
-         }
-         if (wikidataItemResponse["descriptions"][language]!= undefined ) {
-	    wikidatadescription=wikidataItemResponse["descriptions"][language]["value"];
-         }
+    if (wikidataItemResponse) {
+        if (wikidataItemResponse["sitelinks"][language + "wiki"] != undefined ) {
+	    topic = wikidataItemResponse["sitelinks"][language +"wiki"]["title"];
+        }
+	wikidatatitle = getI18n(language, wikidataItemResponse["labels"])["value"];
+	wikidatadescription = getI18n(language, wikidataItemResponse["descriptions"])["value"];
     }
 
 
