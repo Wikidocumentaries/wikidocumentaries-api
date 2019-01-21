@@ -106,7 +106,7 @@ function getI18n(locale, languageMap) {
     if (languageMap["en"]) {
         return languageMap["en"];
     }
-    return languageMap.values[0];
+    return Object.values(languageMap)[0];
 }
 
 function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
