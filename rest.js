@@ -396,6 +396,7 @@ function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
                                 var value = {
                                     value: null,
                                     url: 'https://www.wikidata.org/wiki/' + mainsnak.datavalue.value.id,
+                                    id: mainsnak.datavalue.value.id,
                                     sitelinks: {}
                                 }
 
