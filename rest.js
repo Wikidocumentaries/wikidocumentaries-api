@@ -92,8 +92,10 @@ app.get('/wiki', function(req, res) {
     }
 });
 
+// language fallback list XXX hardcoded for now
 var languageFallback = ["en", "fi", "sv", "es"];
 
+// get a suitable localised value from languageMap based on locale and fallbacks
 function getI18n(locale, languageMap) {
     if (languageMap[locale]) {
         return languageMap[locale];
@@ -107,6 +109,27 @@ function getI18n(locale, languageMap) {
         return languageMap["en"];
     }
     return Object.values(languageMap)[0];
+}
+
+// get a suitable localised key from languageMap based on locale and fallbacks
+// postfix - appended to locale codes to get a key, e.g. "en" -> "enwiki"
+function getI18nKeys(locale, languageMap, postfix) {
+    var result = [];
+    if (languageMap[locale+postfix]) {
+        result.push(locale+postfix);
+    }
+    for (var i = 0; i < languageFallback.length; i++) {
+        if (languageMap[languageFallback[i]+postfix]) {
+            result.push(languageFallback[i]+postfix);
+        }
+    }
+    if (languageMap["en"+postfix]) {
+        result.push("en"+postfix);
+    }
+    if (!result) {
+        result.push(Object.keys(languageMap)[0]);
+    }
+    return result;
 }
 
 function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
@@ -230,6 +253,8 @@ function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
         if (responseData.wikidataRaw != null && responseData.wikidataRaw.claims != null &&
             Object.keys(responseData.wikidataRaw.claims).length > 0) {
 
+            var sitelinks = responseData.wikidataRaw.sitelinks;
+
             var claims = Object.keys(responseData.wikidataRaw.claims).map(function(e) {
                 return responseData.wikidataRaw.claims[e];
             });
@@ -307,8 +332,8 @@ function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
                         lat: null,
                         lon: null,
                     },
-                    dates : []
-
+                    dates : [],
+                    sitelinks: getI18nKeys(language, sitelinks, "wiki").map(key => sitelinks[key]),
                 }
 
                 //console.log(responseData.wikidataRaw);
