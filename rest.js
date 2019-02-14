@@ -136,12 +136,13 @@ function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
     var topic="";
     var wikidatatitle="";
     var wikidatadescription="";
+    function getOrNull(object, field) {
+        return object && object[field];
+    }
     if (wikidataItemResponse) {
-        if (wikidataItemResponse["sitelinks"][language + "wiki"] != undefined ) {
-	    topic = wikidataItemResponse["sitelinks"][language +"wiki"]["title"];
-        }
-	wikidatatitle = getI18n(language, wikidataItemResponse["labels"])["value"];
-	wikidatadescription = getI18n(language, wikidataItemResponse["descriptions"])["value"];
+        topic = getOrNull(wikidataItemResponse.sitelinks[language + "wiki"], "title");
+        wikidatatitle = getOrNull(getI18n(language, wikidataItemResponse.labels), "value");
+        wikidatadescription = getOrNull(getI18n(language, wikidataItemResponse.descriptions), "value");
     }
 
 
