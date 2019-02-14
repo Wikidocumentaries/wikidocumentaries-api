@@ -147,8 +147,8 @@ function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
 
 
     console.log(topic);
-    var encodedLanguage = encodeURIComponent(language);
-    var encodedTopic = encodeURIComponent(topic);
+    var encodedLanguage = language && encodeURIComponent(language);
+    var encodedTopic = topic && encodeURIComponent(topic);
 
     var wikipediaSummaryPromise = function() {
         var requestConfig = {
@@ -160,7 +160,7 @@ function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
                 'Api-User-Agent': process.env.WIKIDOCUMENTARIES_API_USER_AGENT
             },
         };
-        if (encodedTopic == "") return ""; 
+        if (!encodedTopic || !language) return "";
         else return axios.request(requestConfig);
     };
 
@@ -175,7 +175,7 @@ function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
                 'Api-User-Agent': process.env.WIKIDOCUMENTARIES_API_USER_AGENT
             },
         };
-        if (encodedTopic == "") return ""; 
+        if (!encodedTopic || !language) return "";
         else return axios.request(requestConfig);
     };
 
