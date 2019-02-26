@@ -25,6 +25,20 @@ app.use(function(req, res, next) {
 
 axios.defaults.timeout = 5000;
 
+// proxy sparql requests from UI to Wikidata Query Service
+app.get('/sparql', async function(req, res) {
+    const response = await axios.request({
+        // TODO switch from dev to production when supported
+        baseURL: "https://wikidocumentaries-dev-query.wmflabs.org/proxy/wdqs/bigdata/namespace/wdq/sparql",
+        params: {
+            query: req.query.query,
+            format: req.query.format,
+        },
+        timeout: 60*1000, // 1 minute
+    });
+    res.send(response.data);
+});
+
 app.get('/wiki', function(req, res) {
 
     console.log(req.originalUrl);
