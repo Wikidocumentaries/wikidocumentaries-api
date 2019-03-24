@@ -1,10 +1,13 @@
 const express = require('express')
 const app = express()
 const axios = require('axios')
+const bodyParser = require('body-parser');
 const cheerio = require('cheerio')
+const querystring = require('querystring');
 const turf = require('@turf/turf');
 //console.log(turf);
 
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 if (process.env.WIKIDOCUMENTARIES_API_USER_AGENT == undefined) {
     console.log("Set environment variable WIKIDOCUMENTARIES_API_USER_AGENT to e.g. your email. Please, see: https://en.wikipedia.org/api/rest_v1/");
@@ -37,6 +40,25 @@ app.get('/sparql', async function(req, res) {
         timeout: 60*1000, // 1 minute
     });
     res.send(response.data);
+});
+
+app.post('/sparql', urlencodedParser, async function(req, res) {
+    try {
+        const response = await axios.request({
+            method: 'post',
+            // TODO switch from dev to production when supported
+            baseURL: "https://wikidocumentaries-dev-query.wmflabs.org/proxy/wdqs/bigdata/namespace/wdq/sparql",
+            data: querystring.stringify({
+                query: req.body.query,
+                format: req.body.format,
+            }),
+            timeout: 60*1000, // 1 minute
+        });
+        res.send(response.data);
+    } catch(error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
 });
 
 app.get('/wiki', function(req, res) {
