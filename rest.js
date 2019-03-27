@@ -147,24 +147,41 @@ function getI18n(locale, languageMap) {
     return Object.values(languageMap)[0];
 }
 
-// get a suitable localised key from languageMap based on locale and fallbacks
+// get suitable localised keys from languageMap based on locale and fallbacks
 // postfix - appended to locale codes to get a key, e.g. "en" -> "enwiki"
 function getI18nKeys(locale, languageMap, postfix) {
     var result = [];
+    const fallbackKeys = languageFallback.map(language => language+postfix);
     if (languageMap[locale+postfix]) {
         result.push(locale+postfix);
     }
     for (var i = 0; i < languageFallback.length; i++) {
+        if (languageFallback[i] == locale) {
+            continue; // skip this as it was already included
+        }
         if (languageMap[languageFallback[i]+postfix]) {
             result.push(languageFallback[i]+postfix);
         }
     }
+
+/* Don't add English twice as long as it's in the fallback list anyway
     if (languageMap["en"+postfix]) {
         result.push("en"+postfix);
     }
+*/
+
+    // List all the remaining languages for which content is available
+    for (var key in languageMap) {
+        if (!fallbackKeys.includes(key)) {
+            result.push(key);
+        }
+    }
+
+/* No need for this as long as all languages are included above
     if (!result) {
         result.push(Object.keys(languageMap)[0]);
     }
+*/
     return result;
 }
 
@@ -355,6 +372,11 @@ function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
 
                 //console.log("entities returned from collectWikidataInfo", entities);
 
+                var translations =
+                    getI18nKeys(language, sitelinks, "wiki")
+                    .map(key => sitelinks[key])
+                    .filter(sitelink => sitelink.site.endsWith('wiki'));
+
                 var wikidata = {
                     id: wikidataItemID,
                     title: wikidatatitle,
@@ -370,7 +392,7 @@ function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
                         lon: null,
                     },
                     dates : [],
-                    sitelinks: getI18nKeys(language, sitelinks, "wiki").map(key => sitelinks[key]),
+                    sitelinks: translations,
                 }
 
                 //console.log(responseData.wikidataRaw);
