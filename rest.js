@@ -375,7 +375,8 @@ function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
                 var translations =
                     getI18nKeys(language, sitelinks, "wiki")
                     .map(key => sitelinks[key])
-                    .filter(sitelink => sitelink.site.endsWith('wiki'));
+                    .filter(sitelink => sitelink.site.endsWith('wiki'))
+                    .filter(sitelink => !['commonswiki', 'specieswiki'].includes(sitelink.site));
 
                 var wikidata = {
                     id: wikidataItemID,
