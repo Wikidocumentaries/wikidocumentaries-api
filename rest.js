@@ -9,6 +9,14 @@ const turf = require('@turf/turf');
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
+// Needed for error handling in ExpressJS before version 5.0.0
+// From https://odino.org/async-slash-await-in-expressjs/
+const asyncMiddleware = fn =>
+  (req, res, next) => {
+    Promise.resolve(fn(req, res, next))
+      .catch(next);
+  };
+
 if (process.env.WIKIDOCUMENTARIES_API_USER_AGENT == undefined) {
     console.log("Set environment variable WIKIDOCUMENTARIES_API_USER_AGENT to e.g. your email. Please, see: https://en.wikipedia.org/api/rest_v1/");
     process.exit();
@@ -29,7 +37,7 @@ app.use(function(req, res, next) {
 axios.defaults.timeout = 5000;
 
 // proxy sparql requests from UI to Wikidata Query Service
-app.get('/sparql', async function(req, res) {
+app.get('/sparql', asyncMiddleware(async function(req, res) {
     const response = await axios.request({
         // TODO switch from dev to production when supported
         baseURL: "https://wikidocumentaries-dev-query.wmflabs.org/proxy/wdqs/bigdata/namespace/wdq/sparql",
@@ -40,9 +48,9 @@ app.get('/sparql', async function(req, res) {
         timeout: 60*1000, // 1 minute
     });
     res.send(response.data);
-});
+}));
 
-app.post('/sparql', urlencodedParser, async function(req, res) {
+app.post('/sparql', urlencodedParser, asyncMiddleware(async function(req, res) {
     try {
         const response = await axios.request({
             method: 'post',
@@ -59,9 +67,9 @@ app.post('/sparql', urlencodedParser, async function(req, res) {
         console.log(error);
         res.sendStatus(500);
     }
-});
+}));
 
-app.get('/wiki', function(req, res) {
+app.get('/wiki', asyncMiddleware(function(req, res) {
 
     console.log(req.originalUrl);
 
@@ -126,7 +134,7 @@ app.get('/wiki', function(req, res) {
         }
         getWikidataItemIDPromise();
     }
-});
+}));
 
 // language fallback list XXX hardcoded for now
 var languageFallback = ["en", "fi", "sv", "es"];
@@ -668,7 +676,7 @@ function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
 
 
 
-app.get('/wiki/items/by/latlon', function(req, res) {
+app.get('/wiki/items/by/latlon', asyncMiddleware(function(req, res) {
 
     console.log(req.originalUrl);
 
@@ -785,9 +793,9 @@ app.get('/wiki/items/by/latlon', function(req, res) {
         res.send([]);
         //return Promise.reject(error);
     });
-});
+}));
 
-app.get('/images', function(req, res) {
+app.get('/images', asyncMiddleware(function(req, res) {
 
     console.log(req.originalUrl);
 
@@ -1252,9 +1260,9 @@ app.get('/images', function(req, res) {
     //         console.log(imagesFromCommonsWithRadiusResponse.data);
     //         res.send(imagesFromCommonsWithRadiusResponse.data);
     //     }));
-});
+}));
 
-app.get('/basemaps', function(req, res) {
+app.get('/basemaps', asyncMiddleware(function(req, res) {
 
     console.log(req.originalUrl);
 
@@ -1373,10 +1381,10 @@ app.get('/basemaps', function(req, res) {
         res.send([]);
         //return Promise.reject(error);
     });
-});
+}));
 
 
-app.get('/geocode', function(req, res) {
+app.get('/geocode', asyncMiddleware(function(req, res) {
 
     console.log(req.originalUrl);
 
@@ -1415,7 +1423,7 @@ app.get('/geocode', function(req, res) {
         res.send(null);
         //return Promise.reject(error);
     });
-});
+}));
 
 
 app.listen(3000, () => console.log('Listening on port 3000'));
