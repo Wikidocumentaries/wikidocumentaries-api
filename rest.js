@@ -51,22 +51,17 @@ app.get('/sparql', asyncMiddleware(async function(req, res) {
 }));
 
 app.post('/sparql', urlencodedParser, asyncMiddleware(async function(req, res) {
-    try {
-        const response = await axios.request({
-            method: 'post',
-            // TODO switch from dev to production when supported
-            baseURL: "https://wikidocumentaries-dev-query.wmflabs.org/proxy/wdqs/bigdata/namespace/wdq/sparql",
-            data: querystring.stringify({
-                query: req.body.query,
-                format: req.body.format,
-            }),
-            timeout: 60*1000, // 1 minute
-        });
-        res.send(response.data);
-    } catch(error) {
-        console.log(error);
-        res.sendStatus(500);
-    }
+    const response = await axios.request({
+        method: 'post',
+        // TODO switch from dev to production when supported
+        baseURL: "https://wikidocumentaries-dev-query.wmflabs.org/proxy/wdqs/bigdata/namespace/wdq/sparql",
+        data: querystring.stringify({
+            query: req.body.query,
+            format: req.body.format,
+        }),
+        timeout: 60*1000, // 1 minute
+    });
+    res.send(response.data);
 }));
 
 app.get('/wiki', asyncMiddleware(function(req, res) {
@@ -1752,3 +1747,12 @@ function getCentroid(coords) {
     }, [0,0])
     return center;
 }
+
+// Error handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    if (res.headersSent) {
+        return next(err);
+    }
+    res.status(500).send({ error: "Internal Server Error" });
+});
