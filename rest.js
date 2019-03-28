@@ -93,7 +93,7 @@ app.get('/wiki', asyncMiddleware(function(req, res) {
         };
         return axios.request(requestConfig).then((response) => {
             var item = response.data.entities && response.data.entities[wikidata];
-            combineResults(res, language, wikidata, item);
+            return combineResults(res, language, wikidata, item);
         });
     };
     if (wikidata != undefined) {
@@ -132,7 +132,7 @@ app.get('/wiki', asyncMiddleware(function(req, res) {
                 }
             });
         }
-        getWikidataItemIDPromise();
+        return getWikidataItemIDPromise();
     }
 }));
 
@@ -241,7 +241,7 @@ function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
     };
 
 
-    axios.all([wikipediaSummaryPromise(), wikipediaHTMLPromise(), wikidataItemResponse ])
+    return axios.all([wikipediaSummaryPromise(), wikipediaHTMLPromise(), wikidataItemResponse ])
         .then(axios.spread(function (wikipediaSummaryResponse, wikipediaHTMLResponse, wikidataItemResponse ) {
 
             if (wikipediaHTMLResponse.data == undefined ) {
@@ -376,7 +376,7 @@ function combineResults(res, language, wikidataItemID, wikidataItemResponse) {
 
             // TODO get 50 ids at a time
 
-            collectWikidataInfo(ids, language).then(entities => {
+            return collectWikidataInfo(ids, language).then(entities => {
 
                 //console.log("entities returned from collectWikidataInfo", entities);
 
@@ -694,7 +694,7 @@ app.get('/wiki/items/by/latlon', asyncMiddleware(function(req, res) {
         }
     };
 
-    axios.request(requestConfig).then(response => {
+    return axios.request(requestConfig).then(response => {
         //console.log(response.data);
 
         // res.send(response.data);
@@ -757,7 +757,7 @@ app.get('/wiki/items/by/latlon', asyncMiddleware(function(req, res) {
 
             var items = [];
 
-            axios.request(requestConfig).then((wikidataEntitiesResponse) => {
+            return axios.request(requestConfig).then((wikidataEntitiesResponse) => {
                 //console.log(wikidataEntitiesResponse.data);
                 var entities = Object.keys(wikidataEntitiesResponse.data.entities).map(function(e) {
                     return wikidataEntitiesResponse.data.entities[e];
@@ -1228,7 +1228,7 @@ app.get('/images', asyncMiddleware(function(req, res) {
 
     var images = [];
 
-    axios.all([getImagesFromCommonsWithTitle(), getImagesFromFinnaWithTitle(), getImagesFromFlickrWithTitle()])
+    return axios.all([getImagesFromCommonsWithTitle(), getImagesFromFinnaWithTitle(), getImagesFromFlickrWithTitle()])
         .then(axios.spread(function (imagesFromCommonsWithTitleResponse, imagesFromFinnaWithTitleResponse, imagesFromFlickrWithTitle) {
             //console.log(imagesFromFlickrWithTitle);
             //console.log(imagesFromFlickrWithTitleResponse.data);
@@ -1255,7 +1255,7 @@ app.get('/images', asyncMiddleware(function(req, res) {
             //return Promise.reject(error.response);
         });
 
-    // axios.all([getImagesFromCommonsWithRadius(),])
+    // return axios.all([getImagesFromCommonsWithRadius(),])
     //     .then(axios.spread(function (imagesFromCommonsWithRadiusResponse) {
     //         console.log(imagesFromCommonsWithRadiusResponse.data);
     //         res.send(imagesFromCommonsWithRadiusResponse.data);
@@ -1282,7 +1282,7 @@ app.get('/basemaps', asyncMiddleware(function(req, res) {
         }
     };
 
-    axios.request(requestConfig).then(response => {
+    return axios.request(requestConfig).then(response => {
         //console.log(response.data);
         var warpedMaps = response.data.data;
 
@@ -1311,7 +1311,7 @@ app.get('/basemaps', asyncMiddleware(function(req, res) {
             }
         };
 
-        axios.request(requestConfig).then(response => {
+        return axios.request(requestConfig).then(response => {
             //console.log(response.data);
          
             var pages = Object.keys(response.data.query.pages).map(function(e) {
