@@ -84,7 +84,7 @@ app.get('/wiki', function(req, res) {
             }
         };
         return axios.request(requestConfig).then((response) => {
-            var item=response.data.entities[wikidata];
+            var item = response.data.entities && response.data.entities[wikidata];
             combineResults(res, language, wikidata, item);
         });
     };
