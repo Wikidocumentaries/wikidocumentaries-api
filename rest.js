@@ -167,7 +167,7 @@ function getI18nKeys(locale, languageMap, postfix) {
 
     // List all the remaining languages for which content is available
     for (var key in languageMap) {
-        if (!fallbackKeys.includes(key)) {
+        if (key != locale+postfix && !fallbackKeys.includes(key)) {
             result.push(key);
         }
     }
