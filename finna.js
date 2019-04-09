@@ -10,9 +10,11 @@ module.exports = {
             params: {
                 lookfor: topic.split('_').join('+'),
                 type: 'AllFields',
-                limit: 15,
+                limit: 30,
                 "filter[0]": '~format:"0/Image/"',
-                "filter[1]": 'online_boolean:"1"',
+                "filter[1]": '~format:"0/WorkOfArt/"',
+                "filter[2]": 'usage_rights_str_mv:"usage_E"',
+                "filter[3]": 'online_boolean:"1"',
                 "field[0]": 'id',
                 "field[1]": 'title',
                 "field[2]": 'geoLocations',
@@ -55,7 +57,7 @@ module.exports = {
         //         requestConfig.params['filter[2]'] = filter;
         // }
 
-        //console.log(requestConfig);
+        // console.log(requestConfig);
 
         const response = await axios.request(requestConfig);
 
@@ -135,7 +137,7 @@ module.exports = {
                     places: record.subjectPlaces,
                     collection: collection,
                     imageRights: record.imageRights,
-                    license: (record.imageRights != undefined ? record.imageRights.copyright : "Luvanvarainen käyttö / ei tiedossa"),
+                    license: (record.imageRights != undefined ? record.imageRights.copyright : ""),
                     summary: record.summary,
                     infoURL: "https://www.finna.fi/Record/" + encodeURIComponent(record.id)
                 }
