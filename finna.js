@@ -26,6 +26,12 @@ module.exports = {
                 "field[10]": 'summary',
                 "field[11]": 'onlineUrls',
                 "field[12]": 'nonPresenterAuthors',
+                "field[13]": 'subjectActors',
+                "field[14]": 'subjectDetails',
+                "field[15]": 'subjectPlaces',
+                "field[16]": 'buildings',
+                "field[17]": 'subjects',
+                "field[18]": 'formats',
             //    field[]=collections&
             //    field[]=buildings&
             //    field[]=thumbnail&
@@ -105,6 +111,11 @@ module.exports = {
                     institutions = institutions.slice(0, -2);
                 }
 
+                let collection = "";
+                if ((record.buildings!=undefined) && (record.buildings.length>1) && (record.buildings[1].value!=undefined)) {
+                  collection = record.buildings[1].value.split("/")[2];
+                }
+
                 var image = {
                     id: record.id,
                     source: "Finna",
@@ -112,14 +123,20 @@ module.exports = {
                     geoLocations: (record.geoLocations != undefined ? record.geoLocations : []),
                     imageURL: "https://api.finna.fi" + record.images[0],
                     thumbURL: "https://api.finna.fi" + record.images[0],
+                    formats: record.formats,
                     year: (record.year != undefined ? parseInt(record.year, 10) : null),
                     publisher: (record.publisher != undefined ? record.publisher : null),
                     authors: authors,
                     institutions: institutions,
-                    //events: record.events,
+                    events: record.events,
+                    actors: record.subjectActors,
+                    details: record.subjectDetails,
+                    subjects: record.subjects,
+                    places: record.subjectPlaces,
+                    collection: collection,
                     imageRights: record.imageRights,
                     license: (record.imageRights != undefined ? record.imageRights.copyright : "Luvanvarainen käyttö / ei tiedossa"),
-                    //summary: record.summary,
+                    summary: record.summary,
                     infoURL: "https://www.finna.fi/Record/" + encodeURIComponent(record.id)
                 }
 
