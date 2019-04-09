@@ -1,14 +1,15 @@
-const express = require('express')
-const app = express()
-const axios = require('axios')
+const express = require('express');
+const app = express();
+const axios = require('axios');
 const bodyParser = require('body-parser');
-const cheerio = require('cheerio')
 const querystring = require('querystring');
-const turf = require('@turf/turf');
 
+const { getHistoricalMaps } = require('./historical-maps');
+const { getImagesFromCommonsWithTitle } = require('./wikimedia-commons');
 const { getImagesFromFinnaWithTitle } = require('./finna');
 const { getImagesFromFlickrWithTitle } = require('./flickr');
 const { getWikidata } = require('./wikidata');
+const { getWikidataByLatLon } = require('./wikidata-latlon');
 const { findWikidataItemFromWikipedia, getWikipediaData } = require('./wikipedia');
 
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -93,106 +94,7 @@ app.get('/wiki/items/by/latlon', asyncMiddleware(async function(req, res) {
     const topic = req.query.topic;
     //console.log(topic);
 
-    const requestConfig = {
-        baseURL: 'https://query.wikidata.org/',
-        url: '/bigdata/namespace/wdq/sparql?query=SELECT%3Fitem(SAMPLE(%3Fitem_label)as%3Flabel)(SAMPLE(%3Flocation)as%3Flocation)WHERE%7BSERVICE%20wikibase%3Aaround%7B%3Fitem%20wdt%3AP625%3Flocation.bd%3AserviceParam%20wikibase%3Acenter"Point(' + req.query.lon + '%20' + req.query.lat + ')"%5E%5Egeo%3AwktLiteral.%20bd%3AserviceParam%20wikibase%3Aradius"' + req.query.radius / 1000 + '".%7DOPTIONAL%7B%3Fitem%20rdfs%3Alabel%3Fitem_label.%7D%7DGROUP%20BY%20%3Fitem',
-        timeout: 20000,
-        method: 'get',
-        params: {
-            format: 'json'
-        }
-    };
-
-    const response = await axios.request(requestConfig);
-    //console.log(response.data);
-
-    // res.send(response.data);
-    // return;
-
-    let wikiItems = [];
-
-    for(var i = 0; i < response.data.results.bindings.length; i++) {
-        var index = response.data.results.bindings[i].item.value.lastIndexOf('/') + 1;
-        var id = response.data.results.bindings[i].item.value.substring(index);
-        var startIndex = response.data.results.bindings[i].location.value.indexOf('(') + 1;
-        var endIndex = response.data.results.bindings[i].location.value.indexOf(')');
-        var parts = response.data.results.bindings[i].location.value.substring(startIndex, endIndex).split(' ');
-        var lat = parts[1];
-        var lon = parts[0];
-
-        wikiItems.push({
-            id: id,
-            title: response.data.results.bindings[i].label.value,
-            lat: Number(lat),
-            lon: Number(lon)
-        });
-    }
-
-    //console.log(wikiItems);
-
-    let ids = [];
-
-    for (var i = 0; i < wikiItems.length; i++) {
-        ids.push(wikiItems[i].id);
-    }
-
-    if (ids.length == 0) {
-        res.send([]);
-        return;
-    }
-
-    if (ids.length > 50) { // "Maximum number of values is 50" https://www.wikidata.org/w/api.php?action=help&modules=wbgetentities
-        ids = ids.slice(0, 50);
-    }
-
-    //console.log(ids);
-    ids = ids.join('|');
-    //console.dir(ids);
-
-    const requestConfigGetEntities = {
-        baseURL: "https://www.wikidata.org/w/api.php",
-        method: "get",
-        responseType: "json",
-        headers: {
-            "Api-User-Agent": process.env.WIKIDOCUMENTARIES_API_USER_AGENT
-        },
-        params: {
-            action: "wbgetentities",
-            ids: ids,
-            props: "labels|sitelinks",
-            languages: (language != "en" ? language + "|en" : "en"),
-            format: "json"
-        }
-    };
-
-    let items = [];
-
-    const wikidataEntitiesResponse = await axios.request(requestConfigGetEntities);
-    //console.log(wikidataEntitiesResponse.data);
-    const entities = Object.keys(wikidataEntitiesResponse.data.entities).map(function(e) {
-        return wikidataEntitiesResponse.data.entities[e];
-    });
-    //console.dir(entities);
-    for (var i = 0; i < wikiItems.length; i++) {
-        for (var j = 0; j < entities.length; j++) {
-            if (wikiItems[i].id == entities[j].id) {
-                if (entities[j].sitelinks[language + 'wiki'] != undefined &&
-                entities[j].sitelinks[language + 'wiki'].title == topic) {
-                    // Do not include the topic item itself
-                    //console.log(entities[j].sitelinks[language + 'wiki'].title);
-                }
-                else {
-                    var item = {
-                        title: wikiItems[i].title,
-                        position: [wikiItems[i].lon, wikiItems[i].lat],
-                        wikidata: entities[j]
-                    };
-                    items.push(item);
-                }
-                break;
-            }
-        }
-    }
+    const items = await getWikidataByLatLon(req.query.lat, req.query.lon, req.query.radius, language, topic);
 
     res.send(items);
 }));
@@ -206,170 +108,9 @@ app.get('/images', asyncMiddleware(async function(req, res) {
     //console.log(topic);
     const encodedTopic = encodeURIComponent(topic);
 
-    const getImagesFromCommonsWithTitle = async function() {
-        let requestConfig;
-
-        if (req.query.commons_category != undefined) {
-            //console.log("commons_category", req.query.commons_category);
-            requestConfig = {
-                baseURL: "https://commons.wikimedia.org/",
-                url: "/w/api.php",
-                method: "get",
-                timeout: 10000,
-                params: {
-                    action: "query",
-                    generator: "categorymembers",
-                    gcmtype: "file",
-                    gcmtitle: "Category:" + req.query.commons_category,
-                    gcmlimit: 30,
-                    prop: "imageinfo",
-                    iiurlwidth: 400,
-                    iiurlheight: 400,
-                    redirects: "resolve",
-                    iiprop: "user|url|extmetadata",
-                    format: "json"
-                }
-            };
-        } else {
-            requestConfig = {
-                baseURL: "https://commons.wikimedia.org/",
-                url: "/w/api.php",
-                method: "get",
-                params: {
-                    action: "query",
-                    generator: "search",
-                    prop: "imageinfo",
-                    iiurlwidth: 400,
-                    iiurlheight: 400,
-                    redirects: "resolve",
-                    gsrsearch: topic,
-                    gsrnamespace: 6,
-                    iiprop: "user|url|extmetadata",
-                    format: "json"
-                }
-            };
-        }
-
-        const response = await axios.request(requestConfig);
-
-        let images = [];
-
-        //console.log(response.data);
-
-        if (!response.data.query || !response.data.query.pages) {
-            return [];
-        }
-
-        const pages = Object.keys(response.data.query.pages).map(function(e) {
-            return response.data.query.pages[e];
-        });
-
-        //console.log(pages.length);
-
-        //res.send(pages);
-
-        pages.forEach((page, index) => {
-            //console.log(index);
-            var image = {
-                id: page.title,
-                source: 'Wikimedia Commons',
-                imageURL: page.imageinfo[0].url,
-                thumbURL: page.imageinfo[0].thumburl,
-                title: "",
-                authors: page.imageinfo[0].user,
-                institutions: "",
-                infoURL: page.imageinfo[0].descriptionurl,
-                location: "",
-                geoLocations: [],
-                year: null,
-                license: null
-            };
-
-            if (page.imageinfo[0].extmetadata.ImageDescription != undefined) {
-                var origHTML = page.imageinfo[0].extmetadata.ImageDescription.value;
-                const $ = cheerio.load(origHTML);
-                var title = $.text();
-                image.title = title;
-            }
-
-            if (page.imageinfo[0].extmetadata.GPSLatitude != undefined && page.imageinfo[0].extmetadata.GPSLongitude != undefined) {
-
-                // if (req.query.lat != undefined &&
-                //     req.query.lon != undefined &&
-                //     req.query.maxradius != undefined) {
-
-                //         var distance =
-                //             turf.distance([req.query.lon, req.query.lat], [page.imageinfo[0].extmetadata.GPSLongitude.value, page.imageinfo[0].extmetadata.GPSLatitude.value]);
-                //         if (distance > req.query.maxradius / 1000) {
-                //             return;
-                //         }
-                // }
-
-                image.geoLocations.push("POINT(" + page.imageinfo[0].extmetadata.GPSLongitude.value + " " + page.imageinfo[0].extmetadata.GPSLatitude.value + ")")
-            }
-
-            if (page.imageinfo[0].extmetadata.DateTimeOriginal != undefined) {
-                var dateString = page.imageinfo[0].extmetadata.DateTimeOriginal.value;
-                var year = parseInt(dateString.substr(0, 4), 10);
-                if (year != NaN) {
-                    image.year = year;
-                }
-            }
-
-            if (page.imageinfo[0].extmetadata.LicenseShortName != undefined) {
-                image.license = page.imageinfo[0].extmetadata.LicenseShortName.value;
-            }
-
-            //console.log(index);
-            images.push(image);
-        });
-
-        //console.log(images.length);
-
-        if (images.length > 30) { // Good practice
-            images = images.slice(0, 30);
-        }
-
-        return images;
-    }
-
-    // var getImagesFromCommonsWithRadius = null;
-    // var coords = null;
-
-    // if (req.query.lat != undefined && req.query.lon != undefined) {
-    //     coords = {
-    //         lat: req.query.lat,
-    //         lon: req.query.lon
-    //     }
-
-    //     getImagesFromCommonsWithRadius = function() {
-    //         var requestConfig = {
-    //             baseURL: "https://commons.wikimedia.org/",
-    //             url: "/w/api.php",
-    //             method: "get",
-    //             params: {
-    //                 action: "query",
-    //                 generator: "geosearch",
-    //                 ggsprimary: "all",
-    //                 ggsnamespace: 6,
-    //                 ggsradius: 500,
-    //                 ggscoord: coords.lat + '|' + coords.lon,
-    //                 ggslimit: 10,
-    //                 prop: "imageinfo",
-    //                 iilimit: 10,
-    //                 iiprop: "url",
-    //                 iiurlwidth: 400,
-    //                 iiurlheight: 400,
-    //                 format: "json"
-    //             }
-    //         };
-
-    //         return axios.request(requestConfig);
-    //     }
-    // }
 
     const requests = [
-        getImagesFromCommonsWithTitle(),
+        getImagesFromCommonsWithTitle(req.query.commons_category),
         getImagesFromFinnaWithTitle(topic, req.query.lat, req.query.lon, req.query.maxradius),
         getImagesFromFlickrWithTitle(topic, req.query.lat, req.query.lon, req.query.maxradius),
     ];
@@ -388,6 +129,7 @@ app.get('/images', asyncMiddleware(async function(req, res) {
     res.send(images);
 }));
 
+
 app.get('/basemaps', asyncMiddleware(async function(req, res) {
     console.log(req.originalUrl);
 
@@ -396,100 +138,7 @@ app.get('/basemaps', asyncMiddleware(async function(req, res) {
     const rightLon = req.query.rightLon;
     const topLat = req.query.topLat;
 
-    const requestConfig = {
-        baseURL: "http://warper.wmflabs.org/",
-        url: "/api/v1/maps.json",
-        method: "get",
-        params: {
-            show_warped: 1,
-            bbox: leftLon + "," + bottomLat + "," + rightLon + "," + topLat,
-            per_page: 50
-        }
-    };
-
-    const response = await axios.request(requestConfig);
-    //console.log(response.data);
-    const warpedMaps = response.data.data;
-
-    let commonsTitles = [];
-
-    for (var i = 0; i < warpedMaps.length; i++) {
-        commonsTitles.push(warpedMaps[i].attributes.title);
-    }
-
-    const titles = commonsTitles.join('|');
-
-    const requestConfigGetImageInfo = {
-        baseURL: "https://commons.wikimedia.org/",
-        url: "/w/api.php",
-        method: "get",
-        timeout: 10000,
-        params: {
-            action: "query",
-            titles: titles,
-            iiurlwidth: 400,
-            iiurlheight: 400,
-            prop: "imageinfo",
-            iiprop: "user|url|extmetadata",
-            redirects: "resolve",
-            format: "json"
-        }
-    };
-
-    const imageInfoResponse = await axios.request(requestConfigGetImageInfo);
-    //console.log(response.data);
-
-    const pages = Object.keys(imageInfoResponse.data.query.pages).map(function(e) {
-        return imageInfoResponse.data.query.pages[e];
-    });
-
-    let basemaps = [];
-
-    for (var i = 0; i < warpedMaps.length; i++) {
-        for (var j = 0; j < pages.length; j++) {
-            if (warpedMaps[i].attributes.title == pages[j].title &&
-                pages[j].imageinfo != undefined) {
-                var page = pages[j];
-                //console.log(page);
-                //console.log(page.imageinfo);
-                var basemap = {
-                    id: page.title,
-                    title: "",
-                    imageURL: page.imageinfo[0].url,
-                    thumbURL: page.imageinfo[0].thumburl,
-                    commonsInfoURL: page.imageinfo[0].descriptionurl,
-                    year: null,
-                    license: null,
-                    server: "http://warper.wmflabs.org/",
-                    warperID: parseInt(warpedMaps[i].id, 10),
-                    bbox: warpedMaps[i].attributes.bbox
-                };
-
-                if (page.imageinfo[0].extmetadata.ImageDescription != undefined) {
-                    var origHTML = page.imageinfo[0].extmetadata.ImageDescription.value;
-                    const $ = cheerio.load(origHTML);
-                    var title = $.text();
-                    basemap.title = title;
-                }
-
-                if (page.imageinfo[0].extmetadata.DateTimeOriginal != undefined) {
-                    var dateString = page.imageinfo[0].extmetadata.DateTimeOriginal.value;
-                    var year = parseInt(dateString.substr(0, 4), 10);
-                    if (year != NaN) {
-                        basemap.year = year;
-                    }
-                }
-
-                if (page.imageinfo[0].extmetadata.LicenseShortName != undefined) {
-                    basemap.license = page.imageinfo[0].extmetadata.LicenseShortName.value;
-                }
-
-                if (basemap.year != null && basemap.year < 2000) {
-                    basemaps.push(basemap);
-                }
-            }
-        }
-    }
+    const basemaps = await getHistoricalMaps(leftLon, bottomLat, rightLon, topLat);
 
     res.send(basemaps);
 
