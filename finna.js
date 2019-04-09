@@ -115,7 +115,14 @@ module.exports = {
 
                 let collection = "";
                 if ((record.buildings!=undefined) && (record.buildings.length>1) && (record.buildings[1].value!=undefined)) {
-                  collection = record.buildings[1].value.split("/")[2];
+                  let collectionElements = record.buildings[1].value.split("/");
+                  if (collectionElements.length > 2) collection = collectionElements[2];
+                }
+
+                let formats = "";
+                if ((record.formats!=undefined) && (record.formats.length>1) && (record.formats[1].value!=undefined)) {
+                  let formatsElements = record.formats[1].value.split("/");
+                  if (formatsElements.length > 2) formats = formatsElements[2];
                 }
 
                 var image = {
@@ -125,7 +132,7 @@ module.exports = {
                     geoLocations: (record.geoLocations != undefined ? record.geoLocations : []),
                     imageURL: "https://api.finna.fi" + record.images[0],
                     thumbURL: "https://api.finna.fi" + record.images[0],
-                    formats: record.formats,
+                    formats: formats,
                     year: (record.year != undefined ? parseInt(record.year, 10) : null),
                     publisher: (record.publisher != undefined ? record.publisher : null),
                     authors: authors,
