@@ -1350,17 +1350,17 @@ const convertToWikidocumentariesHTML = function(origHTML, topic, language) {
         else if (href.indexOf('/wiki') == 0 && href.indexOf('/wiki/Special:') != -1) {
             $(this).attr('href', 'https://' + language + '.wikipedia.org' + href);
             $(this).attr('target', '_blank');
-            $(this).attr('style', 'color: #52758b;');
+            $(this).attr('class', 'extlink;');
         }
         else if (href.indexOf('#cite_') == 0) {
             $(this).attr('href', 'https://' + language + '.wikipedia.org/wiki/' + topic + href);
             $(this).attr('target', '_blank');
-            $(this).attr('style', 'color: #52758b;');
+            $(this).attr('class', 'extlink;');
         }
         else {
             //https://fi.wikipedia.org/wiki/Vapaamuurarin_hauta#cite_note-1
             $(this).attr('target', '_blank');
-            $(this).attr('style', 'color: #52758b;');
+            $(this).attr('class', 'extlink;');
             //$(this).replaceWith($(this).html());
         }
     });

@@ -9,3 +9,7 @@ npm install
 ## Run
 
 npm run dev
+
+## Remarks
+
+The environment variable must be set in order to start. The variables are in rest.js.
