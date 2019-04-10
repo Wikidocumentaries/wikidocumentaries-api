@@ -34,6 +34,9 @@ module.exports = {
                 "field[16]": 'buildings',
                 "field[17]": 'subjects',
                 "field[18]": 'formats',
+                "field[19]": 'identifierString',
+                "field[20]": 'measurements',
+                "field[21]": 'geoCenter',
             //    field[]=collections&
             //    field[]=buildings&
             //    field[]=thumbnail&
@@ -127,9 +130,12 @@ module.exports = {
 
                 var image = {
                     id: record.id,
+                    inventoryNumber: record.identifierString,
                     source: "Finna",
                     title: record.title,
                     geoLocations: (record.geoLocations != undefined ? record.geoLocations : []),
+                    geoCenter: record.geoCenter,
+                    measurements: record.measurements,
                     imageURL: "https://api.finna.fi" + record.images[0],
                     thumbURL: "https://api.finna.fi" + record.images[0],
                     formats: formats,
