@@ -134,7 +134,6 @@ module.exports = {
                     source: "Finna",
                     title: record.title,
                     geoLocations: (record.geoLocations != undefined ? record.geoLocations : []),
-                    geoCenter: record.geoCenter,
                     measurements: record.measurements,
                     imageURL: "https://api.finna.fi" + record.images[0],
                     thumbURL: "https://api.finna.fi" + record.images[0],
