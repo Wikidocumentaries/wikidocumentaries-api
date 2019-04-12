@@ -142,7 +142,6 @@ module.exports = {
                     publisher: (record.publisher != undefined ? record.publisher : null),
                     authors: authors,
                     institutions: institutions,
-                    events: record.events,
                     actors: record.subjectActors,
                     details: record.subjectDetails,
                     subjects: record.subjects,
