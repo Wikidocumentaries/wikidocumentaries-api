@@ -36,6 +36,7 @@ module.exports = {
                 "field[18]": 'identifierString',
                 "field[19]": 'measurements',
                 "field[20]": 'inscriptions',
+                "field[21]": 'imagesExtended',
             //    field[]=collections&
             //    field[]=buildings&
             //    field[]=thumbnail&
@@ -127,6 +128,15 @@ module.exports = {
                   if (formatsElements.length > 2) formats = formatsElements[2];
                 }
 
+                // console.log("BaseURL: ", BaseURL);
+                let thumbURL = "https://api.finna.fi" + record.images[0];
+                if (record.imagesExtended != undefined) {
+                  let imagesExtendedUrls = record.imagesExtended[0].urls;
+                  if (imagesExtendedUrls.small) thumbURL = "https://api.finna.fi" + imagesExtendedUrls.small;
+                  else if (imagesExtendedUrls.medium) thumbURL = "https://api.finna.fi" + imagesExtendedUrls.medium;
+                  // console.log("thumbURL: ", thumbURL);
+                }
+
                 var image = {
                     id: record.id,
                     inventoryNumber: record.identifierString,
@@ -135,7 +145,7 @@ module.exports = {
                     geoLocations: (record.geoLocations != undefined ? record.geoLocations : []),
                     measurements: record.measurements,
                     imageURL: "https://api.finna.fi" + record.images[0],
-                    thumbURL: "https://api.finna.fi" + record.images[0],
+                    thumbURL: thumbURL,
                     formats: formats,
                     year: (record.year != undefined ? parseInt(record.year, 10) : null),
                     publisher: (record.publisher != undefined ? record.publisher : null),
