@@ -1,10 +1,11 @@
 const axios = require('axios');
 const turf = require('@turf/turf');
+const BASE_URL = "https://api.finna.fi";
 
 module.exports = {
     async getImagesFromFinnaWithTitle(topic, lat, lon, maxradius) {
         const requestConfig = {
-            baseURL: "https://api.finna.fi/",
+            baseURL: BASE_URL+"/",
             url: "/v1/search",
             method: "get",
             params: {
@@ -128,12 +129,11 @@ module.exports = {
                   if (formatsElements.length > 2) formats = formatsElements[2];
                 }
 
-                // console.log("BaseURL: ", BaseURL);
-                let thumbURL = "https://api.finna.fi" + record.images[0];
+                let thumbURL = BASE_URL + record.images[0];
                 if (record.imagesExtended != undefined) {
                   let imagesExtendedUrls = record.imagesExtended[0].urls;
-                  if (imagesExtendedUrls.small) thumbURL = "https://api.finna.fi" + imagesExtendedUrls.small;
-                  else if (imagesExtendedUrls.medium) thumbURL = "https://api.finna.fi" + imagesExtendedUrls.medium;
+                  if (imagesExtendedUrls.small != undefined) thumbURL = BASE_URL + imagesExtendedUrls.small;
+                  else if (imagesExtendedUrls.medium != undefined) thumbURL = BASE_URL + imagesExtendedUrls.medium;
                   // console.log("thumbURL: ", thumbURL);
                 }
 
@@ -144,7 +144,7 @@ module.exports = {
                     title: record.title,
                     geoLocations: (record.geoLocations != undefined ? record.geoLocations : []),
                     measurements: record.measurements,
-                    imageURL: "https://api.finna.fi" + record.images[0],
+                    imageURL: BASE_URL + record.images[0],
                     thumbURL: thumbURL,
                     formats: formats,
                     year: (record.year != undefined ? parseInt(record.year, 10) : null),
