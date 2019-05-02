@@ -3,12 +3,15 @@ const turf = require('@turf/turf');
 
 module.exports = {
     async getImagesFromFinnaWithTitle(topic, lat, lon, maxradius) {
+
+        //construct query
         const requestConfig = {
             baseURL: "https://api.finna.fi/",
             url: "/v1/search",
             method: "get",
             params: {
                 lookfor: topic.split('_').join('+'),
+                //lookfor: getTopics(),
                 type: 'AllFields',
                 limit: 30,
                 "filter[0]": '~format:"0/Image/"',
@@ -42,7 +45,7 @@ module.exports = {
             //    field[]=thumbnail&
             }
         }
-
+        
         // Remove images too faraway from the provided coordinates if they and maxdistance given
         // if (lat != undefined &&
         //     lon != undefined &&
@@ -70,6 +73,7 @@ module.exports = {
             return [];
         }
 
+        //format response
         for (var i = 0; i < response.data.records.length; i++) {
             var record = response.data.records[i];
             if (record.images != undefined && record.images.length > 0) {
@@ -137,6 +141,7 @@ module.exports = {
                   // console.log("thumbURL: ", thumbURL);
                 }
 
+                //assign data to metadata properties
                 var image = {
                     id: record.id,
                     inventoryNumber: record.identifierString,
@@ -150,6 +155,7 @@ module.exports = {
                     year: (record.year != undefined ? parseInt(record.year, 10) : null),
                     publisher: (record.publisher != undefined ? record.publisher : null),
                     authors: authors,
+                    creators: record.nonPresenterAuthors,
                     institutions: institutions,
                     actors: record.subjectActors,
                     details: record.subjectDetails,
@@ -175,6 +181,36 @@ module.exports = {
 
         return images;
     }
+};
+
+function getTopics () {
+    // let queryLang = ["fi", "sv"]
+    // let nameProps = [
+    //     P1477, //syntymänimi
+    //     P2562, //married name
+    //     P1705, //nimi alkuperäiskielellä
+    //     P1559, //nimi äidinkielellä
+    //     P742, //salanimi
+    //     P1448, //virallinen nimi
+    //     P1449, //lempinimi
+    //     P1635, //religious name
+    //     P1782, //courtesy name
+    //     P1785, //temple name
+    //     P1786, //posthumous name
+    //     P1787, //art-name
+    //     P1810, //named as
+    //     P1813, //lyhyt nimi
+    //     P2561, //nimi
+    //     P4970, //vaihtoehtoiset nimet
+    //     P5056 //henkilön patronyymi tai matronyymi
+    // ]
+    // for (var index in statements) {
+    //     if (statements[index].id == ‘P94’) {
+    //         topic = statements[index].values[0].value;
+    //         return “https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/“+coaid;
+    //     }
+    // }
+    return topic.split('_').join('+');
 };
 
 function getFirstGeoLocation(image) {

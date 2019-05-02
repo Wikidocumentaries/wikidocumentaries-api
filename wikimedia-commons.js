@@ -66,14 +66,15 @@ module.exports = {
         //res.send(pages);
 
         pages.forEach((page, index) => {
-            //console.log(index);
+            console.log(index);
             var image = {
                 id: page.title,
                 source: 'Wikimedia Commons',
                 imageURL: page.imageinfo[0].url,
                 thumbURL: page.imageinfo[0].thumburl,
                 title: "",
-                authors: page.imageinfo[0].user,
+                authors: "",
+                uploader: page.imageinfo[0].user,
                 institutions: "",
                 infoURL: page.imageinfo[0].descriptionurl,
                 location: "",
@@ -83,6 +84,7 @@ module.exports = {
             };
 
             if (page.imageinfo[0].extmetadata.ImageDescription != undefined) {
+                console.log(page.imageinfo[0].extmetadata.ImageDescription);
                 var origHTML = page.imageinfo[0].extmetadata.ImageDescription.value;
                 const $ = cheerio.load(origHTML);
                 var title = $.text();
