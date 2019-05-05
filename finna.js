@@ -41,6 +41,7 @@ module.exports = {
                 "field[19]": 'measurements',
                 "field[20]": 'inscriptions',
                 "field[21]": 'imagesExtended',
+                "field[22]": 'events',
             //    field[]=collections&
             //    field[]=buildings&
             //    field[]=thumbnail&
@@ -166,7 +167,8 @@ module.exports = {
                     license: (record.imageRights != undefined ? record.imageRights.copyright : ""),
                     summary: record.summary,
                     infoURL: "https://www.finna.fi/Record/" + encodeURIComponent(record.id),
-                    inscriptions: record.inscriptions
+                    inscriptions: record.inscriptions,
+                    datecreated: record.events
                 }
 
                 //console.log(image);

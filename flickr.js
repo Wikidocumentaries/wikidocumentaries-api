@@ -16,7 +16,7 @@ module.exports = {
                 api_key: process.env.FLICKR_KEY,
                 text: topic.split('_').join('+'),
                 license: "1,2,3,4,5,6,7,8,9,10",
-                extras: "license,owner_name,geo,url_o,url_m,path_alias,date_taken",
+                extras: "license,owner_name,geo,url_b,url_n,path_alias,date_taken",
                 per_page: 100,
                 format: "json",
                 nojsoncallback: 1
@@ -44,8 +44,8 @@ module.exports = {
                 image = {
                     id: photoInfo.id,
                     source: 'Flickr',
-                    imageURL: photoInfo.url_o,
-                    thumbURL: photoInfo.url_m,
+                    imageURL: photoInfo.url_b,
+                    thumbURL: photoInfo.url_n,
                     title: photoInfo.title,
                     authors: photoInfo.ownername,
                     institutions: "",

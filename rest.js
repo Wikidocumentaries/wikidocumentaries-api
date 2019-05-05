@@ -5,8 +5,8 @@ const bodyParser = require('body-parser');
 const querystring = require('querystring');
 
 const { getHistoricalMaps } = require('./historical-maps');
-const { getImagesFromCommonsWithTitle } = require('./wikimedia-commons');
 const { getImagesFromFinnaWithTitle } = require('./finna');
+const { getImagesFromCommonsWithTitle } = require('./wikimedia-commons');
 const { getImagesFromFlickrWithTitle } = require('./flickr');
 const { getWikidata } = require('./wikidata');
 const { getWikidataByLatLon } = require('./wikidata-latlon');
@@ -110,8 +110,8 @@ app.get('/images', asyncMiddleware(async function(req, res) {
 
 
     const requests = [
-        getImagesFromCommonsWithTitle(req.query.commons_category),
         getImagesFromFinnaWithTitle(topic, req.query.lat, req.query.lon, req.query.maxradius),
+        getImagesFromCommonsWithTitle(req.query.commons_category),
         getImagesFromFlickrWithTitle(topic, req.query.lat, req.query.lon, req.query.maxradius),
     ];
     const safeRequests = requests.map(promise => promise.catch(err => {
