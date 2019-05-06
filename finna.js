@@ -165,7 +165,7 @@ module.exports = {
                     collection: collection,
                     imageRights: record.imageRights,
                     license: (record.imageRights != undefined ? record.imageRights.copyright : ""),
-                    summary: record.summary,
+                    description: record.summary,
                     infoURL: "https://www.finna.fi/Record/" + encodeURIComponent(record.id),
                     inscriptions: record.inscriptions,
                     datecreated: record.events

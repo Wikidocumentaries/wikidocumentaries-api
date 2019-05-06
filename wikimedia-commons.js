@@ -73,11 +73,11 @@ module.exports = {
                 imageURL: page.imageinfo[0].url,
                 thumbURL: page.imageinfo[0].thumburl,
                 title: "",
-                authors: "",
+                authors: null,
                 uploader: page.imageinfo[0].user,
                 institutions: "",
                 infoURL: page.imageinfo[0].descriptionurl,
-                location: "",
+                location: null,
                 geoLocations: [],
                 year: null,
                 license: null

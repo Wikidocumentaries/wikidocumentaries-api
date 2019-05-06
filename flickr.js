@@ -16,7 +16,8 @@ module.exports = {
                 api_key: process.env.FLICKR_KEY,
                 text: topic.split('_').join('+'),
                 license: "1,2,3,4,5,6,7,8,9,10",
-                extras: "license,owner_name,geo,url_b,url_n,path_alias,date_taken",
+                is_commons: "true",
+                extras: "license,description,owner_name,geo,tags,url_l,url_n,path_alias,date_taken",
                 per_page: 100,
                 format: "json",
                 nojsoncallback: 1
@@ -40,20 +41,38 @@ module.exports = {
                 //console.log(photoInfo.urls);
 
                 var infoURL = "https://www.flickr.com/photos/" + photoInfo.owner + "/" + photoInfo.id;
+                var uploaderURL = "https://www.flickr.com/photos/" + photoInfo.owner;
+
+                let subjects = photoInfo.tags.split(',');
 
                 image = {
                     id: photoInfo.id,
-                    source: 'Flickr',
-                    imageURL: photoInfo.url_b,
-                    thumbURL: photoInfo.url_n,
                     title: photoInfo.title,
-                    authors: photoInfo.ownername,
+                    description: photoInfo.description,
+                    inventoryNumber: null,
+                    source: 'Flickr',
+                    imageURL: photoInfo.url_l,
+                    thumbURL: photoInfo.url_n,
+                    measurements: null,
+                    formats: null,
+                    creators: null,
                     institutions: "",
                     infoURL: infoURL,
                     location: null,
                     geoLocations: [],
                     year: null,
-                    license: "?"
+                    datecreated: null,
+                    publisher: null,
+                    license: "?",
+                    uploader: photoInfo.ownername,
+                    institutions: null,
+                    actors: null,
+                    subjects: subjects,
+                    places: null,
+                    collection: null,
+                    imageRights: null,
+                    inscriptions: null,
+                    uploaderURL: uploaderURL
                 };
 
                 if (photoInfo.latitude != 0 && photoInfo.longitude != 0 && photoInfo.geo_is_public == 1) {
