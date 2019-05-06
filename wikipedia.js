@@ -144,8 +144,9 @@ const convertToWikidocumentariesHTML = function(origHTML, topic, language) {
 
     $("a").each(function(index) {
         const href = $(this).attr('href');
-        //console.log(href);
-        if (href.indexOf('/wiki') == 0 && href.indexOf('/wiki/Special:') == -1) {
+        if (!href) {
+            return;
+        } else if (href.indexOf('/wiki') == 0 && href.indexOf('/wiki/Special:') == -1) {
             //$(this).attr('href', '#' + href + "?language=" + language);
             var noHashPart = href.split('#')[0];
             $(this).attr('href', noHashPart.replace("/wiki/", "/wikipedia/" + language + "/") + "?language=" + language);

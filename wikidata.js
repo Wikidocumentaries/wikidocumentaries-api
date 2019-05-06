@@ -11,6 +11,9 @@ const languageFallback = ["en", "fi", "sv", "es"];
 
 // get a suitable localised value from languageMap based on locale and fallbacks
 function getI18n(locale, languageMap) {
+    if (!languageMap) {
+        return languageMap; // pass on the same non-true value
+    }
     if (languageMap[locale]) {
         return languageMap[locale];
     }
@@ -91,7 +94,7 @@ async function getWikidata(wikidataItemID, language) {
         return object && object[field];
     }
     if (wikidataRaw) {
-        topic = getOrNull(wikidataRaw.sitelinks[language + "wiki"], "title");
+        topic = getOrNull(getOrNull(wikidataRaw.sitelinks, language + "wiki"), "title");
         wikidatatitle = getOrNull(getI18n(language, wikidataRaw.labels), "value");
         wikidatadescription = getOrNull(getI18n(language, wikidataRaw.descriptions), "value");
     }
