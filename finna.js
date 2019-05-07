@@ -47,7 +47,7 @@ module.exports = {
             //    field[]=thumbnail&
             }
         }
-        
+
         // Remove images too faraway from the provided coordinates if they and maxdistance given
         // if (lat != undefined &&
         //     lon != undefined &&
@@ -142,6 +142,15 @@ module.exports = {
                   // console.log("thumbURL: ", thumbURL);
                 }
 
+                var subjects = !record.subjects ? [] : record.subjects.flat();
+                // console.log("subjects: ", subjects);
+
+                var datecreated = [];
+                if (!!record.events && !!record.events.valmistus) {
+                  datecreated = record.events.valmistus.filter(x => (x.type==='valmistus' && x.date)).map(x => x.date);
+                }
+                // console.log("datecreated: ", datecreated);
+
                 //assign data to metadata properties
                 var image = {
                     id: record.id,
@@ -160,7 +169,7 @@ module.exports = {
                     institutions: institutions,
                     actors: record.subjectActors,
                     details: record.subjectDetails,
-                    subjects: record.subjects,
+                    subjects: subjects,
                     places: record.subjectPlaces,
                     collection: collection,
                     imageRights: record.imageRights,
@@ -168,7 +177,7 @@ module.exports = {
                     description: record.summary,
                     infoURL: "https://www.finna.fi/Record/" + encodeURIComponent(record.id),
                     inscriptions: record.inscriptions,
-                    datecreated: record.events
+                    datecreated: datecreated
                 }
 
                 //console.log(image);
