@@ -6,15 +6,16 @@ module.exports = {
     async getImagesCC(topic) {
         const requestConfig = {
             baseURL: BASE_URL + "/",
-            url: "/image/search/",
+            url: "image/search/",
             method: "get",
             params: {
-                "format": json,
-                "q": topic,
-                "lt": 'all',
-                "page": 1,
-                "pagesize": 30,
-                "filter_dead": true
+                format: 'json',
+                q: topic,
+                provider: ['nypl', 'met', 'rijksmuseum', 'brooklynmuseum', 'digitaltmuseum', 'sciencemuseum', 'clevelandmuseum', 'thorvaldsensmuseum', 'museumsvictoria', 'geographorguk'],
+                lt: 'all',
+                page: 1,
+                pagesize: 30,
+                filter_dead: true
             }
         }
         const response = await axios.request(requestConfig);
@@ -37,6 +38,7 @@ module.exports = {
                 // measurements: result.measurements,
                 imageURL: result.url,
                 thumbURL: result.thumbnail,
+                download_url: result.detail,
                 // formats: formats,
                 // year: result.year,
                 // publisher: result.publisher,
