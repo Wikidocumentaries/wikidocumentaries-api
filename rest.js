@@ -5,10 +5,10 @@ const bodyParser = require('body-parser');
 const querystring = require('querystring');
 
 const { getHistoricalMaps } = require('./historical-maps');
-const { getImagesFromFinnaWithTitle } = require('./finna');
-const { getImagesFromCommonsWithTitle } = require('./wikimedia-commons');
-const { getImagesFromFlickrWithTitle } = require('./flickr');
-// const { getImagesFromCCWithTitle } = require('./cc');
+// const { getImagesFromFinnaWithTitle } = require('./finna');
+// const { getImagesFromCommonsWithTitle } = require('./wikimedia-commons');
+// const { getImagesFromFlickrWithTitle } = require('./flickr');
+const { getImagesCC } = require('./cc');
 const { getWikidata } = require('./wikidata');
 const { getWikidataByLatLon } = require('./wikidata-latlon');
 const { findWikidataItemFromWikipedia, getWikipediaData } = require('./wikipedia');
@@ -111,10 +111,10 @@ app.get('/images', asyncMiddleware(async function(req, res) {
 
 
     const requests = [
-        getImagesFromFinnaWithTitle(topic, req.query.lat, req.query.lon, req.query.maxradius),
-        getImagesFromCommonsWithTitle(req.query.commons_category),
-        getImagesFromFlickrWithTitle(topic, req.query.lat, req.query.lon, req.query.maxradius),
-        // getImagesFromCCWithTitle(topic)
+        // getImagesFromFinnaWithTitle(topic, req.query.lat, req.query.lon, req.query.maxradius),
+        // getImagesFromCommonsWithTitle(req.query.commons_category),
+        // getImagesFromFlickrWithTitle(topic, req.query.lat, req.query.lon, req.query.maxradius),
+        getImagesCC(topic)
     ];
     const safeRequests = requests.map(promise => promise.catch(err => {
         console.error(err.stack);
