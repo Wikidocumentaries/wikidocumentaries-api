@@ -97,21 +97,21 @@ module.exports = {
                         }
                 }
 
-                var authors = "";
-                if (record.authors != undefined) {
-                    for (var author in record.authors) {
-                        if (record.authors.hasOwnProperty(author)) {
-                            //console.log(author);
-                            for (var key in record.authors[author]) {
-                                //console.log(key);
-                                if (record.authors[author].hasOwnProperty(key)) {
-                                    authors += key + ", ";
-                                }
-                            }
-                        }
-                    }
-                    authors = authors.slice(0, -2);
-                }
+                // var authors = "";
+                // if (record.authors != undefined) {
+                //     for (var author in record.authors) {
+                //         if (record.authors.hasOwnProperty(author)) {
+                //             //console.log(author);
+                //             for (var key in record.authors[author]) {
+                //                 //console.log(key);
+                //                 if (record.authors[author].hasOwnProperty(key)) {
+                //                     authors += key + ", ";
+                //                 }
+                //             }
+                //         }
+                //     }
+                //     authors = authors.slice(0, -2);
+                // }
 
                 var institutions = "";
                 if (record.institutions != undefined) {
@@ -164,7 +164,7 @@ module.exports = {
                     formats: formats,
                     year: (record.year != undefined ? parseInt(record.year, 10) : null),
                     publisher: (record.publisher != undefined ? record.publisher : null),
-                    authors: authors,
+                    // authors: authors,
                     creators: record.nonPresenterAuthors,
                     institutions: institutions,
                     actors: record.subjectActors,
