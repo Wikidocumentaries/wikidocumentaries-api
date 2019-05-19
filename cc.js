@@ -1,5 +1,5 @@
 const axios = require('axios');
-// const turf = require('@turf/turf');
+const turf = require('@turf/turf');
 const BASE_URL = "https://api.creativecommons.engineering";
 
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
             params: {
                 format: 'json',
                 q: topic,
-                provider: ['nypl', 'met', 'rijksmuseum', 'brooklynmuseum', 'digitaltmuseum', 'sciencemuseum', 'clevelandmuseum', 'thorvaldsensmuseum', 'museumsvictoria', 'geographorguk'],
+                provider: 'nypl,met,rijksmuseum,digitaltmuseum,sciencemuseum,clevelandmuseum,thorvaldsensmuseum,museumsvictoria',
                 lt: 'all',
                 page: 1,
                 pagesize: 30,
@@ -29,36 +29,38 @@ module.exports = {
         //format response
         for (var i = 0; i < response.data.results.length; i++) {
             var result = response.data.results[i];
+
             var image = {
                 id: result.id,
-                // inventoryNumber: result.identifierString,
-                source: result.provider,
+                source: result.source,
                 title: result.title,
-                // geoLocations: result.geolocations,
-                // measurements: result.measurements,
                 imageURL: result.url,
                 thumbURL: result.thumbnail,
                 download_url: result.detail,
-                // formats: formats,
-                // year: result.year,
-                // publisher: result.publisher,
                 creators: result.creator,
                 creator_urls: result.creator_url,
-                institutions: result.source,
-                // actors: result.subjectActors,
+                institutions: result.provider,
                 subjects: result.tags,
                 legacy_tags: result.legacy_tags,
-                // places: result.subjectPlaces,
-                // collection: collection,
                 license: result.license,
                 license_version: result.license_version,
-                // description: result.summary,
-                infoURL: result.foreign_landing_url
-                // inscriptions: result.inscriptions,
-                // datecreated: datecreated
+                infoURL: result.foreign_landing_url,
+                inventoryNumber: '',
+                geoLocations: '',
+                measurements: '',
+                formats: '',
+                year: '',
+                publisher: '',
+                actors: '',
+                places: '',
+                collection: '',
+                imageRights: '',
+                description: '',
+                inscriptions: '',
+                datecreated: ''
             }
 
-            //console.log(image);
+            console.log(image);
 
             images.push(image);
         }
