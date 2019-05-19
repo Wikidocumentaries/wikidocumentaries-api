@@ -30,7 +30,7 @@ module.exports = {
         }
 
         //format response
-        for (let i = 0; i < response.data.results.length; i++) {
+        for (var i = 0; i < response.data.results.length; i++) {
             var result = response.data.results[i];
 
             // let subjects = [];
@@ -70,24 +70,23 @@ module.exports = {
                 datecreated: ''
             }
 
-            // for (let j = 0; j < CCLicenses.length; j++) {
-            //     if (CCLicenses[j].id == result.license) {
-            //         image.license = CCLicenses[j].short;
-            //         image.license_link = CCLicenses[j].url;
-            //         break;
-            //     }
-            // }
+            for (var j = 0; j < CCLicenses.length; j++) {
+                if (CCLicenses[j].id == result.license) {
+                    image.license = CCLicenses[j].short;
+                    image.license_link = CCLicenses[j].url;
+                    break;
+                }
+            }
 
-            // for (let k = 0; k < glams.length; k++) {
-            //     if (glams[k].id == result.provider) {
-            //         image.institutions = glams[k].defaultname;
-            //         break;
-            //     }
-            //     if (glams[k].id == result.source) {
-            //         image.source = glams[k].defaultname;
-            //         break;
-            //     }
-            // }
+            for (var k = 0; k < glams.length; k++) {
+                if (glams[k].id == result.provider) {
+                    image.institutions = glams[k].defaultname;
+                }
+                if (glams[k].id == result.source) {
+                    image.source = glams[k].defaultname;
+                    break;
+                }
+            }
 
             // console.log(image);
 
