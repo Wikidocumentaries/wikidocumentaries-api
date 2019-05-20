@@ -37,6 +37,11 @@ module.exports = {
             // for (var i = 0; i < result.tags.length; i++) {
             //     subjects += tags[i].name;
             // }
+            var subjects;
+            for (let tag of result.tags) {
+                subjects.push(tag.name);
+                //console.log(tag.name); // Will display contents of the object inside the array
+            }
 
             var image = {
                 id: result.id,
@@ -48,7 +53,7 @@ module.exports = {
                 creators: result.creator,
                 creator_urls: result.creator_url,
                 institutions: result.provider,
-                subjects: result.tags,
+                subjects: subjects,
                 legacy_tags: result.legacy_tags,
                 license: result.license,
                 license_id: result.license,
