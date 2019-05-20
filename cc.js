@@ -33,6 +33,11 @@ module.exports = {
         for (var i = 0; i < response.data.results.length; i++) {
             var result = response.data.results[i];
 
+            // let subjects = [];
+            // for (var i = 0; i < result.tags.length; i++) {
+            //     subjects += tags[i].name;
+            // }
+
             var image = {
                 id: result.id,
                 source: result.source,
@@ -59,12 +64,11 @@ module.exports = {
                 actors: '',
                 places: '',
                 collection: '',
+                imageRights: '',
                 description: '',
                 inscriptions: '',
                 datecreated: ''
             }
-
-            image.subjects = !result.tags ? [] : result.tags.flat();
 
             for (var j = 0; j < CCLicenses.length; j++) {
                 if (CCLicenses[j].id == result.license) {
@@ -80,6 +84,7 @@ module.exports = {
                 }
                 if (glams[k].id == result.source) {
                     image.source = glams[k].defaultname;
+                    break;
                 }
             }
 
@@ -93,7 +98,7 @@ module.exports = {
 };
 
 const CCLicenses = [
-    { "id": 'by', "short": "CC BY", "qid": "xxx", "url": "xxx", "icon": "xxx"},
+    { "id": 'by', "short": "BY", "qid": "xxx", "url": "xxx", "icon": "xxx"},
     { "id": 'cc0', "short": "CC0", "qid": "xxx", "url": "xxx", "icon": "xxx"},
     { "id": 'by-nc-nd', "short": "CC BY-NC-ND", "qid": "xxx", "url": "xxx", "icon": "xxx"},
     { "id": 'by-nc-sa', "short": "CC BY-NC-SA", "qid": "xxx", "url": "xxx", "icon": "xxx"},
