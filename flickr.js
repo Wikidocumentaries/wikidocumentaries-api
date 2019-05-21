@@ -14,7 +14,7 @@ module.exports = {
             params: {
                 method: "flickr.photos.search",
                 api_key: process.env.FLICKR_KEY,
-                text: topic.split('_').join('+'),
+                text: topic,
                 license: "1,2,3,4,5,6,7,8,9,10",
                 is_commons: "true",
                 extras: "license,description,owner_name,geo,tags,url_l,url_n,path_alias,date_taken",

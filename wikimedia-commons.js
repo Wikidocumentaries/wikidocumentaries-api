@@ -3,7 +3,7 @@ const cheerio = require('cheerio')
 
 
 module.exports = {
-    async getImagesFromCommonsWithTitle(commons_category) {
+    async getImagesFromCommonsWithTitle(topic,commons_category) {
         let requestConfig;
 
         if (commons_category != undefined) {
