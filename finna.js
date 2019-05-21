@@ -11,7 +11,7 @@ module.exports = {
             url: "/v1/search",
             method: "get",
             params: {
-                lookfor: topic.split('_').join('+'),
+                lookfor: topic,
                 //lookfor: getTopics(),
                 type: 'AllFields',
                 limit: 30,
