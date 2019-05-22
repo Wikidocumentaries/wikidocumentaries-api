@@ -33,10 +33,6 @@ module.exports = {
         for (var i = 0; i < response.data.results.length; i++) {
             var result = response.data.results[i];
 
-            // let subjects = [];
-            // for (var i = 0; i < result.tags.length; i++) {
-            //     subjects += tags[i].name;
-            // }
             var subjects = [];
 
             for (let tag of result.tags) {

@@ -75,6 +75,8 @@ module.exports = {
             return [];
         }
 
+        console.log(response.data.records);
+
         //format response
         for (var i = 0; i < response.data.records.length; i++) {
             var record = response.data.records[i];
@@ -146,8 +148,10 @@ module.exports = {
                 // console.log("subjects: ", subjects);
 
                 var datecreated = [];
+                var materials = [];
                 if (!!record.events && !!record.events.valmistus) {
                   datecreated = record.events.valmistus.filter(x => (x.type==='valmistus' && x.date)).map(x => x.date);
+                  materials = record.events.valmistus.filter(x => (x.type==='valmistus' && x.materials)).map(x => x.materials);
                 }
                 // console.log("datecreated: ", datecreated);
 
@@ -159,6 +163,7 @@ module.exports = {
                     title: record.title,
                     geoLocations: (record.geoLocations != undefined ? record.geoLocations : []),
                     measurements: record.measurements,
+                    materials: materials,
                     imageURL: BASE_URL + record.images[0],
                     thumbURL: thumbURL,
                     formats: formats,
@@ -215,13 +220,6 @@ function getTopics () {
     //     P4970, //vaihtoehtoiset nimet
     //     P5056 //henkilön patronyymi tai matronyymi
     // ]
-    // for (var index in statements) {
-    //     if (statements[index].id == ‘P94’) {
-    //         topic = statements[index].values[0].value;
-    //         return “https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/“+coaid;
-    //     }
-    // }
-    return topic.split('_').join('+');
 };
 
 function getFirstGeoLocation(image) {

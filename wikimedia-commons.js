@@ -49,7 +49,7 @@ module.exports = {
 
         const response = await axios.request(requestConfig);
 
-        let images = [];
+        var images = [];
 
         //console.log(response.data);
 

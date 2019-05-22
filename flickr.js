@@ -33,7 +33,7 @@ module.exports = {
 
         photos.forEach((photoInfo) => {
 
-            //console.log(photoInfo);
+            console.log(photoInfo);
 
             var image = null;
 
@@ -49,29 +49,29 @@ module.exports = {
                     id: photoInfo.id,
                     title: photoInfo.title,
                     description: photoInfo.description,
-                    inventoryNumber: null,
+                    inventoryNumber: '',
                     source: 'Flickr',
                     imageURL: photoInfo.url_l,
                     thumbURL: photoInfo.url_n,
-                    measurements: null,
-                    formats: null,
-                    creators: null,
-                    institutions: "",
+                    measurements: '',
+                    formats: '',
+                    creators: '',
+                    institutions: '',
                     infoURL: infoURL,
-                    location: null,
+                    location: '',
                     geoLocations: [],
-                    year: null,
-                    datecreated: null,
-                    publisher: null,
-                    license: "?",
+                    year: '',
+                    datecreated: '',
+                    publisher: '',
+                    license: '',
                     uploader: photoInfo.ownername,
-                    institutions: null,
-                    actors: null,
+                    institutions: '',
+                    actors: '',
                     subjects: subjects,
-                    places: null,
-                    collection: null,
-                    imageRights: null,
-                    inscriptions: null,
+                    places: '',
+                    collection: '',
+                    imageRights: '',
+                    inscriptions: '',
                     uploaderURL: uploaderURL
                 };
 
