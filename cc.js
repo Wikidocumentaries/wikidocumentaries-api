@@ -35,8 +35,10 @@ module.exports = {
 
             var subjects = [];
 
-            for (let tag of result.tags) {
-                subjects.push(tag.name);
+            if (result.tags.length) {
+                for (let tag of result.tags) {
+                    subjects.push(tag.name);
+                }
             }
 
             var image = {
