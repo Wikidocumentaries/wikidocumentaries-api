@@ -1,21 +1,21 @@
 const axios = require('axios');
 const turf = require('@turf/turf');
-const BASE_URL = "https://api.creativecommons.engineering";
+const BASE_URL = "https://www.europeana.eu/api/v2/search.json";
 
 module.exports = {
-    async getImagesCC(topic) {
+    async getImagesCC(topic, lat, lon, maxradius) {
         const requestConfig = {
             baseURL: BASE_URL + "/",
-            url: "image/search/",
-            method: "get",
+            // url: "image/search/",
+            // method: "get",
             params: {
-                format: 'json',
-                q: topic,
-                provider: 'nypl,met,rijksmuseum,digitaltmuseum,sciencemuseum,clevelandmuseum,thorvaldsensmuseum,museumsvictoria',
-                lt: 'all',
-                page: 1,
-                pagesize: 30,
-                filter_dead: true
+                wskey: 'BXEGTQYKm',
+                query: topic,
+                qf: '',
+                media: true,
+                thumbnail: true,
+                sort: 'timestamp_created',
+                rows: 30
             }
         }
 
@@ -30,8 +30,8 @@ module.exports = {
         }
 
         //format response
-        for (var i = 0; i < response.data.results.length; i++) {
-            var result = response.data.results[i];
+        for (var i = 0; i < response.data.items.length; i++) {
+            var inventoryNumber = response.data.items[i];
 
             var subjects = [];
 
@@ -42,34 +42,59 @@ module.exports = {
             }
 
             var image = {
-                id: result.id,
-                source: result.source,
-                title: result.title,
-                imageURL: result.url,
-                thumbURL: result.thumbnail,
-                download_url: result.detail,
-                creators: result.creator,//creator_url
-                institutions: result.provider,
-                subjects: subjects,
-                legacy_tags: result.legacy_tags,
-                license: result.license,
-                license_id: result.license,
-                license_version: result.license_version,
-                license_link: '',
-                infoURL: result.foreign_landing_url,
+                id: item.id,
+                source: 'Europeana',
+                title: item.title, //dcTitleLangAware
+                //imageURL: result.url,
+                thumbURL: item.edmPreview,
+                //download_url: result.detail,
+                //creators: result.creator,
+                institutions: item.dataProvider,
+                //subjects: subjects,
+                //legacy_tags: result.legacy_tags,
+                //license: result.license,
+                license_id: result.license, //rights
+                //license_version: result.license_version,
+                //license_link: '',
+                infoURL: item.edmIsShownAt,
                 inventoryNumber: '',
-                geoLocations: '',
+                geoLocations: '', //edmPlaceLatitude, edmPlaceLongitude
                 measurements: '',
                 formats: '',
                 year: '',
                 publisher: '',
                 actors: '',
-                places: '',
+                places: item.edmPlaceLabel,//.def
                 collection: '',
                 imageRights: '',
-                description: '',
+                description: item.dcDescription,//dcDescriptionLangAware
                 inscriptions: '',
-                datecreated: ''
+                datecreated: '',
+                language: ''
+            }
+
+            if (item.edmPlaceLatitude != 0 && item.edmPlaceLongitude != 0) {
+                // Remove images too faraway from the provided coordinates if they and maxdistance given
+                if (lat != undefined &&
+                    lon != undefined &&
+                    maxradius != undefined) {
+            
+                        var distance =
+                            turf.distance([lon, lat], [photoInfo.longitude, photoInfo.latitude]);
+                        if (distance > maxradius / 1000) {
+                            //console.log("distance too big", distance);
+                            return null;
+                        }
+                }
+            
+                var geoLocation =
+                    "POINT(" +
+                    photoInfo.longitude +
+                    " " +
+                    photoInfo.latitude +
+                    ")";
+            
+                image.geoLocations.push(geoLocation);
             }
 
             for (var j = 0; j < CCLicenses.length; j++) {

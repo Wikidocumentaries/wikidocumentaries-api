@@ -43,7 +43,7 @@ module.exports = {
                 var infoURL = "https://www.flickr.com/photos/" + photoInfo.owner + "/" + photoInfo.id;
                 var uploaderURL = "https://www.flickr.com/photos/" + photoInfo.owner;
 
-                let subjects = photoInfo.tags.split(',');
+                let subjects = photoInfo.tags.split(' ');
 
                 image = {
                     id: photoInfo.id,
@@ -61,7 +61,7 @@ module.exports = {
                     location: '',
                     geoLocations: [],
                     year: '',
-                    datecreated: '',
+                    datecreated: photoInfo.datetaken,
                     publisher: '',
                     license: '',
                     uploader: photoInfo.ownername,
