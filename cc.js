@@ -44,12 +44,12 @@ module.exports = {
             var image = {
                 id: result.id,
                 source: result.source,
-                title: result.title,
+                title: [],
                 imageURL: result.url,
                 thumbURL: result.thumbnail,
                 download_url: result.detail,
-                creators: result.creator,//creator_url
-                institutions: result.provider,
+                creators: [],//creator_url
+                institutions: [],
                 subjects: subjects,
                 legacy_tags: result.legacy_tags,
                 license: result.license,
@@ -73,9 +73,11 @@ module.exports = {
             }
 
             if (result.title) {
-                for (let title of result.title) {
-                    image.title.push(title);
-                  }
+                image.title.push(result.title);
+            }
+
+            if (result.creator) {
+                image.creators.push(result.creator);
             }
 
             for (var j = 0; j < CCLicenses.length; j++) {
@@ -88,10 +90,10 @@ module.exports = {
 
             for (var k = 0; k < glams.length; k++) {
                 if (glams[k].id == result.provider) {
-                    image.institutions = glams[k].defaultname;
+                    image.institutions.push(glams[k].defaultname);
                 }
                 if (glams[k].id == result.source) {
-                    image.source = glams[k].defaultname;
+                    image.source.push(glams[k].defaultname);
                     break;
                 }
             }
