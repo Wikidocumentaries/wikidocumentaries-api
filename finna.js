@@ -115,15 +115,6 @@ module.exports = {
                 //     authors = authors.slice(0, -2);
                 // }
 
-                var institutions = "";
-                if (record.institutions != undefined) {
-                    for (var j = 0; j < record.institutions.length; j++) {
-                        institutions += record.institutions[j].translated + ', ';
-                    }
-
-                    institutions = institutions.slice(0, -2);
-                }
-
                 let collection = "";
                 if ((record.buildings!=undefined) && (record.buildings.length>1) && (record.buildings[1].value!=undefined)) {
                   let collectionElements = record.buildings[1].value.split("/");
@@ -160,7 +151,7 @@ module.exports = {
                     id: record.id,
                     inventoryNumber: record.identifierString,
                     source: "Finna",
-                    title: record.title,
+                    title: [],
                     geoLocations: (record.geoLocations != undefined ? record.geoLocations : []),
                     measurements: record.measurements,
                     materials: materials,
@@ -171,7 +162,7 @@ module.exports = {
                     publisher: (record.publisher != undefined ? record.publisher : null),
                     // authors: authors,
                     creators: record.nonPresenterAuthors,
-                    institutions: institutions,
+                    institutions: [],
                     actors: record.subjectActors,
                     details: record.subjectDetails,
                     subjects: subjects,
@@ -185,6 +176,16 @@ module.exports = {
                     datecreated: datecreated
                 }
 
+                if (record.title) {
+                    image.title.push(record.title);
+                }
+
+                if (record.institutions) {
+                    for (let institution of record.institutions) {
+                        image.institutions.push(institution.translated);
+                      }
+                }
+
                 //console.log(image);
 
                 images.push(image);
@@ -194,6 +195,7 @@ module.exports = {
         if (images.length > 30) { // Good practice
             images = images.slice(0, 30);
         }
+
 
         return images;
     }

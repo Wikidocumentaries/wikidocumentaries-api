@@ -47,7 +47,7 @@ module.exports = {
 
                 image = {
                     id: photoInfo.id,
-                    title: photoInfo.title,
+                    title: [],
                     description: photoInfo.description,
                     inventoryNumber: '',
                     source: 'Flickr',
@@ -56,16 +56,15 @@ module.exports = {
                     measurements: '',
                     formats: '',
                     creators: '',
-                    institutions: '',
+                    institutions: [],
                     infoURL: infoURL,
                     location: '',
                     geoLocations: [],
                     year: '',
-                    datecreated: photoInfo.datetaken,
+                    datecreated: [],
                     publisher: '',
                     license: '',
                     uploader: photoInfo.ownername,
-                    institutions: '',
                     actors: '',
                     subjects: subjects,
                     places: '',
@@ -74,6 +73,14 @@ module.exports = {
                     inscriptions: '',
                     uploaderURL: uploaderURL
                 };
+
+                if (photoInfo.title) {
+                    image.title.push(photoInfo.title);
+                }
+
+                if (photoInfo.datetaken) {
+                    image.datecreated.push(photoInfo.datetaken);
+                }
 
                 if (photoInfo.latitude != 0 && photoInfo.longitude != 0 && photoInfo.geo_is_public == 1) {
                     // Remove images too faraway from the provided coordinates if they and maxdistance given

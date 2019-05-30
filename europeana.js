@@ -3,11 +3,9 @@ const turf = require('@turf/turf');
 const BASE_URL = "https://www.europeana.eu/api/v2/search.json";
 
 module.exports = {
-    async getImagesCC(topic, lat, lon, maxradius) {
+    async getImagesEuropeana(topic,language) {
         const requestConfig = {
             baseURL: BASE_URL + "/",
-            // url: "image/search/",
-            // method: "get",
             params: {
                 wskey: 'BXEGTQYKm',
                 query: topic,
@@ -25,95 +23,93 @@ module.exports = {
 
         let images = [];
 
-        if (!response.data.results) {
+        if (!response.data.items) {
             return [];
         }
 
         //format response
         for (var i = 0; i < response.data.items.length; i++) {
-            var inventoryNumber = response.data.items[i];
-
-            var subjects = [];
-
-            if (result.tags != undefined) {
-                for (let tag of result.tags) {
-                    subjects.push(tag.name);
-                }
-            }
+            var item = response.data.items[i];
 
             var image = {
                 id: item.id,
                 source: 'Europeana',
-                title: item.title, //dcTitleLangAware
-                //imageURL: result.url,
+                title: [], //dcTitleLangAware
+                description: item.dcDescription,//dcDescriptionLangAware
+                imageURL: item.edmIsShownBy,
                 thumbURL: item.edmPreview,
                 //download_url: result.detail,
-                //creators: result.creator,
-                institutions: item.dataProvider,
-                //subjects: subjects,
+                creators: [],
+                institutions: [],
+                subjects: item.subject,
                 //legacy_tags: result.legacy_tags,
                 //license: result.license,
-                license_id: result.license, //rights
+                //license_id: result.license, //rights
                 //license_version: result.license_version,
-                //license_link: '',
+                license_link: item.rights,
                 infoURL: item.edmIsShownAt,
                 inventoryNumber: '',
-                geoLocations: '', //edmPlaceLatitude, edmPlaceLongitude
+                geoLocations: '',//transformation FIX
                 measurements: '',
                 formats: '',
-                year: '',
+                year: item.year,
                 publisher: '',
-                actors: '',
-                places: item.edmPlaceLabel,//.def
+                actors: item.edmAgent,
+                places: item.edmPlaceLabel,//.def = language
                 collection: '',
                 imageRights: '',
-                description: item.dcDescription,//dcDescriptionLangAware
                 inscriptions: '',
-                datecreated: '',
+                datecreated: item.when,
                 language: ''
             }
 
-            if (item.edmPlaceLatitude != 0 && item.edmPlaceLongitude != 0) {
-                // Remove images too faraway from the provided coordinates if they and maxdistance given
-                if (lat != undefined &&
-                    lon != undefined &&
-                    maxradius != undefined) {
-            
-                        var distance =
-                            turf.distance([lon, lat], [photoInfo.longitude, photoInfo.latitude]);
-                        if (distance > maxradius / 1000) {
-                            //console.log("distance too big", distance);
-                            return null;
-                        }
-                }
-            
-                var geoLocation =
-                    "POINT(" +
-                    photoInfo.longitude +
-                    " " +
-                    photoInfo.latitude +
-                    ")";
-            
-                image.geoLocations.push(geoLocation);
+            if (item.title) {
+                for (let title of item.title) {
+                    image.title.push(title);
+                  }
             }
 
-            for (var j = 0; j < CCLicenses.length; j++) {
-                if (CCLicenses[j].id == result.license) {
-                    image.license = CCLicenses[j].short;
-                    image.license_link = CCLicenses[j].url;
-                    break;
-                }
+            if (item.dcCreator) {
+                for (let creator of item.dcCreator) {
+                    image.creators.push(creator);
+                  }
             }
 
-            for (var k = 0; k < glams.length; k++) {
-                if (glams[k].id == result.provider) {
-                    image.institutions = glams[k].defaultname;
-                }
-                if (glams[k].id == result.source) {
-                    image.source = glams[k].defaultname;
-                    break;
-                }
+            if (item.dataProvider) {
+                for (let provider of item.dataProvider) {
+                    image.institutions.push(provider);
+                  }
             }
+
+            // if (item.edmPlaceLatitude != 0 && item.edmPlaceLongitude != 0) {
+            
+            //     var geoLocation =
+            //         "POINT(" +
+            //         item.edmPlaceLongitude +
+            //         " " +
+            //         item.edmPlaceLatitude +
+            //         ")";
+            
+            //     image.geoLocations.push(geoLocation);
+            // }
+
+            // for (var j = 0; j < CCLicenses.length; j++) {
+            //     if (CCLicenses[j].id == result.license) {
+            //         image.license = CCLicenses[j].short;
+            //         image.license_link = CCLicenses[j].url;
+            //         break;
+            //     }
+            // }
+
+            // for (var k = 0; k < glams.length; k++) {
+            //     if (glams[k].id == result.provider) {
+            //         image.institutions = glams[k].defaultname;
+            //     }
+            //     if (glams[k].id == result.source) {
+            //         image.source = glams[k].defaultname;
+            //         break;
+            //     }
+            // }
 
             console.log(image);
 

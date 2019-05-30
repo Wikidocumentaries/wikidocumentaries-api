@@ -72,15 +72,15 @@ module.exports = {
                 source: 'Wikimedia Commons',
                 imageURL: page.imageinfo[0].url,
                 thumbURL: page.imageinfo[0].thumburl,
-                title: "",
-                authors: null,
+                title: [],
+                creators: [],
                 uploader: page.imageinfo[0].user,
-                institutions: "",
+                institutions: [],
                 infoURL: page.imageinfo[0].descriptionurl,
                 location: null,
                 geoLocations: [],
                 year: null,
-                license: null
+                license: ''
             };
 
             if (page.imageinfo[0].extmetadata.ImageDescription != undefined) {
@@ -88,7 +88,7 @@ module.exports = {
                 var origHTML = page.imageinfo[0].extmetadata.ImageDescription.value;
                 const $ = cheerio.load(origHTML);
                 var title = $.text();
-                image.title = title;
+                image.title.push(title);
             }
 
             if (page.imageinfo[0].extmetadata.GPSLatitude != undefined && page.imageinfo[0].extmetadata.GPSLongitude != undefined) {

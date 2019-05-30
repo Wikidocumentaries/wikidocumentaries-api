@@ -10,7 +10,7 @@ module.exports = {
             method: "get",
             params: {
                 format: 'json',
-                q: topic,
+                q: topic.split(' ').join('+'),
                 provider: 'nypl,met,rijksmuseum,digitaltmuseum,sciencemuseum,clevelandmuseum,thorvaldsensmuseum,museumsvictoria',
                 lt: 'all',
                 page: 1,
@@ -70,6 +70,12 @@ module.exports = {
                 description: '',
                 inscriptions: '',
                 datecreated: ''
+            }
+
+            if (result.title) {
+                for (let title of result.title) {
+                    image.title.push(title);
+                  }
             }
 
             for (var j = 0; j < CCLicenses.length; j++) {
