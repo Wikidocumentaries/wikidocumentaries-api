@@ -1,74 +1,47 @@
 const axios = require('axios');
-const cheerio = require('cheerio')
 
+const requestConfigTemplate = {
+    baseURL: 'https://commons.wikimedia.org/',
+    url: '/w/api.php',
+    method: 'get',
+    timeout: 10000,
+    params: {
+        action: 'query',
+        prop: 'imageinfo',
+        iiurlwidth: 400,
+        iiurlheight: 400,
+        redirects: 'resolve',
+        iiprop: 'user|url|extmetadata',
+        format: 'json',
+    },
+};
 
 module.exports = {
-    async getImagesFromCommonsWithTitle(topic,commons_category) {
-        let requestConfig;
+    async getImagesFromCommonsWithTitle(topic, commonsCategory) {
+        let requestConfig = requestConfigTemplate;
 
-        if (commons_category != undefined) {
-            //console.log("commons_category", commons_category);
-            requestConfig = {
-                baseURL: "https://commons.wikimedia.org/",
-                url: "/w/api.php",
-                method: "get",
-                timeout: 10000,
-                params: {
-                    action: "query",
-                    generator: "categorymembers",
-                    gcmtype: "file",
-                    gcmtitle: "Category:" + commons_category,
-                    gcmlimit: 30,
-                    prop: "imageinfo",
-                    iiurlwidth: 400,
-                    iiurlheight: 400,
-                    redirects: "resolve",
-                    iiprop: "user|url|extmetadata",
-                    format: "json"
-                }
-            };
+        if (commonsCategory !== undefined) {
+            requestConfig.params.generator = 'categorymembers';
+            requestConfig.params.gcmtype = 'file';
+            requestConfig.params.gcmtitl = 'Category:' + commonsCategory;
+            requestConfig.params.gcmlimit = 30;
         } else {
-            requestConfig = {
-                baseURL: "https://commons.wikimedia.org/",
-                url: "/w/api.php",
-                method: "get",
-                params: {
-                    action: "query",
-                    generator: "search",
-                    prop: "imageinfo",
-                    iiurlwidth: 400,
-                    iiurlheight: 400,
-                    redirects: "resolve",
-                    gsrsearch: topic,
-                    gsrnamespace: 6,
-                    iiprop: "user|url|extmetadata",
-                    format: "json"
-                }
-            };
+            requestConfig.params.generator = 'search';
+            requestConfig.params.gsrsearch = topic;
+            requestConfig.params.gsrlimit = 30;
+            requestConfig.params.gsrnamespace = 6;
         }
 
         const response = await axios.request(requestConfig);
-
-        var images = [];
-
-        //console.log(response.data);
 
         if (!response.data.query || !response.data.query.pages) {
             return [];
         }
 
-        const pages = Object.keys(response.data.query.pages).map(function(e) {
-            return response.data.query.pages[e];
-        });
-
-        //console.log(pages.length);
-
-        //res.send(pages);
-
-        pages.forEach((page, index) => {
-            console.log(index);
-            var image = {
-                id: page.title,
+        return Object.keys(response.data.query.pages).map(p => {
+            const page = response.data.query.pages[p];
+            let image = {
+                id: page.pageid,
                 source: 'Wikimedia Commons',
                 imageURL: page.imageinfo[0].url,
                 thumbURL: page.imageinfo[0].thumburl,
@@ -80,80 +53,29 @@ module.exports = {
                 location: null,
                 geoLocations: [],
                 year: null,
-                license: ''
+                license: '',
             };
 
-            if (page.imageinfo[0].extmetadata.ImageDescription != undefined) {
-                console.log(page.imageinfo[0].extmetadata.ImageDescription);
-                var origHTML = page.imageinfo[0].extmetadata.ImageDescription.value;
-                const $ = cheerio.load(origHTML);
-                var title = $.text();
-                image.title.push(title);
+            const extMetadata = page.imageinfo[0].extmetadata;
+            image.title.push(page.title.replace('File:', '').replace(/\.[^/.]+$/, ''));
+
+            if (extMetadata.GPSLatitude !== undefined && extMetadata.GPSLongitude !== undefined) {
+                image.geoLocations.push('POINT(' + extMetadata.GPSLongitude.value + ' ' + extMetadata.GPSLatitude.value + ')')
             }
 
-            if (page.imageinfo[0].extmetadata.GPSLatitude != undefined && page.imageinfo[0].extmetadata.GPSLongitude != undefined) {
-
-                // if (req.query.lat != undefined &&
-                //     req.query.lon != undefined &&
-                //     req.query.maxradius != undefined) {
-
-                //         var distance =
-                //             turf.distance([req.query.lon, req.query.lat], [page.imageinfo[0].extmetadata.GPSLongitude.value, page.imageinfo[0].extmetadata.GPSLatitude.value]);
-                //         if (distance > req.query.maxradius / 1000) {
-                //             return;
-                //         }
-                // }
-
-                image.geoLocations.push("POINT(" + page.imageinfo[0].extmetadata.GPSLongitude.value + " " + page.imageinfo[0].extmetadata.GPSLatitude.value + ")")
-            }
-
-            if (page.imageinfo[0].extmetadata.DateTimeOriginal != undefined) {
-                var dateString = page.imageinfo[0].extmetadata.DateTimeOriginal.value;
-                var year = parseInt(dateString.substr(0, 4), 10);
-                if (year != NaN) {
+            if (extMetadata.DateTimeOriginal !== undefined) {
+                const dateString = extMetadata.DateTimeOriginal.value;
+                const year = parseInt(dateString.substr(0, 4), 10);
+                if (year !== NaN) {
                     image.year = year;
                 }
             }
 
-            if (page.imageinfo[0].extmetadata.LicenseShortName != undefined) {
-                image.license = page.imageinfo[0].extmetadata.LicenseShortName.value;
+            if (extMetadata.LicenseShortName !== undefined) {
+                image.license = extMetadata.LicenseShortName.value;
             }
 
-            //console.log(index);
-            images.push(image);
+            return image;
         });
-
-        //console.log(images.length);
-
-        if (images.length > 30) { // Good practice
-            images = images.slice(0, 30);
-        }
-
-        return images;
     }
-
-    //     getImagesFromCommonsWithRadius = function() {
-    //         var requestConfig = {
-    //             baseURL: "https://commons.wikimedia.org/",
-    //             url: "/w/api.php",
-    //             method: "get",
-    //             params: {
-    //                 action: "query",
-    //                 generator: "geosearch",
-    //                 ggsprimary: "all",
-    //                 ggsnamespace: 6,
-    //                 ggsradius: 500,
-    //                 ggscoord: lat + '|' + lon,
-    //                 ggslimit: 10,
-    //                 prop: "imageinfo",
-    //                 iilimit: 10,
-    //                 iiprop: "url",
-    //                 iiurlwidth: 400,
-    //                 iiurlheight: 400,
-    //                 format: "json"
-    //             }
-    //         };
-
-    //         return axios.request(requestConfig);
-    //     }
 };
