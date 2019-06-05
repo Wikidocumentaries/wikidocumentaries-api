@@ -35,7 +35,7 @@ module.exports = {
                 id: item.id,
                 source: 'Europeana',
                 title: [], //dcTitleLangAware
-                description: item.dcDescription,//dcDescriptionLangAware
+                description: item.dcDescription,//dcDescriptionLangAware/langcode
                 imageURL: item.edmIsShownBy,
                 thumbURL: item.edmPreview,
                 //download_url: result.detail,
@@ -47,7 +47,7 @@ module.exports = {
                 //license_id: result.license, //rights
                 //license_version: result.license_version,
                 license_link: item.rights,
-                infoURL: item.edmIsShownAt,
+                infoURL: item.edmIsShownAt[0],
                 inventoryNumber: '',
                 geoLocations: '',//transformation FIX
                 measurements: '',
@@ -81,6 +81,12 @@ module.exports = {
                   }
             }
 
+            // if (item.edmIsShownAt) {
+            //     for (let info of item.edmIsShownAt) {
+            //         image.infoURL.push(info);
+            //       }
+            // }
+            
             // if (item.edmPlaceLatitude != 0 && item.edmPlaceLongitude != 0) {
             
             //     var geoLocation =

@@ -40,7 +40,6 @@ module.exports = {
             if (photoInfo.license != 0) { // 0 = All rights reserved
                 //console.log(photoInfo.urls);
 
-                var infoURL = "https://www.flickr.com/photos/" + photoInfo.owner + "/" + photoInfo.id;
                 var uploaderURL = "https://www.flickr.com/photos/" + photoInfo.owner;
 
                 let subjects = photoInfo.tags.split(' ');
@@ -57,7 +56,7 @@ module.exports = {
                     formats: '',
                     creators: '',
                     institutions: [],
-                    infoURL: infoURL,
+                    infoURL: "https://www.flickr.com/photos/" + photoInfo.owner + "/" + photoInfo.id,
                     location: '',
                     geoLocations: [],
                     year: '',
