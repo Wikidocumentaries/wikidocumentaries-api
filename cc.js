@@ -19,8 +19,6 @@ module.exports = {
             }
         }
 
-        console.log(requestConfig);
-
         const response = await axios.request(requestConfig);
 
         let images = [];
@@ -97,8 +95,6 @@ module.exports = {
                     break;
                 }
             }
-
-            console.log(image);
 
             images.push(image);
         }

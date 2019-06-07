@@ -39,7 +39,6 @@ async function findWikidataItemFromWikipedia(language, topic) {
 }
 
 async function getWikipediaData(language, topic) {
-    console.log(topic);
 
     const encodedLanguage = language && encodeURIComponent(language);
     const encodedTopic = topic && encodeURIComponent(topic);

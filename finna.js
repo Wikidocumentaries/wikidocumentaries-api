@@ -75,8 +75,6 @@ module.exports = {
             return [];
         }
 
-        console.log(response.data.records);
-
         //format response
         for (var i = 0; i < response.data.records.length; i++) {
             var record = response.data.records[i];

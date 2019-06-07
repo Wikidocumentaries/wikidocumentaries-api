@@ -33,8 +33,6 @@ module.exports = {
 
         photos.forEach((photoInfo) => {
 
-            console.log(photoInfo);
-
             var image = null;
 
             if (photoInfo.license != 0) { // 0 = All rights reserved

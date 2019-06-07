@@ -25,8 +25,6 @@ module.exports = {
             return [];
         }
 
-        console.log(response.data.records);
-
         //format response
         for (var i = 0; i < response.data.records.length; i++) {
             var record = response.data.records[i];
@@ -66,8 +64,6 @@ module.exports = {
                     // inscriptions: '',
                     datecreated: artifact.publishedDate
                 }
-
-                //console.log(image);
 
                 images.push(image);
             }
