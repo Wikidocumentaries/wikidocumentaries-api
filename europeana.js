@@ -63,23 +63,23 @@ module.exports = {
                 language: ''
             }
 
-            if (item.edmIsShownAt) {
+            if (!!item.edmIsShownAt && item.edmIsShownAt.length > 0) {
                 image.infoURL = item.edmIsShownAt[0];
             }
 
-            if (item.title) {
+            if (!!item.title && item.title.length > 0) {
                 for (let title of item.title) {
                     image.title.push(title);
                   }
             }
 
-            if (item.dcCreator) {
+            if (!!item.dcCreator && item.dcCreator.legth > 0) {
                 for (let creator of item.dcCreator) {
                     image.creators.push(creator);
                   }
             }
 
-            if (item.dataProvider) {
+            if (!!item.dataProvider && item.dataProvider > 0) {
                 for (let provider of item.dataProvider) {
                     image.institutions.push(provider);
                   }
