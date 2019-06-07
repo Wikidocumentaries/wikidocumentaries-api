@@ -47,7 +47,7 @@ module.exports = {
                 //license_id: result.license, //rights
                 //license_version: result.license_version,
                 license_link: item.rights,
-                infoURL: item.edmIsShownAt[0],
+                infoURL: '',
                 inventoryNumber: '',
                 geoLocations: '',//transformation FIX
                 measurements: '',
@@ -61,6 +61,10 @@ module.exports = {
                 inscriptions: '',
                 datecreated: item.when,
                 language: ''
+            }
+
+            if (item.edmIsShownAt) {
+                image.infoURL = item.edmIsShownAt[0];
             }
 
             if (item.title) {
