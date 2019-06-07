@@ -1,6 +1,24 @@
 const express = require('express');
 const app = express();
 const axios = require('axios');
+// Log all HTTP responses
+axios.interceptors.response.use(
+    response => {
+        console.log(response.status.toString(), response.request.res.responseUrl);
+        return response;
+    },
+    error => {
+        if (error.response) {
+            console.log(error.response.status.toString(), error.response.request.res.responseUrl);
+            console.log(error.response.headers);
+            console.log(error.response.data);
+        } else {
+            console.log(error);
+        }
+        return Promise.reject(error);
+    },
+);
+
 const bodyParser = require('body-parser');
 const querystring = require('querystring');
 
