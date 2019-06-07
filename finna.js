@@ -119,11 +119,14 @@ module.exports = {
                   if (formatsElements.length > 2) formats = formatsElements[2];
                 }
 
-                let thumbURL = BASE_URL + record.images[0];
-                if (record.imagesExtended != undefined) {
+                // let thumbURL = BASE_URL + record.images[0];
+                let thumbURL = '/static/pngs/imageplaceholder.png';
+                if (!!record.imagesExtended) {
                   let imagesExtendedUrls = record.imagesExtended[0].urls;
-                  if (imagesExtendedUrls.small != undefined) thumbURL = BASE_URL + imagesExtendedUrls.small;
-                  else if (imagesExtendedUrls.medium != undefined) thumbURL = BASE_URL + imagesExtendedUrls.medium;
+                  if (!!imagesExtendedUrls.small) {
+                      thumbURL = BASE_URL + imagesExtendedUrls.small;
+                  }
+                //   else if (imagesExtendedUrls.medium != undefined) thumbURL = BASE_URL + imagesExtendedUrls.medium;
                 }
 
                 var subjects = record.subjects && [].concat(...record.subjects) || [];
@@ -186,29 +189,6 @@ module.exports = {
 
         return images;
     }
-};
-
-function getTopics () {
-    // let queryLang = ["fi", "sv"]
-    // let nameProps = [
-    //     P1477, //syntymänimi
-    //     P2562, //married name
-    //     P1705, //nimi alkuperäiskielellä
-    //     P1559, //nimi äidinkielellä
-    //     P742, //salanimi
-    //     P1448, //virallinen nimi
-    //     P1449, //lempinimi
-    //     P1635, //religious name
-    //     P1782, //courtesy name
-    //     P1785, //temple name
-    //     P1786, //posthumous name
-    //     P1787, //art-name
-    //     P1810, //named as
-    //     P1813, //lyhyt nimi
-    //     P2561, //nimi
-    //     P4970, //vaihtoehtoiset nimet
-    //     P5056 //henkilön patronyymi tai matronyymi
-    // ]
 };
 
 function getFirstGeoLocation(image) {
