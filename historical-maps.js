@@ -20,7 +20,6 @@ async function getHistoricalMaps(leftLon, bottomLat, rightLon, topLat) {
     };
 
     const response = await axios.request(requestConfig);
-    //console.log(response.data);
     const warpedMaps = response.data.data;
 
     let commonsTitles = [];
@@ -49,7 +48,6 @@ async function getHistoricalMaps(leftLon, bottomLat, rightLon, topLat) {
     };
 
     const imageInfoResponse = await axios.request(requestConfigGetImageInfo);
-    //console.log(response.data);
 
     const pages = Object.keys(imageInfoResponse.data.query.pages).map(function(e) {
         return imageInfoResponse.data.query.pages[e];
@@ -62,8 +60,6 @@ async function getHistoricalMaps(leftLon, bottomLat, rightLon, topLat) {
             if (warpedMaps[i].attributes.title == pages[j].title &&
                 pages[j].imageinfo != undefined) {
                 var page = pages[j];
-                //console.log(page);
-                //console.log(page.imageinfo);
                 var basemap = {
                     id: page.title,
                     title: "",

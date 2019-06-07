@@ -99,7 +99,6 @@ async function getWikidata(wikidataItemID, language) {
         wikidatadescription = getOrNull(getI18n(language, wikidataRaw.descriptions), "value");
     }
 
-    //console.dir(responseData);
     if (!wikidataRaw || !wikidataRaw.claims
         || !Object.keys(wikidataRaw.claims).length) {
         // no Wikidata item associated with the Wikipedia item
@@ -120,14 +119,9 @@ async function getWikidata(wikidataItemID, language) {
         wikidataRaw: claims,
     };
 
-    //console.dir(claims);
-
     let ids = [];
 
-    //console.log(ids);
-
     claims.forEach((claim) => {
-        //console.dir(claim[0]);
         claim.forEach(statement => {
             if (statement.mainsnak.snaktype == "value") {
                 if (ids.indexOf(statement.mainsnak.property) == -1) {
@@ -141,20 +135,16 @@ async function getWikidata(wikidataItemID, language) {
                 else if (statement.mainsnak.datavalue.type == "quantity" && statement.mainsnak.datavalue.value.unit.indexOf("/entity/Q") != -1) {
                     var index = statement.mainsnak.datavalue.value.unit.lastIndexOf('/') + 1;
                     var id = statement.mainsnak.datavalue.value.unit.substring(index);
-                    //console.log(id);
                     if (ids.indexOf(id) == -1) {
                         ids.push(id);
                     }
                 }
             }
             if (statement.qualifiers != undefined) {
-                //console.log(statement.qualifiers);
                 var qualifiers = Object.keys(statement.qualifiers).map(function(e) {
                     return statement.qualifiers[e];
                 });
-                //console.log(qualifiers);
                 qualifiers.forEach(qualifier => {
-                    //console.log(qualifier);
                     if (ids.indexOf(qualifier[0].property) == -1) {
                         ids.push(qualifier[0].property);
                     }
@@ -168,14 +158,9 @@ async function getWikidata(wikidataItemID, language) {
         });
     });
 
-    //console.log(ids);
-    //console.log(ids.length);
-
     // TODO get 50 ids at a time
 
     const entities = await collectWikidataInfo(ids, language);
-
-    //console.log("entities returned from collectWikidataInfo", entities);
 
     const translations =
         getI18nKeys(language, sitelinks, "wiki")
@@ -201,11 +186,7 @@ async function getWikidata(wikidataItemID, language) {
         sitelinks: translations,
     };
 
-    //console.log(responseData.wikidataRaw);
-    //console.log(entities);
-
     for (var i = 0; i < responseData.wikidataRaw.length; i++) {
-        //console.log(responseData.wikidataRaw[i][0]);
         var statement = {
             id: null,
             label: null,
@@ -230,7 +211,6 @@ async function getWikidata(wikidataItemID, language) {
                     if (mainsnak.datavalue.type == "wikibase-entityid") {
                         for (var k = 0; k < entities.length; k++) {
                             if (entities[k].id == mainsnak.datavalue.value.id) {
-                                //console.log(entities[k]);
                                 label = entities[k].labels[language] != undefined ? entities[k].labels[language].value : "";
                                 if (label == "") {
                                     label = entities[k].labels.en != undefined ? entities[k].labels.en.value : "";
@@ -294,8 +274,6 @@ async function getWikidata(wikidataItemID, language) {
                     statement.values.push(value);
                 }
                 else if (mainsnak.datavalue.type == "wikibase-entityid") {
-                    //console.log(responseData.wikidataRaw[i]);
-                    //console.log(mainsnak);
                     var value = {
                         value: null,
                         url: 'https://www.wikidata.org/wiki/' + mainsnak.datavalue.value.id,
@@ -306,8 +284,6 @@ async function getWikidata(wikidataItemID, language) {
                     for (var k = 0; k < entities.length; k++) {
                         if (entities[k].id == mainsnak.datavalue.value.id) {
                             var entity = entities[k];
-                            //console.log(statement.url);
-                            //console.log(entity.sitelinks);
 
                             if (entity.sitelinks != undefined) {
                                 if (entity.sitelinks[language + 'wiki'] != undefined) {
@@ -324,7 +300,6 @@ async function getWikidata(wikidataItemID, language) {
                         }
                     }
 
-                    //console.log(mainsnak.datavalue.value);
                     value.value = findLabel(entities, mainsnak.datavalue.value.id, language);
 
                     statement.values.push(value);
@@ -333,11 +308,8 @@ async function getWikidata(wikidataItemID, language) {
 
                     // See also: https://www.wikidata.org/wiki/Help:Dates
 
-                    //console.log(mainsnak);
-
                     const dateString = getFormattedDateString(mainsnak.datavalue.value, language);
                     //var date = new Date(timeString);
-                    //console.log("isNaN(date)", isNaN(date));
 
                     var value = {
                         value: dateString,
@@ -355,20 +327,15 @@ async function getWikidata(wikidataItemID, language) {
                 }
                 else if (mainsnak.datavalue.type == "quantity") {
 
-                    //console.log(mainsnak);
-
                     var value = {
                         value: Number(mainsnak.datavalue.value.amount),
                         url: null
                     }
 
                     if (mainsnak.datavalue.value.unit.indexOf("/entity/Q") != -1) {
-                        //console.log("found");
                         var index = mainsnak.datavalue.value.unit.lastIndexOf('/') + 1;
                         var id = mainsnak.datavalue.value.unit.substring(index);
-                        //console.log(id);
                         var label = findLabel(entities, id, language);
-                        //console.log(label);
                         value.unit = label;
                     }
 
@@ -396,7 +363,6 @@ async function getWikidata(wikidataItemID, language) {
                     });
 
                     qualifiers.forEach(qualifier => {
-                        //console.log(qualifier);
                         if (qualifier[0].snaktype == "value") {
 
                             var q = {
@@ -414,11 +380,8 @@ async function getWikidata(wikidataItemID, language) {
                                 q.value = getFormattedDateString(qualifier[0].datavalue.value, language);
                             }
                             else if (qualifier[0].datavalue.type == "wikibase-entityid") {
-                                //console.log(responseData.wikidataRaw[i]);
-                                //console.log(mainsnak);
                                 q.url = 'https://www.wikidata.org/wiki/' + qualifier[0].datavalue.value.id;
 
-                                //console.log(qualifier[0].datavalue.value);
                                 q.value = findLabel(entities, qualifier[0].datavalue.value.id, language);
                             }
                             else if (qualifier[0].datavalue.type == "quantity") {
@@ -445,7 +408,6 @@ async function getWikidata(wikidataItemID, language) {
             wikidata.statements.push(statement);
         }
     }
-    //console.log(wikidata.statements);
     // DEV
     // responseData.wikipedia = undefined;
     // responseData.wikipediaExcerptHTML = undefined;
@@ -463,7 +425,6 @@ const findLabel = function (entities, id, language) {
     var label = "";
     for (var j = 0; j < entities.length; j++) {
         if (entities[j].id == id) {
-            //console.log(entities[j]);
             label = entities[j].labels[language] != undefined ? entities[j].labels[language].value : "";
             if (label == "") {
                 label = entities[j].labels.en != undefined ? entities[j].labels.en.value : "";
@@ -481,24 +442,16 @@ const findLabel = function (entities, id, language) {
 const collectWikidataInfo = async function(allIDs, language) {
     var index = 0;
     var parts = [];
-    //console.log(part.length);
     while (index < allIDs.length) {
-        //console.log(index);
         var part = allIDs.slice(index, index + 50);
-        //console.log(part.length);
-        //console.log(part);
         parts.push(part);
         index += 50;
     }
 
-    //console.log(parts);
-
     var allEntities = [];
 
     for (var i = 0; i < parts.length; i++) {
-        //console.log(ids);
         const ids = parts[i].join('|');
-        //console.dir(ids);
 
         const requestConfig = {
             baseURL: "https://www.wikidata.org/w/api.php",
@@ -518,14 +471,11 @@ const collectWikidataInfo = async function(allIDs, language) {
 
         const wikidataEntitiesResponse = await axios.request(requestConfig);
 
-        //console.log(wikidataEntitiesResponse.data);
         const entities = Object.keys(wikidataEntitiesResponse.data.entities).map(function(e) {
             return wikidataEntitiesResponse.data.entities[e];
         });
-        //console.log(entities);
         allEntities = allEntities.concat(entities);
     }
-    //console.log("collectWikidataInfo, allEntities", allEntities);
 
     return allEntities;
 }
@@ -535,8 +485,6 @@ function getFormattedDateString(dateWikidataValue, language) {
     var timeString = dateWikidataValue.time;
 
     //timeString = "-0050-00-00T00:00:00Z";
-
-    //console.log(dateWikidataValue);
 
     var year = parseInt((timeString.indexOf('-') != 0 ? timeString.substring(1, timeString.indexOf('-')) : timeString.substring(0, timeString.indexOf('-', 1))), 10);
     var month = parseInt(timeString.substr(6, 2));
@@ -554,18 +502,9 @@ function getFormattedDateString(dateWikidataValue, language) {
         // date.setHours(hour);
         // date.setMinutes(mintutes);
         // date.setSeconds(seconds);
-        // console.log(date.getFullYear());
-        // console.log(date.getMonth());
-        // console.log(date.getDate());
-        // console.log("month", month);
-        // console.log("day", day);
-        // console.log("hour", hour);
-        // console.log("mintutes", mintutes);
-        // console.log("seconds", seconds);
 
         //var dateFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         formattedDateString = (year < 0 ? year + "-" + month + "-" + day : date.toLocaleDateString(language + "-" + language.toUpperCase()/*, dateFormatOptions*/));
-        //console.log(formattedDateString);
         break;
     case 10:
         formattedDateString = year + "-" + month;

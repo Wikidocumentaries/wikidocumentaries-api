@@ -18,7 +18,6 @@ async function getWikidataByLatLon(lat, lon, radius, language, topic) {
     };
 
     const response = await axios.request(requestConfig);
-    //console.log(response.data);
 
     // res.send(response.data);
     // return;
@@ -42,8 +41,6 @@ async function getWikidataByLatLon(lat, lon, radius, language, topic) {
         });
     }
 
-    //console.log(wikiItems);
-
     let ids = [];
 
     for (var i = 0; i < wikiItems.length; i++) {
@@ -58,9 +55,7 @@ async function getWikidataByLatLon(lat, lon, radius, language, topic) {
         ids = ids.slice(0, 50);
     }
 
-    //console.log(ids);
     ids = ids.join('|');
-    //console.dir(ids);
 
     const requestConfigGetEntities = {
         baseURL: "https://www.wikidata.org/w/api.php",
@@ -81,18 +76,15 @@ async function getWikidataByLatLon(lat, lon, radius, language, topic) {
     let items = [];
 
     const wikidataEntitiesResponse = await axios.request(requestConfigGetEntities);
-    //console.log(wikidataEntitiesResponse.data);
     const entities = Object.keys(wikidataEntitiesResponse.data.entities).map(function(e) {
         return wikidataEntitiesResponse.data.entities[e];
     });
-    //console.dir(entities);
     for (var i = 0; i < wikiItems.length; i++) {
         for (var j = 0; j < entities.length; j++) {
             if (wikiItems[i].id == entities[j].id) {
                 if (entities[j].sitelinks[language + 'wiki'] != undefined &&
                 entities[j].sitelinks[language + 'wiki'].title == topic) {
                     // Do not include the topic item itself
-                    //console.log(entities[j].sitelinks[language + 'wiki'].title);
                 }
                 else {
                     var item = {

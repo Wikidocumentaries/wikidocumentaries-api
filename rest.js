@@ -112,7 +112,6 @@ app.get('/wiki/items/by/latlon', asyncMiddleware(async function(req, res) {
 
     const language = req.query.language;
     const topic = req.query.topic;
-    //console.log(topic);
 
     const items = await getWikidataByLatLon(req.query.lat, req.query.lon, req.query.radius, language, topic);
 
@@ -125,7 +124,6 @@ app.get('/images', asyncMiddleware(async function(req, res) {
 
     const language = req.query.language;
     const topic = req.query.topic;
-    //console.log(topic);
     const encodedTopic = encodeURIComponent(topic);
 
 
@@ -192,10 +190,8 @@ app.get('/geocode', asyncMiddleware(async function(req, res) {
     };
 
     const response = await axios.request(requestConfig);
-    //console.log(response.data);
 
     if (response.data.resourceSets != undefined && response.data.resourceSets[0].resources != undefined && response.data.resourceSets[0].resources.length > 0) {
-        //console.log(response.data.resourceSets[0].resources[0]);
 
         res.send({result:
             response.data.resourceSets[0].resources[0]

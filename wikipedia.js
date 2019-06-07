@@ -119,8 +119,6 @@ async function getWikipediaData(language, topic) {
                 }
             });
 
-        //console.log(remainingOrigHTML.length);
-
             if (remainingOrigHTML.length > 3000) { // Small count of HTML should be with the leading section
                 remainingHTML = convertToWikidocumentariesHTML(remainingOrigHTML, topic, language);
             }
@@ -181,14 +179,12 @@ const convertToWikidocumentariesHTML = function(origHTML, topic, language) {
     });
     $("ul").each(function(index) {
         var div_class = $(this).attr('class');
-        //console.log(div_class);
         if (div_class != undefined && div_class.indexOf('gallery') != -1) {
             $(this).remove();
         }
     });
     $("div").each(function(index) {
         var div_class = $(this).attr('class');
-        //console.log(div_class);
         if (div_class == undefined || div_class != 'noprint') {
             $(this).remove();
         }

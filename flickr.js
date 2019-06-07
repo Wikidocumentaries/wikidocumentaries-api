@@ -27,8 +27,6 @@ module.exports = {
         const response = await axios.request(requestConfig);
         const photos = response.data.photos.photo;// && response.data.photos.photo || [];
 
-        //console.log(photos);
-
         let images = [];
 
         photos.forEach((photoInfo) => {
@@ -36,7 +34,6 @@ module.exports = {
             var image = null;
 
             if (photoInfo.license != 0) { // 0 = All rights reserved
-                //console.log(photoInfo.urls);
 
                 var uploaderURL = "https://www.flickr.com/photos/" + photoInfo.owner;
 
@@ -88,7 +85,6 @@ module.exports = {
                             var distance =
                                 turf.distance([lon, lat], [photoInfo.longitude, photoInfo.latitude]);
                             if (distance > maxradius / 1000) {
-                                //console.log("distance too big", distance);
                                 return null;
                             }
                     }
