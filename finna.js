@@ -126,7 +126,7 @@ module.exports = {
                   else if (imagesExtendedUrls.medium != undefined) thumbURL = BASE_URL + imagesExtendedUrls.medium;
                 }
 
-                var subjects = !record.subjects ? [] : record.subjects.flat();
+                var subjects = record.subjects && [].concat(...record.subjects) || [];
 
                 var datecreated = [];
                 var materials = [];
