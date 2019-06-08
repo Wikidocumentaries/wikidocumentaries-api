@@ -10,7 +10,7 @@ module.exports = {
             method: "get",
             params: {
                 format: 'json',
-                q: topic.split(' ').join('+'),
+                q: topic,
                 provider: 'nypl,met,rijksmuseum,digitaltmuseum,sciencemuseum,clevelandmuseum,thorvaldsensmuseum,museumsvictoria',
                 lt: 'all',
                 page: 1,

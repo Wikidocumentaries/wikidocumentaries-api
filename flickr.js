@@ -42,7 +42,7 @@ module.exports = {
                 image = {
                     id: photoInfo.id,
                     title: [],
-                    description: photoInfo.description,
+                    description: [],
                     inventoryNumber: '',
                     source: 'Flickr',
                     imageURL: photoInfo.url_l,
@@ -67,6 +67,10 @@ module.exports = {
                     inscriptions: '',
                     uploaderURL: uploaderURL
                 };
+
+                if (photoInfo.description) {
+                    image.description.push(photoInfo.description._content);
+                }
 
                 if (photoInfo.title) {
                     image.title.push(photoInfo.title);
