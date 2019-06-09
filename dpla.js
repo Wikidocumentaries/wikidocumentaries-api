@@ -3,6 +3,7 @@ const turf = require('@turf/turf');
 const BASE_URL = "https://api.dp.la/v2/items/";
 
 // format request
+// Info at https://pro.dp.la/developers/requests
 module.exports = {
     async getImagesDpla(topic) {
         const requestConfig = {
