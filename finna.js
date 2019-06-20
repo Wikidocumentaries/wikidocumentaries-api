@@ -93,20 +93,6 @@ module.exports = {
                         }
                 }
 
-                // var authors = "";
-                // if (record.authors != undefined) {
-                //     for (var author in record.authors) {
-                //         if (record.authors.hasOwnProperty(author)) {
-                //             for (var key in record.authors[author]) {
-                //                 if (record.authors[author].hasOwnProperty(key)) {
-                //                     authors += key + ", ";
-                //                 }
-                //             }
-                //         }
-                //     }
-                //     authors = authors.slice(0, -2);
-                // }
-
                 let collection = "";
                 if ((record.buildings!=undefined) && (record.buildings.length>1) && (record.buildings[1].value!=undefined)) {
                   let collectionElements = record.buildings[1].value.split("/");
@@ -142,7 +128,7 @@ module.exports = {
                 var image = {
                     id: record.id,
                     inventoryNumber: record.identifierString,
-                    source: "Finna",
+                    source: 'Finna',
                     title: [],
                     geoLocations: (record.geoLocations != undefined ? record.geoLocations : []),
                     measurements: record.measurements,
@@ -152,7 +138,6 @@ module.exports = {
                     formats: formats,
                     year: (record.year != undefined ? parseInt(record.year, 10) : null),
                     publisher: (record.publisher != undefined ? record.publisher : null),
-                    // authors: authors,
                     creators: record.nonPresenterAuthors,
                     institutions: [],
                     actors: record.subjectActors,
@@ -161,9 +146,9 @@ module.exports = {
                     places: record.subjectPlaces,
                     collection: collection,
                     imageRights: record.imageRights,
-                    license: (record.imageRights != undefined ? record.imageRights.copyright : ""),
+                    license: (record.imageRights != undefined ? record.imageRights.copyright : ''),
                     description: record.summary,
-                    infoURL: "https://www.finna.fi/Record/" + encodeURIComponent(record.id),
+                    infoURL: 'https://www.finna.fi/Record/' + encodeURIComponent(record.id),
                     inscriptions: record.inscriptions,
                     datecreated: datecreated
                 }
@@ -175,7 +160,7 @@ module.exports = {
                 if (record.institutions) {
                     for (let institution of record.institutions) {
                         image.institutions.push(institution.translated);
-                      }
+                    }
                 }
 
                 images.push(image);

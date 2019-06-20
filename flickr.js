@@ -80,6 +80,10 @@ module.exports = {
                     image.datecreated.push(photoInfo.datetaken);
                 }
 
+                if(photoInfo.ownername) {
+                    image.institutions.push(photoInfo.ownername);
+                }
+
                 if (photoInfo.latitude != 0 && photoInfo.longitude != 0 && photoInfo.geo_is_public == 1) {
                     // Remove images too faraway from the provided coordinates if they and maxdistance given
                     if (lat != undefined &&

@@ -50,7 +50,7 @@ module.exports = {
                 geoLocations: '',//transformation FIX
                 measurements: '',
                 formats: '',
-                year: '',
+                year: item.year[0],
                 publisher: '',
                 actors: item.edmAgent,
                 places: item.edmPlaceLabel,//.def = language
@@ -59,10 +59,6 @@ module.exports = {
                 inscriptions: '',
                 datecreated: item.when,
                 language: ''
-            }
-
-            if (!!item.year && item.year.length > 0) {
-                image.year = item.year[0];
             }
 
             if (!!item.edmIsShownAt && item.edmIsShownAt.length > 0) {

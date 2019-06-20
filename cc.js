@@ -41,7 +41,8 @@ module.exports = {
 
             var image = {
                 id: result.id,
-                source: result.source,
+                source: 'CC Search',
+                //source: result.source,
                 title: [],
                 imageURL: result.url,
                 thumbURL: result.thumbnail,

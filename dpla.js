@@ -11,8 +11,8 @@ module.exports = {
             params: {
                 q: topic,
                 page_size: 30,
-                api_key: '2fa4e490d8e6c99261865141de8d3614'
-                // 'sourceResource.type': image
+                api_key: '2fa4e490d8e6c99261865141de8d3614',
+                'sourceResource.type': image
             }
         }
 
@@ -34,20 +34,24 @@ module.exports = {
                 // provider: dataProvider,
                 title: [],
                 description: '',
-                // imageURL: '',
+                imageURL: item.hasView,
                 thumbURL: item.object,
-                // download_url: '',
+                download_url: item.tmp_high_res_link,
                 creators: [],
+                // contributors: []??
                 institutions: [],
                 subjects: [],
                 // // //legacy_tags: result.legacy_tags,
                 // // //license: result.license,
                 // // //license_id: result.license, //rights
                 // // //license_version: result.license_version,
+                // rigtsstatements_link: '',
                 // license_link: '',
+                imageRights: item.rights, // On mitä tahansa
+                // attribution_text: '', //!! rights
                 infoURL: item.isShownAt,
                 inventoryNumber: [],
-                // geoLocations: '',//transformation FIX
+                geoLocations: item.sourceResource.spatial.coordinates,//spatial.coordinates, esim. "60.16952, 24.93545"
                 measurements: [],
                 formats: [],
                 // year: '',
@@ -55,9 +59,8 @@ module.exports = {
                 // actors: '',
                 places: [],
                 collection: [],
-                // imageRights: '', //!!
                 // inscriptions: '',
-                // datecreated: '',
+                datecreated: '',//+ begin & end
                 // language: ''
             }
 
@@ -65,6 +68,7 @@ module.exports = {
             //     image.year = item.year[0];
             // }
 
+            //title voi olla myös string!!
             if (!!item.sourceResource.title && item.sourceResource.title.length > 0) {
                 for (let title of item.sourceResource.title) {
                     image.title.push(title);
@@ -91,10 +95,12 @@ module.exports = {
                 image.datecreated = item.sourceResource.date[0];
             }
 
+            //description voi olla myös string!!
             if (!!item.sourceResource.description && item.sourceResource.description.length > 0) {
-                image.description = item.sourceResource.description[0];
+                image.description = item.sourceResource.description.join(' ');
             }
 
+            //format voi olla myös string!!
             if (!!item.sourceResource.format && item.sourceResource.format.length > 0) {
                 for (let format of item.sourceResource.format) {
                     image.formats.push(format);
