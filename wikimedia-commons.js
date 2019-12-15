@@ -23,7 +23,7 @@ module.exports = {
         if (commonsCategory !== undefined) {
             requestConfig.params.generator = 'categorymembers';
             requestConfig.params.gcmtype = 'file';
-            requestConfig.params.gcmtitl = 'Category:' + commonsCategory;
+            requestConfig.params.gcmtitle = 'Category:' + commonsCategory;
             requestConfig.params.gcmlimit = 30;
         } else {
             requestConfig.params.generator = 'search';
