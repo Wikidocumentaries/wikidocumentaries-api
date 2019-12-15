@@ -28,7 +28,6 @@ const { getImagesFromCommonsWithTitle } = require('./wikimedia-commons');
 const { getImagesFromFlickrWithTitle } = require('./flickr');
 const { getImagesCC } = require('./cc');
 const { getImagesEuropeana } = require('./europeana');
-const { getImagesYle } = require('./yle');
 const { getWikidata } = require('./wikidata');
 const { getWikidataByLatLon } = require('./wikidata-latlon');
 const { findWikidataItemFromWikipedia, getWikipediaData } = require('./wikipedia');
@@ -133,8 +132,7 @@ app.get('/images', asyncMiddleware(async function(req, res) {
         getImagesFromCommonsWithTitle(topic, req.query.commons_category),
         getImagesFromFlickrWithTitle(topic, req.query.lat, req.query.lon, req.query.maxradius),
         getImagesCC(topic),
-        getImagesEuropeana(topic, language),
-        getImagesYle(topic, language)
+        getImagesEuropeana(topic, language)
     ];
     const safeRequests = requests.map(promise => promise.catch(err => {
         console.error(err.stack);
