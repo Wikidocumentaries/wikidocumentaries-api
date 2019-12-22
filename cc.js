@@ -11,8 +11,8 @@ module.exports = {
             params: {
                 format: 'json',
                 q: topic,
-                provider: 'nypl,met,rijksmuseum,digitaltmuseum,sciencemuseum,clevelandmuseum,thorvaldsensmuseum,museumsvictoria',
                 lt: 'all',
+                provider: ['wikimedia', 'thorvaldsensmuseum', 'thingiverse', 'svgsilh', 'sciencemuseum', 'rijksmuseum', 'rawpixel', 'phylopic', 'nypl', 'museumsvictoria', 'met', 'mccordmuseum', 'iha', 'geographorguk', 'floraon', 'flickr', 'eol', 'digitaltmuseum', 'deviantart', 'clevelandmuseum', 'brooklynmuseum', 'behance', 'animaldiversity', 'WoRMS', 'CAPL', '500px'],
                 page: 1,
                 pagesize: 30,
                 filter_dead: true
@@ -41,7 +41,7 @@ module.exports = {
 
             var image = {
                 id: result.id,
-                source: result.source,
+                source: "CC Search",
                 title: [],
                 imageURL: result.url,
                 thumbURL: result.thumbnail,
@@ -90,10 +90,10 @@ module.exports = {
                 if (glams[k].id == result.provider) {
                     image.institutions.push(glams[k].defaultname);
                 }
-                if (glams[k].id == result.source) {
-                    image.source.push(glams[k].defaultname);
-                    break;
-                }
+                // if (glams[k].id == result.source) {
+                //     image.source.push(glams[k].defaultname);
+                //     break;
+                // }
             }
 
             images.push(image);

@@ -16,7 +16,7 @@ module.exports = {
                 api_key: process.env.FLICKR_KEY,
                 text: topic,
                 license: "1,2,3,4,5,6,7,8,9,10",
-                is_commons: "true",
+                is_commons: "false",
                 extras: "license,description,owner_name,geo,tags,url_l,url_n,path_alias,date_taken",
                 per_page: 100,
                 format: "json",
