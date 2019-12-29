@@ -119,12 +119,12 @@ async function getWikipediaData(language, topic) {
                 }
             });
 
-            if (remainingOrigHTML.length > 3000) { // Small count of HTML should be with the leading section
-                remainingHTML = convertToWikidocumentariesHTML(remainingOrigHTML, topic, language);
-            }
+/*             if (remainingOrigHTML.length > 3000) { */ // Small count of HTML should be with the leading section
+            remainingHTML = convertToWikidocumentariesHTML(remainingOrigHTML, topic, language);
+/*             }
             else {
                 origHTML += remainingOrigHTML;
-            }
+            } */
         }
         var excerptHTML = convertToWikidocumentariesHTML(origHTML, topic, language);
     }
@@ -165,7 +165,7 @@ const convertToWikidocumentariesHTML = function(origHTML, topic, language) {
             //$(this).replaceWith($(this).html());
         }
     });
-    $("table").each(function(index) {
+/*     $("table").each(function(index) {
         $(this).remove();
     });
     $("figure").each(function(index) {
@@ -177,15 +177,34 @@ const convertToWikidocumentariesHTML = function(origHTML, topic, language) {
     $("sup").each(function(index) {
         $(this).remove();
     });
-    $("ul").each(function(index) {
-        var div_class = $(this).attr('class');
-        if (div_class != undefined && div_class.indexOf('gallery') != -1) {
-            $(this).remove();
-        }
-    });
+    
     $("div").each(function(index) {
         var div_class = $(this).attr('class');
         if (div_class == undefined || div_class != 'noprint') {
+            $(this).remove();
+        }
+    }); */
+    $("table").each(function(index) { //Remove English Wikipedia infobox
+        var div_class = $(this).attr('class');
+        if (div_class != undefined && div_class.indexOf('infobox') != -1) {
+            $(this).remove();
+        }
+    });
+    $("table").each(function(index) { //Remove warning boxes
+        var div_class = $(this).attr('class');
+        if (div_class != undefined && div_class.indexOf('ambox') != -1) {
+            $(this).remove();
+        }
+    });
+    $("div").each(function(index) { //Remove French Wikipedia infobox
+        var div_class = $(this).attr('class');
+        if (div_class == undefined || div_class != 'infobox_v3') {
+            $(this).remove();
+        }
+    });
+    $("ul").each(function(index) {
+        var div_class = $(this).attr('class');
+        if (div_class != undefined && div_class.indexOf('gallery') != -1) {
             $(this).remove();
         }
     });

@@ -12,7 +12,6 @@ module.exports = {
             method: "get",
             params: {
                 lookfor: topic,
-                //lookfor: getTopics(),
                 type: 'AllFields',
                 limit: 30,
                 "filter[0]": '~format:"0/Image/"',
@@ -43,7 +42,6 @@ module.exports = {
                 "field[21]": 'imagesExtended',
                 "field[22]": 'events',
             //    field[]=collections&
-            //    field[]=buildings&
             //    field[]=thumbnail&
             }
         }
@@ -123,9 +121,9 @@ module.exports = {
                 let thumbURL = '/static/pngs/imageplaceholder.png';
                 if (!!record.imagesExtended) {
                   let imagesExtendedUrls = record.imagesExtended[0].urls;
-                  if (!!imagesExtendedUrls.small) {
-                      thumbURL = BASE_URL + imagesExtendedUrls.small;
-                  }
+                  //if (!!imagesExtendedUrls.small) {
+                    thumbURL = BASE_URL + imagesExtendedUrls.small + '&h=300';
+                  //}
                 //   else if (imagesExtendedUrls.medium != undefined) thumbURL = BASE_URL + imagesExtendedUrls.medium;
                 }
 
