@@ -90,6 +90,7 @@ async function getWikidata(wikidataItemID, language) {
     let topic="";
     let wikidatatitle="";
     let wikidatadescription="";
+    let wikidataaliases=[];
     function getOrNull(object, field) {
         return object && object[field];
     }
@@ -97,6 +98,7 @@ async function getWikidata(wikidataItemID, language) {
         topic = getOrNull(getOrNull(wikidataRaw.sitelinks, language + "wiki"), "title");
         wikidatatitle = getOrNull(getI18n(language, wikidataRaw.labels), "value");
         wikidatadescription = getOrNull(getI18n(language, wikidataRaw.descriptions), "value");
+        wikidataaliases = getOrNull(getI18n(language, wikidataRaw.aliases), "value");
     }
 
     if (!wikidataRaw || !wikidataRaw.claims
@@ -172,6 +174,7 @@ async function getWikidata(wikidataItemID, language) {
         id: wikidataItemID,
         title: wikidatatitle,
         description: wikidatadescription,
+        aliases: wikidataaliases,
         instance_of: {
             id: null,
             value: null,
@@ -463,7 +466,7 @@ const collectWikidataInfo = async function(allIDs, language) {
             params: {
                 action: "wbgetentities",
                 ids: ids,
-                props: "labels|sitelinks",
+                props: "labels|sitelinks|descriptions|aliases",
                 languages: (language != "en" ? language + "|en" : "en"),
                 format: "json"
             }
