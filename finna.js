@@ -13,7 +13,7 @@ module.exports = {
             params: {
                 lookfor: topic,
                 type: 'AllFields',
-                limit: 30,
+                limit: 100,
                 "filter[0]": '~format:"0/Image/"',
                 "filter[1]": '~format:"0/WorkOfArt/"',
                 "filter[2]": 'usage_rights_str_mv:"usage_E"',
