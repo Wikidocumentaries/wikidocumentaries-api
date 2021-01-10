@@ -13,7 +13,7 @@ module.exports = {
                 media: true,
                 thumbnail: true,
                 sort: 'timestamp_created',
-                rows: 30
+                rows: 100
             }
         }
 
@@ -35,7 +35,7 @@ module.exports = {
                 title: [], //dcTitleLangAware
                 description: item.dcDescription,//dcDescriptionLangAware/langcode
                 imageURL: item.edmIsShownBy,
-                thumbURL: item.edmPreview,
+                thumbURL: item.edmPreview[0],
                 //download_url: result.detail,
                 creators: [],
                 institutions: [],
