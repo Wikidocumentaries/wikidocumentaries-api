@@ -98,7 +98,7 @@ async function getWikidata(wikidataItemID, language) {
         topic = getOrNull(getOrNull(wikidataRaw.sitelinks, language + "wiki"), "title");
         wikidatatitle = getOrNull(getI18n(language, wikidataRaw.labels), "value");
         wikidatadescription = getOrNull(getI18n(language, wikidataRaw.descriptions), "value");
-        wikidataaliases = getOrNull(getI18n(language, wikidataRaw.aliases), "value");
+        wikidataaliases = wikidataRaw.aliases;
     }
 
     if (!wikidataRaw || !wikidataRaw.claims
