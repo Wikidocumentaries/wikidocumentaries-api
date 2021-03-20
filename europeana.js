@@ -1,6 +1,6 @@
 const axios = require('axios');
 const turf = require('@turf/turf');
-const BASE_URL = "https://www.europeana.eu/api/v2/search.json";
+const BASE_URL = "https://api.europeana.eu/record/v2/search.json";
 
 module.exports = {
     async getImagesEuropeana(topic,language) {
