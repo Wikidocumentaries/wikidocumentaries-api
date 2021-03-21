@@ -25,13 +25,14 @@ const querystring = require('querystring');
 const { getHistoricalMaps } = require('./historical-maps');
 const { getImagesFromFinnaWithTitle } = require('./finna');
 const { getImagesFromCommonsWithTitle } = require('./wikimedia-commons');
-const { getImagesFromFlickrWithTitle } = require('./flickr');
+const { getImagesFlickr } = require('./flickr');
 const { getImagesCC } = require('./cc');
 const { getImagesEuropeana } = require('./europeana');
 const { getWikidata } = require('./wikidata');
 const { getWikidataByLatLon } = require('./wikidata-latlon');
 const { findWikidataItemFromWikipedia, getWikipediaData } = require('./wikipedia');
 
+//does deprecating bodyParser make something dysfunctional?
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 // Needed for error handling in ExpressJS before version 5.0.0
@@ -130,7 +131,7 @@ app.get('/images', asyncMiddleware(async function(req, res) {
     const requests = [
         getImagesFromFinnaWithTitle(topic, req.query.lat, req.query.lon, req.query.maxradius),
         getImagesFromCommonsWithTitle(topic, req.query.commons_category),
-        getImagesFromFlickrWithTitle(topic, req.query.lat, req.query.lon, req.query.maxradius),
+        getImagesFlickr(topic, req.query.lat, req.query.lon, req.query.maxradius),
         getImagesCC(topic),
         getImagesEuropeana(topic, language)
     ];

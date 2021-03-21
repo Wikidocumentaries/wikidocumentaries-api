@@ -6,7 +6,7 @@ if (process.env.FLICKR_KEY == undefined) {
 }
 
 module.exports = {
-    async getImagesFromFlickrWithTitle(topic, lat, lon, maxradius) {
+    async getImagesFlickr(topic, lat, lon, maxradius) {
         const requestConfig = {
             baseURL: "https://api.flickr.com/",
             url: "/services/rest/",
