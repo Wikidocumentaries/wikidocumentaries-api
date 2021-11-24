@@ -4,6 +4,8 @@ const BASE_URL = "https://api.finna.fi";
 
 module.exports = {
     async getImagesFromFinnaWithTitle(topic, lat, lon, maxradius) {
+        
+        let query = '"' + JSON.parse(topic).join('" OR "') + '"';
 
         //construct query
         const requestConfig = {
@@ -11,13 +13,17 @@ module.exports = {
             url: "/v1/search",
             method: "get",
             params: {
-                lookfor: topic,
+                lookfor: query,
                 type: 'AllFields',
                 limit: 100,
-                "filter[0]": '~format:"0/Image/"',
-                "filter[1]": '~format:"0/WorkOfArt/"',
-                "filter[2]": 'usage_rights_str_mv:"usage_E"',
-                "filter[3]": 'online_boolean:"1"',
+                //"filter[0]": '~format:"0/Image/"',
+                //"filter[1]": '~format:"0/WorkOfArt/"',
+                //"filter[2]": 'usage_rights_str_mv:"usage_E"',
+                //"filter[0]": 'free_online_boolean:"1"',
+                'filter[0]': '~format_ext_str_mv:"0/Image/"',
+                'filter[1]': '~format_ext_str_mv:"0/Map/"',
+                'filter[2]': '~format_ext_str_mv:"0/WorkOfArt/"',
+                'filter[3]': 'free_online_boolean:1',
                 "field[0]": 'id',
                 "field[1]": 'title',
                 "field[2]": 'geoLocations',
@@ -138,32 +144,33 @@ module.exports = {
 
                 //assign data to metadata properties
                 var image = {
-                    id: record.id,
-                    inventoryNumber: record.identifierString,
-                    source: "Finna",
-                    title: [],
-                    geoLocations: (record.geoLocations != undefined ? record.geoLocations : []),
-                    measurements: record.measurements,
-                    materials: materials,
-                    imageURL: BASE_URL + record.images[0],
-                    thumbURL: thumbURL,
-                    formats: formats,
-                    year: (record.year != undefined ? parseInt(record.year, 10) : null),
-                    publisher: (record.publisher != undefined ? record.publisher : null),
-                    // authors: authors,
-                    creators: record.nonPresenterAuthors,
-                    institutions: [],
                     actors: record.subjectActors,
-                    details: record.subjectDetails,
-                    subjects: subjects,
-                    places: record.subjectPlaces,
                     collection: collection,
-                    imageRights: record.imageRights,
-                    license: (record.imageRights != undefined ? record.imageRights.copyright : ""),
+                    creators: record.nonPresenterAuthors,
+                    creditline: record.imagesExtended[0].rights.creditline,
+                    datecreated: datecreated,
                     description: record.summary,
+                    details: record.subjectDetails,
+                    downloadURL: '',
+                    formats: formats,
+                    geoLocations: (record.geoLocations != undefined ? record.geoLocations : []),
+                    id: record.id,
+                    imageURL: BASE_URL + record.images[0],
                     infoURL: "https://www.finna.fi/Record/" + encodeURIComponent(record.id),
                     inscriptions: record.inscriptions,
-                    datecreated: datecreated
+                    institutions: [],
+                    inventoryNumber: record.identifierString,
+                    license: (record.imageRights != undefined ? record.imageRights.copyright : ""),
+                    materials: materials,
+                    measurements: record.measurements,
+                    places: record.subjectPlaces,
+                    publisher: (record.publisher != undefined ? record.publisher : null),
+                    rightsstatement: '',
+                    source: "Finna",
+                    subjects: subjects,
+                    thumbURL: thumbURL,
+                    title: [],
+                    year: ''
                 }
 
                 if (record.title) {
@@ -174,6 +181,10 @@ module.exports = {
                     for (let institution of record.institutions) {
                         image.institutions.push(institution.translated);
                       }
+                }
+
+                if (record.year != undefined) {
+                    image.year = parseInt(record.year, 10);
                 }
 
                 images.push(image);

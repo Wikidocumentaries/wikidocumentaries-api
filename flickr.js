@@ -7,6 +7,9 @@ if (process.env.FLICKR_KEY == undefined) {
 
 module.exports = {
     async getImagesFlickr(topic, lat, lon, maxradius) {
+
+        let query = '"' + JSON.parse(topic).join('" OR "') + '"';
+
         const requestConfig = {
             baseURL: "https://api.flickr.com/",
             url: "/services/rest/",
@@ -14,7 +17,7 @@ module.exports = {
             params: {
                 method: "flickr.photos.search",
                 api_key: process.env.FLICKR_KEY,
-                text: topic,
+                text: query,
                 license: "1,2,3,4,5,6,7,8,9,10",
                 is_commons: "false",
                 extras: "license,description,owner_name,geo,tags,url_l,url_n,path_alias,date_taken",

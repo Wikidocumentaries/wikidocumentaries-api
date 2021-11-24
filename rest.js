@@ -26,7 +26,9 @@ const { getHistoricalMaps } = require('./historical-maps');
 const { getImagesFromFinnaWithTitle } = require('./finna');
 const { getImagesFromCommonsWithTitle } = require('./wikimedia-commons');
 const { getImagesFlickr } = require('./flickr');
-const { getImagesCC } = require('./cc');
+//const { getImagesTroveTextsearch } = require('./trove');
+//const { getImagesSmithsonianTextsearch } = require('./smithsonian');
+//const { getImagesCC } = require('./cc');
 const { getImagesEuropeana } = require('./europeana');
 const { getWikidata } = require('./wikidata');
 const { getWikidataByLatLon } = require('./wikidata-latlon');
@@ -132,8 +134,10 @@ app.get('/images', asyncMiddleware(async function(req, res) {
         getImagesFromFinnaWithTitle(topic, req.query.lat, req.query.lon, req.query.maxradius),
         getImagesFromCommonsWithTitle(topic, req.query.commons_category),
         getImagesFlickr(topic, req.query.lat, req.query.lon, req.query.maxradius),
-        getImagesCC(topic),
-        getImagesEuropeana(topic, language)
+        //getImagesCC(topic),
+        getImagesEuropeana(topic, language),
+        getImagesTroveTextsearch(topic, language),
+        getImagesSmithsonianTextsearch(topic, language)
     ];
     const safeRequests = requests.map(promise => promise.catch(err => {
         console.error(err.stack);
