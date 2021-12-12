@@ -10,146 +10,266 @@ units:
         generic:
             metadata_permission:
                 jsonpath: 
-                values: 
-        wikidocumentaries_api:
-            url:
+                values:
         images:
-            fields:
-                aliases: [] #Alternative titles
-                inscriptions: []
-                    content: #was "inscriptions"
-                    inscriptionMentions: [] 
-                        statedAs:
-                        language:
-                        qid: #inscription mentions (P6568)
-                    location: 
-                        statedAs:
-                        language: 
-                        pct: #relative position within image (P2677)
-                    language: 
-                aspectRatio: #TBD
-                copyright: #currently missing this hierarchy
-                    copyrightRS: #RightStatements categories "incopyright, nocopyright, unknowncopyright and more detailed"
-                    license:  #In varying forms from the source
-                    licenseId: #Unified licence ID to allow multilinguality, QID?
-                    licenseLink: #Link to license deed, preferably in preferred language
-                    creditLine: #Attribution text defined by the source
-                    copyrightNote: #Any other information
-                creators: [] #creator (P170)
-                    statedAs: #creator (P170) / stated as (P1932)
+            aliases: [] #Alternative titles
+                content:
+                language:
+            inscriptions: []
+                content: #was "inscriptions" inscription (P1684)
+                inscriptionMentions: [] 
+                    statedAs:
                     language:
                     qid: #inscription mentions (P6568)
-                    role: #creator (P170) / object has role (P3831)
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                position: 
+                    statedAs:
+                    language: 
+                    pct: #relative position within image (P2677)
+                language: 
+                source:
+                    sourceURL:
+                    retrievedDate:
+            aspectRatio: #aspect ratio (P2061)
+            copyright: #Is this hierarchy useful?
+                license:  #In varying forms from the source
+                    statedAs: #can also be RightsStatement or other
+                    qid:
+                    licenseLink: #Link to license deed, preferably in preferred language
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                creditLine: #Attribution text defined by the source
+                    content:
+                    language:
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                copyrightNote: #Any other information
+                    source:
+                        sourceURL:
+                        retrievedDate:
+            creators: [] #creator (P170)
+                statedAs: #creator (P170) / stated as (P1932)
+                language:
+                qid: #inscription mentions (P6568)
+                role: #creator (P170) / object has role (P3831)
+                    statedAs:
+                    language:
+                    qid: #inscription mentions (P6568)
+                url: #e.g. Commons and Flickr, creator (P170) / official website (P856)
+                source:
+                    sourceURL:
+                    retrievedDate:
+            dates: []
+                type: #designed, contructed, deployed, usage, uploaded, depicted... --> different Wikidata properties
+                statedAs:
+                date:
+                startDate:
+                endDate:
+                year: 
+                source:
+                    sourceURL:
+                    retrievedDate:
+            depicted: [] #Require type only if exists
+                type: #place (currently "places"), person (currently "actors"), events (currently "events"), subjects (currently "subjects"), period (currently "perioddepicted")
+                statedAs: #depicts (P180) / stated as (P1932)
+                language:
+                qid:
+                source:
+                    sourceURL:
+                    retrievedDate:
+            description:
+                content:
+                language:
+                source:
+                    sourceURL:
+                    retrievedDate:
+            types: [] #type from the source, such as "Photograph", text in original language, was "formats"
+                statedAs:
+                language:
+                qid:
+                source:
+                    sourceURL:
+                    retrievedDate:
+            genres: [] #genre from the source, such as "Romanticism", text in original language, was "genre"
+                statedAs:
+                language:
+                qid:
+                source:
+                    sourceURL:
+                    retrievedDate:
+            imagefiles: []
+                type: #currently "imageURL, downloadURL, thumbURL"
+                url:
+                dataSize:
+                    amount:
+                    unit:
                         statedAs:
                         language:
-                        qid: #inscription mentions (P6568)
-                    url: #e.g. Commons and Flickr, creator (P170) / official website (P856)
-                dates: []
-                    type: #designed, contructed, deployed, usage, uploaded, depicted... --> different Wikidata properties
+                        qid:
+                dataDimensions:
+                    width: #width (P2049)
+                        amount:
+                        unit:
+                            statedAs:
+                            language:
+                            qid:
+                    height:
+                        amount:
+                        unit:
+                            statedAs:
+                            language:
+                            qid:
+                checksum:
+            infoURL: #described at URL (P973)
+            geo:
+                cameraHeading: #TBD
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                fieldOfView:
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                tilt:
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                focalLength:
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                geoLocations: [] #coordinates of depicted place (P9149)
+                    lat:
+                    lon:
+                    wkt:
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                povCoord: #coordinates of the point of view (P1259)
+                    lat:
+                    lon:
+                    wkt:
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                addresses: []
+                    content: #street address (P6375)
+                    language: #Street address
+                    source:
+                        sourceURL:
+                        retrievedDate:
+            original:
+                represents: #artwork that this image represents
+                    statedAs:
+                    language:
+                    qid: #digital representation of (P6243)
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                dimensions: []
+                    width:
+                        amount:
+                        unit:
+                            statedAs:
+                            qid:
+                        source:
+                            sourceURL:
+                            retrievedDate:
+                    height:
+                        amount:
+                        unit:
+                            statedAs:
+                            qid:
+                        source:
+                            sourceURL:
+                            retrievedDate:
+                materials: []
+                    statedAs:
+                    language:
+                    qid:
+                    role:
+                        statedAs:
+                        language:
+                        qid:
+                    source:
+                        sourceURL:
+                        retrievedDate:
+            platform: #currently "source"
+                statedAs:
+                language:
+                qid:
+                id: 
+            published: []
+                publisher:
+                    statedAs:
+                    language:
+                    qid:
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                printer:
+                    statedAs:
+                    language:
+                    qid:
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                city:
+                    statedAs:
+                    language:
+                    qid:
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                language:
+                date:
                     statedAs:
                     date:
                     startDate:
                     endDate:
                     year: 
-                depicted: [] #Require type only if exists
-                    type: #place (currently "places"), person (currently "actors"), events (currently "events"), subjects (currently "subjects"), period (currently "perioddepicted")
-                    statedAs: #depicts (P180) / stated as (P1932)
-                    language:
-                    qid:
-                represents: #artwork that this image represents
+                    source:
+                        sourceURL:
+                        retrievedDate:
+            institution: 
+                statedAs:
+                language:
+                qid: #collection (P195)
+                department:
                     statedAs:
                     language:
                     qid:
-                description:
-                    content:
-                    language:
-                types: [] #type from the source, such as "Photograph", text in original language, was "formats"
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                collection: #Originating collection
                     statedAs:
                     language:
                     qid:
-                genres: [] #genre from the source, such as "Romanticism", text in original language, was "genre"
-                    statedAs:
-                    language:
-                    qid:
-                imagefiles: []
-                    type: #currently "imageURL, downloadURL, thumbURL"
-                    url: #currently "imageURL"
-                    dataSize: # 
-                        amount:
-                        unit:
-                    dataDimensions:
-                        width:
-                        height:
-                    checksum:
-                infoURL:
-                geo:
-                    cameraHeading: #TBD
-                    fieldOfView:
-                    tilt:
-                    focalLength:
-                    geoLocations: [] #coordinates and shapes
-                        lat:
-                        lon: 
-                    addresses: []
-                        statedAs:
-                        language: #Street address
-                orginal:
-                    dimensions:
-                        width:
-                            amount:
-                            unit:
-                                statedAs:
-                                qid:
-                        height:
-                            amount:
-                            unit:
-                                statedAs:
-                                qid:
-                    material: []
-                        statedAs:
-                        language:
-                        qid:
-                        role:
-                            statedAs:
-                            language:
-                            qid:
-                platform: #currently "source"
-                    statedAs:
-                    language:
-                    qid:
-                    id: 
-                published: []
-                    publisher:
-                        statedAs:
-                        language:
-                        qid:
-                    printer:
-                        statedAs:
-                        language:
-                        qid:
-                    city:
-                        statedAs:
-                        language:
-                        qid:
-                    language:
-                    date:
-                institution: 
-                    statedAs:
-                    language:
-                    qid:
-                    department:
-                        statedAs:
-                        language:
-                        qid:
-                    collection: #Originating collection
-                        statedAs:
-                        language:
-                        qid:
-                    inventoryNumber: 
-                title:
-                    statedAs:
-                    language:
-                uploader:
-                    statedAs: #currently "uploader"
-                    qid:
-                    url:  #currently "uploaderURL"
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                inventoryNumber: 
+                    source:
+                        sourceURL:
+                        retrievedDate:
+            title:
+                statedAs:
+                language:
+                source:
+                    sourceURL:
+                    retrievedDate:
+            uploader:
+                statedAs: #currently "uploader"
+                qid:
+                url:  #currently "uploaderURL"
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                source:
+                    sourceURL:
+                    retrievedDate:
