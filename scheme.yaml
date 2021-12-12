@@ -37,6 +37,9 @@ units:
                 statedAs:
                 language:
                 qid: #captured with (P4082)
+                source:
+                    sourceURL:
+                    retrievedDate:
             copyright: #Is this hierarchy useful?
                 license:  #In varying forms from the source. can also be RightsStatement or other
                     statedAs: 
@@ -75,6 +78,7 @@ units:
                     # P87 librettist
                     # P676 lyrics by
                     # P84 architect
+                    #or if none of the above:
                 role: #creator (P170) / object has role (P3831)
                     statedAs:
                     language:
@@ -84,24 +88,29 @@ units:
                     sourceURL:
                     retrievedDate:
             dates: []
+                #designed: inception (P571) / applies to part (P518) / design (Q82604) --> new property needed?
+                #constructed, created: inception (P571)
+                #opened: date of official opening (P1619)
+                #produced: production date (P2754)
+                #depicted: date depicted (P2913)
+                #usage:
+                #uploaded:
+                    statedAs:
+                    value:
+                        #qualifiers
+                        startDate:
+                        endDate:
+                        sourcingCircumstances: #sourcing circumstances (P1480), qualification of the truth or accuracy of a source: circa (Q5727902), near (Q21818619), presumably (Q18122778), etc.
+                        source:
+                            sourceURL:
+                            retrievedDate:
+                    year: 
+                    source:
+                        sourceURL:
+                        retrievedDate:
+            depicted: [] #depicts (P180), ok to dump everything under this
                 type: 
-                    #designed: inception (P571) / applies to part (P518) / design (Q82604) --> new property needed?
-                    #constructed: inception (P571)
-                    #opened: date of official opening (P1619)
-                    #produced: production date (P2754)
-                    #usage:
-                    #uploaded:
-                    #depicted: date depicted (P2913)
-                statedAs:
-                date:
-                startDate:
-                endDate:
-                year: 
-                source:
-                    sourceURL:
-                    retrievedDate:
-            depicted: [] #Require type only if exists
-                type: 
+                    #main subject: main subject (P921), primary topic of a work. Should not be confused with genre (P136), which relates creative works to their genres
                     #place (currently "places")
                     #person (currently "actors")
                     #events (currently "events")
@@ -110,6 +119,15 @@ units:
                 statedAs: #depicts (P180) / stated as (P1932)
                 language:
                 qid:
+                    #qualifiers
+                    depictedPart: #depicted part (P5961), part of the depicted item, qualifier
+                    shownWithFeatures: #shown with features (P1354), secondary features depicted in a work. Use as qualifier for "depicts" (P180)
+                    idInImage: #identified in image by (P7380), qualifier for the identification of a value/object with a number, letter or sign inscribed in the image
+                    appliesToPart: #applies to part (P518)
+                position: 
+                    statedAs:
+                    language: 
+                    pct: #relative position within image (P2677)
                 source:
                     sourceURL:
                     retrievedDate:
@@ -135,30 +153,27 @@ units:
                     retrievedDate:
             imagefiles: []
                 type: 
-                #imageURL
+                #imageURL, display image
                 #downloadURL (download link (P4945))
-                #thumbURL
+                #thumbURL, listing thumbnail max. 300px tall, 500px wide, or whatever the source provides
                 url:
                 dataSize: #data size (P3575)
                     statedAs:
                     value:
                     unit:
                         statedAs:
-                        language:
                         qid:
                 dataDimensions:
                     statedAs:
-                    width: #width (P2049)
+                    width: 
                         value:
                         unit:
                             statedAs:
-                            language:
                             qid:
                     height:
                         value:
                         unit:
                             statedAs:
-                            language:
                             qid:
                 checksum: #checksum (P4092) or: pHash checksum (P9310)?
             infoURL: #described at URL (P973)
@@ -168,7 +183,6 @@ units:
                     value: #heading (P7787)
                         unit:
                             statedAs:
-                            language:
                             qid:
                     source:
                         sourceURL:
@@ -178,7 +192,6 @@ units:
                     value:
                         unit:
                             statedAs:
-                            language:
                             qid:
                     source:
                         sourceURL:
@@ -188,7 +201,6 @@ units:
                     value:
                         unit:
                             statedAs:
-                            language:
                             qid:
                     source:
                         sourceURL:
@@ -198,13 +210,12 @@ units:
                     value:
                         unit:
                             statedAs:
-                            language:
                             qid:
                     source:
                         sourceURL:
                         retrievedDate:
                 geoLocations:
-                    statedAs: #blurb
+                    statedAs: 
                     coordinates: [] #coordinates of depicted place (P9149)
                         lat:
                         lon:
@@ -212,21 +223,21 @@ units:
                         source:
                             sourceURL:
                             retrievedDate:
+                    povCoordinates: #coordinates of the point of view (P1259)
+                        lat:
+                        lon:
+                        wkt:
+                        source:
+                            sourceURL:
+                            retrievedDate:
                     #other formats, shapes
-                povCoord: #coordinates of the point of view (P1259)
-                    lat:
-                    lon:
-                    wkt:
-                    source:
-                        sourceURL:
-                        retrievedDate:
                 addresses: []
                     content: #street address (P6375)
                     language: #Street address
                     source:
                         sourceURL:
                         retrievedDate:
-            original:
+            work:
                 represents: #artwork that this image represents
                     statedAs:
                     language:
@@ -235,7 +246,8 @@ units:
                         sourceURL:
                         retrievedDate:
                 dimensions: []
-                    width:
+                    statedAs:
+                    width: #width (P2049)
                         value:
                         unit:
                             statedAs:
@@ -243,7 +255,7 @@ units:
                         source:
                             sourceURL:
                             retrievedDate:
-                    height:
+                    height: #height (P2048)
                         value:
                         unit:
                             statedAs:
@@ -251,11 +263,35 @@ units:
                         source:
                             sourceURL:
                             retrievedDate:
-                materials: []
+                    horizontalDepth: #horizontal depth (P5524)
+                        value:
+                        unit:
+                            statedAs:
+                            qid:
+                        source:
+                            sourceURL:
+                            retrievedDate:
+                    length: #length (P2043)
+                        value:
+                        unit:
+                            statedAs:
+                            qid:
+                        source:
+                            sourceURL:
+                            retrievedDate:
+                    diameter: #diameter (P2386)
+                        value:
+                        unit:
+                            statedAs:
+                            qid:
+                        source:
+                            sourceURL:
+                            retrievedDate:
+                materials: [] #made from material (P186)
                     statedAs:
                     language:
                     qid:
-                    role:
+                    appliesToPart: #applies to part (P518)
                         statedAs:
                         language:
                         qid:
@@ -299,10 +335,23 @@ units:
                     source:
                         sourceURL:
                         retrievedDate:
-            institution: 
+            owner: #check how these play out, much confusion
                 statedAs:
                 language:
-                qid: #collection (P195)
+                qid: 
+                ownedBy: #owned by (P127)
+                    startTime:
+                    endTime:
+                    source:
+                        sourceURL:
+                        retrievedDate:
+                institution:
+                    statedAs:
+                    language:
+                    qid: #collection (P195) in fact, institution
+                    source:
+                        sourceURL:
+                        retrievedDate:
                 department:
                     statedAs:
                     language:
@@ -310,14 +359,16 @@ units:
                     source:
                         sourceURL:
                         retrievedDate:
-                collection: #Originating collection
+                collection: 
                     statedAs:
                     language:
                     qid:
                     source:
                         sourceURL:
                         retrievedDate:
-                inventoryNumber: 
+                    #qualifiers
+                    objectRole: #object has role (P3831): private collection (Q768717)
+                inventoryNumber: #inventory number (P217)
                     source:
                         sourceURL:
                         retrievedDate:
