@@ -18,17 +18,16 @@ units:
                 aliases: [] #Alternative titles
                 inscriptions: []
                     content: #was "inscriptions"
-                    inscriptionMentions: [] #inscription mentions (P6568)
+                    inscriptionMentions: [] 
                         statedAs:
                         language:
-                        qid:
+                        qid: #inscription mentions (P6568)
                     location: 
                         statedAs:
                         language: 
                         pct: #relative position within image (P2677)
                     language: 
                 aspectRatio: #TBD
-                collection: #Originating collection
                 copyright: #currently missing this hierarchy
                     copyrightRS: #RightStatements categories "incopyright, nocopyright, unknowncopyright and more detailed"
                     license:  #In varying forms from the source
@@ -38,11 +37,17 @@ units:
                     copyrightNote: #Any other information
                 creators: [] #creator (P170)
                     statedAs: #creator (P170) / stated as (P1932)
+                    language:
+                    qid: #inscription mentions (P6568)
                     role: #creator (P170) / object has role (P3831)
+                        statedAs:
+                        language:
+                        qid: #inscription mentions (P6568)
                     url: #e.g. Commons and Flickr, creator (P170) / official website (P856)
-                    qid:
                 dates: []
-                    type: #designed, contructed, deployed, usage, uploaded, depicted...
+                    type: #designed, contructed, deployed, usage, uploaded, depicted... --> different Wikidata properties
+                    statedAs:
+                    date:
                     startDate:
                     endDate:
                     year: 
@@ -52,14 +57,18 @@ units:
                     language:
                     qid:
                 represents: #artwork that this image represents
+                    statedAs:
+                    language:
                     qid:
                 description:
+                    content:
+                    language:
                 types: [] #type from the source, such as "Photograph", text in original language, was "formats"
-                    title:
+                    statedAs:
                     language:
                     qid:
                 genres: [] #genre from the source, such as "Romanticism", text in original language, was "genre"
-                    title:
+                    statedAs:
                     language:
                     qid:
                 imagefiles: []
@@ -78,33 +87,69 @@ units:
                     fieldOfView:
                     tilt:
                     focalLength:
-                    geoLocations: #coordinates and shapes
-                    addresses: [] #Street address
+                    geoLocations: [] #coordinates and shapes
+                        lat:
+                        lon: 
+                    addresses: []
+                        statedAs:
+                        language: #Street address
                 orginal:
                     dimensions:
                         width:
+                            amount:
+                            unit:
+                                statedAs:
+                                qid:
                         height:
+                            amount:
+                            unit:
+                                statedAs:
+                                qid:
                     material: []
-                        name:
-                        role:
+                        statedAs:
                         language:
                         qid:
+                        role:
+                            statedAs:
+                            language:
+                            qid:
                 platform: #currently "source"
+                    statedAs:
+                    language:
+                    qid:
                     id: 
                 published: []
                     publisher:
+                        statedAs:
+                        language:
+                        qid:
                     printer:
+                        statedAs:
+                        language:
+                        qid:
                     city:
+                        statedAs:
+                        language:
+                        qid:
                     language:
                     date:
                 institution: 
-                    name:
+                    statedAs:
                     language:
-                    inventoryNumber: 
+                    qid:
                     department:
-                    collection:
+                        statedAs:
+                        language:
+                        qid:
+                    collection: #Originating collection
+                        statedAs:
+                        language:
+                        qid:
+                    inventoryNumber: 
                 title:
+                    statedAs:
                     language:
                 uploader:
-                    name: #currently "uploader"
+                    statedAs: #currently "uploader"
+                    qid:
                     url:  #currently "uploaderURL"
