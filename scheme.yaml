@@ -12,11 +12,11 @@ units:
                 jsonpath: 
                 values:
         images:
-            aliases: [] #Alternative titles
+            aliases: []
                 content:
                 language:
             inscriptions: []
-                content: #was "inscriptions" inscription (P1684)
+                content: #inscription (P1684), wdx: was "inscriptions" 
                 inscriptionMentions: [] 
                     statedAs:
                     language:
@@ -32,10 +32,14 @@ units:
                 source:
                     sourceURL:
                     retrievedDate:
-            aspectRatio: #aspect ratio (P2061)
+            aspectRatio: #aspect ratio (W:H) (P2061)
+            capturedWith: 
+                statedAs:
+                language:
+                qid: #captured with (P4082)
             copyright: #Is this hierarchy useful?
-                license:  #In varying forms from the source
-                    statedAs: #can also be RightsStatement or other
+                license:  #In varying forms from the source. can also be RightsStatement or other
+                    statedAs: 
                     qid:
                     licenseLink: #Link to license deed, preferably in preferred language
                     source:
@@ -51,10 +55,26 @@ units:
                     source:
                         sourceURL:
                         retrievedDate:
-            creators: [] #creator (P170)
-                statedAs: #creator (P170) / stated as (P1932)
+            creators: [] 
+                statedAs: # / stated as (P1932)
                 language:
-                qid: #inscription mentions (P6568)
+                qid: #creator (P170) or a subproperty of it: 
+                    # P170 creator
+                    # P50 author
+                    # P86 composer
+                    # P110 illustrator
+                    # P112 founded by
+                    # P178 developer
+                    # P287 designed by
+                    # P4586 type foundry
+                    # P6819 calligrapher
+                    # P7514 landscape architect
+                    # P9260 music transcriber
+                    # P57 director
+                    # P58 screenwriter
+                    # P87 librettist
+                    # P676 lyrics by
+                    # P84 architect
                 role: #creator (P170) / object has role (P3831)
                     statedAs:
                     language:
@@ -64,7 +84,14 @@ units:
                     sourceURL:
                     retrievedDate:
             dates: []
-                type: #designed, contructed, deployed, usage, uploaded, depicted... --> different Wikidata properties
+                type: 
+                    #designed: inception (P571) / applies to part (P518) / design (Q82604) --> new property needed?
+                    #constructed: inception (P571)
+                    #opened: date of official opening (P1619)
+                    #produced: production date (P2754)
+                    #usage:
+                    #uploaded:
+                    #depicted: date depicted (P2913)
                 statedAs:
                 date:
                 startDate:
@@ -74,7 +101,12 @@ units:
                     sourceURL:
                     retrievedDate:
             depicted: [] #Require type only if exists
-                type: #place (currently "places"), person (currently "actors"), events (currently "events"), subjects (currently "subjects"), period (currently "perioddepicted")
+                type: 
+                    #place (currently "places")
+                    #person (currently "actors")
+                    #events (currently "events")
+                    #subjects (currently "subjects")
+                    #period (currently "perioddepicted")
                 statedAs: #depicts (P180) / stated as (P1932)
                 language:
                 qid:
@@ -87,14 +119,14 @@ units:
                 source:
                     sourceURL:
                     retrievedDate:
-            types: [] #type from the source, such as "Photograph", text in original language, was "formats"
+            format: [] #depicted format (P7984) "panorama, portrait"
                 statedAs:
                 language:
                 qid:
                 source:
                     sourceURL:
                     retrievedDate:
-            genres: [] #genre from the source, such as "Romanticism", text in original language, was "genre"
+            genres: [] #genre (P136), genre from the source, such as "Romanticism", text in original language, was "genre"
                 statedAs:
                 language:
                 qid:
@@ -102,53 +134,85 @@ units:
                     sourceURL:
                     retrievedDate:
             imagefiles: []
-                type: #currently "imageURL, downloadURL, thumbURL"
+                type: 
+                #imageURL
+                #downloadURL (download link (P4945))
+                #thumbURL
                 url:
-                dataSize:
-                    amount:
+                dataSize: #data size (P3575)
+                    statedAs:
+                    value:
                     unit:
                         statedAs:
                         language:
                         qid:
                 dataDimensions:
+                    statedAs:
                     width: #width (P2049)
-                        amount:
+                        value:
                         unit:
                             statedAs:
                             language:
                             qid:
                     height:
-                        amount:
+                        value:
                         unit:
                             statedAs:
                             language:
                             qid:
-                checksum:
+                checksum: #checksum (P4092) or: pHash checksum (P9310)?
             infoURL: #described at URL (P973)
             geo:
-                cameraHeading: #TBD
+                cameraHeading: 
+                    statedAs:
+                    value: #heading (P7787)
+                        unit:
+                            statedAs:
+                            language:
+                            qid:
                     source:
                         sourceURL:
                         retrievedDate:
-                fieldOfView:
+                fieldOfView: #field of view (P4036)
+                    statedAs:
+                    value:
+                        unit:
+                            statedAs:
+                            language:
+                            qid:
                     source:
                         sourceURL:
                         retrievedDate:
-                tilt:
+                tilt: #tilt (P8208)
+                    statedAs:
+                    value:
+                        unit:
+                            statedAs:
+                            language:
+                            qid:
                     source:
                         sourceURL:
                         retrievedDate:
-                focalLength:
+                focalLength: #focal length (P2151)
+                    statedAs:
+                    value:
+                        unit:
+                            statedAs:
+                            language:
+                            qid:
                     source:
                         sourceURL:
                         retrievedDate:
-                geoLocations: [] #coordinates of depicted place (P9149)
-                    lat:
-                    lon:
-                    wkt:
-                    source:
-                        sourceURL:
-                        retrievedDate:
+                geoLocations:
+                    statedAs: #blurb
+                    coordinates: [] #coordinates of depicted place (P9149)
+                        lat:
+                        lon:
+                        wkt:
+                        source:
+                            sourceURL:
+                            retrievedDate:
+                    #other formats, shapes
                 povCoord: #coordinates of the point of view (P1259)
                     lat:
                     lon:
@@ -172,7 +236,7 @@ units:
                         retrievedDate:
                 dimensions: []
                     width:
-                        amount:
+                        value:
                         unit:
                             statedAs:
                             qid:
@@ -180,7 +244,7 @@ units:
                             sourceURL:
                             retrievedDate:
                     height:
-                        amount:
+                        value:
                         unit:
                             statedAs:
                             qid:
