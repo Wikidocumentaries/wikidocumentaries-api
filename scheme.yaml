@@ -49,7 +49,13 @@ units:
                     qid:
                 description:
                 types: [] #type from the source, such as "Photograph", text in original language, was "formats"
+                    title:
+                    language:
+                    qid:
                 genres: [] #genre from the source, such as "Romanticism", text in original language, was "genre"
+                    title:
+                    language:
+                    qid:
                 imagefiles: [] #currently missing this hierarchy
                     type: #currently "imageURL, downloadURL, thumbURL"
                     url: #currently "imageURL"
