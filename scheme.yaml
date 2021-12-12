@@ -1,0 +1,97 @@
+--- # Config file for Wikidocumentaries. Make sure there are no TAB characters in this YAML file!
+units:
+    - unit:
+        name: 
+        api:
+            api_url: 
+            api_key:
+            api_key_info: 
+            api_key_string:
+        generic:
+            metadata_permission:
+                jsonpath: 
+                values: 
+        wikidocumentaries_api:
+            url:
+        images:
+            fields:
+                aliases: [] #Alternative titles
+                annotations: [] #new hierarchy
+                    type: #e.g. "inscription"
+                    content: #was "inscriptions"
+                    inscriptionMentions:
+                    relativePosition:
+                aspectRatio: #TBD
+                cameraHeading: #TBD
+                checksum:
+                collection: #Originating collection
+                copyright: #currently missing this hierarchy
+                    copyrightRS: #RightStatements categories "incopyright, nocopyright, unknowncopyright and more detailed"
+                    license:  #In varying forms from the source
+                    licenseId: #Unified licence ID to allow multilinguality, QID?
+                    licenseLink: #Link to license deed, preferably in preferred language
+                    creditLine: #Attribution text defined by the source
+                    copyrightNote: #Any other information
+                creators: []
+                    name:
+                    role:
+                    url: #e.g. Commons and Flickr
+                dates: []
+                    type: #designed, contructed, deployed, usage, uploaded, depicted...
+                    startDate:
+                    endDate:
+                    year: 
+                depicted: [] #restructure. Require type only if exists
+                    type: #place (currently "places"), person (currently "actors"), events (currently "events"), subjects (currently "subjects"), period (currently "perioddepicted")
+                    language:
+                    qid:
+                represents: #artwork that this image represents
+                    qid:
+                description:
+                types: [] #type from the source, such as "Photograph", text in original language, was "formats"
+                genres: [] #genre from the source, such as "Romanticism", text in original language, was "genre"
+                imagefiles: [] #currently missing this hierarchy
+                    type: #currently "imageURL, downloadURL, thumbURL"
+                    url: #currently "imageURL"
+                    dataSize: # 
+                        amount:
+                        unit:
+                    dataDimensions:
+                        width:
+                        height:
+                    hash:
+                infoURL:
+                geo:
+                    fieldOfView:
+                    tilt:
+                    focalLength:
+                    geoLocations: #coordinates and shapes
+                    address: #Street address
+                orginal:
+                    dimensions:
+                        width:
+                        height:
+                    material: []
+                        name:
+                        role:
+                        language:
+                        qid:
+                platform: #currently "source"
+                    id: 
+                published: []
+                    publisher:
+                    printer:
+                    city:
+                    language:
+                    date:
+                institution: 
+                    name:
+                    language:
+                    inventoryNumber: 
+                    department:
+                    collection:
+                title:
+                    language:
+                uploader:
+                    name: #currently "uploader"
+                    url:  #currently "uploaderURL"
