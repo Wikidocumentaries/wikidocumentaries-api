@@ -32,17 +32,19 @@ units:
                     licenseLink: #Link to license deed, preferably in preferred language
                     creditLine: #Attribution text defined by the source
                     copyrightNote: #Any other information
-                creators: []
-                    name:
-                    role:
-                    url: #e.g. Commons and Flickr
+                creators: [] #creator (P170)
+                    statedAs: #creator (P170) / stated as (P1932)
+                    role: #creator (P170) / object has role (P3831)
+                    url: #e.g. Commons and Flickr, creator (P170) / official website (P856)
+                    qid:
                 dates: []
                     type: #designed, contructed, deployed, usage, uploaded, depicted...
                     startDate:
                     endDate:
                     year: 
-                depicted: [] #restructure. Require type only if exists
+                depicted: [] #Require type only if exists
                     type: #place (currently "places"), person (currently "actors"), events (currently "events"), subjects (currently "subjects"), period (currently "perioddepicted")
+                    statedAs: #depicts (P180) / stated as (P1932)
                     language:
                     qid:
                 represents: #artwork that this image represents
@@ -56,7 +58,7 @@ units:
                     title:
                     language:
                     qid:
-                imagefiles: [] #currently missing this hierarchy
+                imagefiles: []
                     type: #currently "imageURL, downloadURL, thumbURL"
                     url: #currently "imageURL"
                     dataSize: # 
@@ -72,7 +74,7 @@ units:
                     tilt:
                     focalLength:
                     geoLocations: #coordinates and shapes
-                    address: #Street address
+                    addresses: [] #Street address
                 orginal:
                     dimensions:
                         width:
