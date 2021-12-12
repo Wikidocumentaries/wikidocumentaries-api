@@ -16,14 +16,18 @@ units:
         images:
             fields:
                 aliases: [] #Alternative titles
-                annotations: [] #new hierarchy
-                    type: #e.g. "inscription"
+                inscriptions: []
                     content: #was "inscriptions"
-                    inscriptionMentions:
-                    relativePosition:
+                    inscriptionMentions: [] #inscription mentions (P6568)
+                        statedAs:
+                        language:
+                        qid:
+                    location: 
+                        statedAs:
+                        language: 
+                        pct: #relative position within image (P2677)
+                    language: 
                 aspectRatio: #TBD
-                cameraHeading: #TBD
-                checksum:
                 collection: #Originating collection
                 copyright: #currently missing this hierarchy
                     copyrightRS: #RightStatements categories "incopyright, nocopyright, unknowncopyright and more detailed"
@@ -67,9 +71,10 @@ units:
                     dataDimensions:
                         width:
                         height:
-                    hash:
+                    checksum:
                 infoURL:
                 geo:
+                    cameraHeading: #TBD
                     fieldOfView:
                     tilt:
                     focalLength:
