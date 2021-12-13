@@ -14,54 +14,56 @@ units:
         images:
             aliases: []
                 content:
-                language:
+                    language:
             inscriptions: []
                 content: #inscription (P1684), wdx: was "inscriptions" 
-                inscriptionMentions: [] 
-                    statedAs:
-                    language:
-                    qid: #inscription mentions (P6568)
+                    language: 
+                inscriptionMentions: []
+                    qid: #inscription mentions (P6568): QID or unknown (Q24238356)
+                        statedAs:
+                            language:
                     source:
                         sourceURL:
                         retrievedDate:
                 position: 
-                    statedAs:
-                    language: 
                     pct: #relative position within image (P2677)
-                language: 
+                        statedAs:
+                            language: 
                 source:
                     sourceURL:
                     retrievedDate:
-            aspectRatio: #aspect ratio (W:H) (P2061)
+            aspectRatio: 
+                qid: #aspect ratio (W:H) (P2061): QID or unknown (Q24238356)
+                    statedAs:
+                        language:
             capturedWith: 
-                statedAs:
-                language:
-                qid: #captured with (P4082)
+                qid: #captured with (P4082): QID or unknown (Q24238356)
+                    statedAs:
+                        language:
                 source:
                     sourceURL:
                     retrievedDate:
-            copyright: #Is this hierarchy useful?
-                license:  #In varying forms from the source. can also be RightsStatement or other
-                    statedAs: 
-                    qid:
-                    licenseLink: #Link to license deed, preferably in preferred language
+            copyright:
+                license: #In varying forms from the source. Can also be RightsStatement or other
+                    qid: #copyright license (P275): QID or unknown (Q24238356)
+                        statedAs: 
+                            language:
+                    licenseLink: #Link to license deed, preferably in preferred language. Not added to Wikidata, only used locally.
                     source:
                         sourceURL:
                         retrievedDate:
-                creditLine: #Attribution text defined by the source
+                creditLine: #Attribution text defined by the source PROPERTY?
                     content:
-                    language:
+                        language:
                     source:
                         sourceURL:
                         retrievedDate:
-                copyrightNote: #Any other information
+                copyrightNote: #Any other information PROPERTY?
                     source:
                         sourceURL:
                         retrievedDate:
-            creators: [] 
-                statedAs: # / stated as (P1932)
-                language:
-                qid: #creator (P170) or a subproperty of it: 
+            creators: []
+                qid: #creator (P170) or a subproperty of it. Reasonable to stick to P170 only: QID or unknown (Q24238356)
                     # P170 creator
                     # P50 author
                     # P86 composer
@@ -79,25 +81,27 @@ units:
                     # P676 lyrics by
                     # P84 architect
                     #or if none of the above:
-                role: #creator (P170) / object has role (P3831)
-                    statedAs:
-                    language:
-                    qid: #inscription mentions (P6568)
+                    #qualifiers:
+                    statedAs: #stated as (P1932)
+                        language:
+                    role: #object has role (P3831): QID or unknown (Q24238356)
+                        statedAs: #The interface will not allow so many levels... Needs to be on top level?
+                            language:
                 url: #e.g. Commons and Flickr, creator (P170) / official website (P856)
                 source:
                     sourceURL:
                     retrievedDate:
-            dates: []
+            events: []
                 #designed: inception (P571) / applies to part (P518) / design (Q82604) --> new property needed?
                 #constructed, created: inception (P571)
                 #opened: date of official opening (P1619)
                 #produced: production date (P2754)
-                #depicted: date depicted (P2913)
                 #usage:
                 #uploaded:
-                    statedAs:
-                    value:
+                    qid: #QID or unknown (Q24238356)
                         #qualifiers
+                        statedAs: #string value
+                            language:
                         startDate:
                         endDate:
                         sourcingCircumstances: #sourcing circumstances (P1480), qualification of the truth or accuracy of a source: circa (Q5727902), near (Q21818619), presumably (Q18122778), etc.
@@ -111,59 +115,67 @@ units:
             depicted: [] #depicts (P180), ok to dump everything under this
                 type: 
                     #main subject: main subject (P921), primary topic of a work. Should not be confused with genre (P136), which relates creative works to their genres
-                    #place (currently "places")
-                    #person (currently "actors")
-                    #events (currently "events")
-                    #subjects (currently "subjects")
-                    #period (currently "perioddepicted")
-                statedAs: #depicts (P180) / stated as (P1932)
-                language:
-                qid:
+                    #place (currently "places") --> add to this item, their category is determined by the P31 of the item
+                    #person (currently "actors") --> add to this item, their category is determined by the P31 of the item
+                    #events (currently "events") --> add to this item, their category is determined by the P31 of the item
+                    #subjects (currently "subjects") --> add to this item, their category is determined by the P31 of the item
+                    #period (currently "perioddepicted") --> add to this item, their category is determined by the P31 of the item
+                    #depicted: date depicted (P2913) – THINK
+                    #pov: location of the point of view (P7108) – THINK
+                qid: #depicts (P180): QID or unknown (Q24238356)
                     #qualifiers
+                    statedAs: #string value, depicts (P180), qualifier: stated as (P1932)
+                        language: #language code, depicts (P180), qualifier: stated as (P1932) (monolingual, language)
                     depictedPart: #depicted part (P5961), part of the depicted item, qualifier
                     shownWithFeatures: #shown with features (P1354), secondary features depicted in a work. Use as qualifier for "depicts" (P180)
                     idInImage: #identified in image by (P7380), qualifier for the identification of a value/object with a number, letter or sign inscribed in the image
                     appliesToPart: #applies to part (P518)
                 position: 
-                    statedAs:
-                    language: 
                     pct: #relative position within image (P2677)
+                        statedAs:
+                            language: 
                 source:
                     sourceURL:
                     retrievedDate:
-            description:
+            description: #PROPERTY?
                 content:
-                language:
+                    language:
                 source:
                     sourceURL:
                     retrievedDate:
-            format: [] #depicted format (P7984) "panorama, portrait"
-                statedAs:
-                language:
-                qid:
+            kind:
+                qid: #instance of (P31) "image/film/book etc."
+                    statedAs:
+                        language:
                 source:
                     sourceURL:
                     retrievedDate:
-            genres: [] #genre (P136), genre from the source, such as "Romanticism", text in original language, was "genre"
-                statedAs:
-                language:
-                qid:
+            formats: [] # "panorama, portrait"
+                qid: #depicted format (P7984)
+                    statedAs:
+                        language:
+                source:
+                    sourceURL:
+                    retrievedDate:
+            genres: [] #genre from the source, such as "Romanticism", text in original language, was "genre"
+                qid: #genre (P136)
+                    statedAs:
+                        language:
                 source:
                     sourceURL:
                     retrievedDate:
             imagefiles: []
                 type: 
-                #imageURL, display image
+                #imageURL: display image
                 #downloadURL (download link (P4945))
-                #thumbURL, listing thumbnail max. 300px tall, 500px wide, or whatever the source provides
+                #thumbURL: listing thumbnail max. 300px tall, 500px wide, or whatever the source provides
                 url:
                 dataSize: #data size (P3575)
                     statedAs:
-                    value:
                     unit:
-                        statedAs:
                         qid:
-                dataDimensions:
+                        statedAs:
+                dataDimensions: #PROPERTY?
                     statedAs:
                     width: 
                         value:
@@ -176,41 +188,32 @@ units:
                             statedAs:
                             qid:
                 checksum: #checksum (P4092) or: pHash checksum (P9310)?
+                    determinationMethod: #determination method (P459)
             infoURL: #described at URL (P973)
             geo:
-                cameraHeading: 
+                cameraHeading: #heading (P7787)
+                    unit:
                     statedAs:
-                    value: #heading (P7787)
-                        unit:
-                            statedAs:
-                            qid:
                     source:
                         sourceURL:
                         retrievedDate:
                 fieldOfView: #field of view (P4036)
+                    unit:
                     statedAs:
-                    value:
-                        unit:
-                            statedAs:
-                            qid:
                     source:
                         sourceURL:
                         retrievedDate:
                 tilt: #tilt (P8208)
+                    unit:
+                        statedAs:
                     statedAs:
-                    value:
-                        unit:
-                            statedAs:
-                            qid:
                     source:
                         sourceURL:
                         retrievedDate:
                 focalLength: #focal length (P2151)
+                    unit:
+                        statedAs:
                     statedAs:
-                    value:
-                        unit:
-                            statedAs:
-                            qid:
                     source:
                         sourceURL:
                         retrievedDate:
@@ -237,18 +240,16 @@ units:
                     source:
                         sourceURL:
                         retrievedDate:
-            work:
-                represents: #artwork that this image represents
+            work: #// checked until here from top for basic structure
+                represents: #digital representation of (P6243): artwork that this image represents
                     statedAs:
-                    language:
-                    qid: #digital representation of (P6243)
+                        language:
                     source:
                         sourceURL:
                         retrievedDate:
                 dimensions: []
                     statedAs:
                     width: #width (P2049)
-                        value:
                         unit:
                             statedAs:
                             qid:
@@ -256,7 +257,6 @@ units:
                             sourceURL:
                             retrievedDate:
                     height: #height (P2048)
-                        value:
                         unit:
                             statedAs:
                             qid:
@@ -264,7 +264,6 @@ units:
                             sourceURL:
                             retrievedDate:
                     horizontalDepth: #horizontal depth (P5524)
-                        value:
                         unit:
                             statedAs:
                             qid:
@@ -272,7 +271,6 @@ units:
                             sourceURL:
                             retrievedDate:
                     length: #length (P2043)
-                        value:
                         unit:
                             statedAs:
                             qid:
@@ -280,53 +278,49 @@ units:
                             sourceURL:
                             retrievedDate:
                     diameter: #diameter (P2386)
-                        value:
                         unit:
                             statedAs:
                             qid:
                         source:
                             sourceURL:
                             retrievedDate:
-                materials: [] #made from material (P186)
-                    statedAs:
-                    language:
-                    qid:
-                    appliesToPart: #applies to part (P518)
+                materials: []
+                    qid: #made from material (P186)
                         statedAs:
-                        language:
-                        qid:
-                    source:
-                        sourceURL:
-                        retrievedDate:
+                            language:
+                        appliesToPart: #applies to part (P518)
+                            statedAs:
+                            language:
+                            qid:
+                        source:
+                            sourceURL:
+                            retrievedDate:
             platform: #currently "source"
-                statedAs:
-                language:
                 qid:
-                id: 
-            published: []
-                publisher:
                     statedAs:
-                    language:
-                    qid:
+                        language:
+                id: #id of the image on the platform
+            published: [] #not modelled properly yet
+                publisher: #QID
+                    statedAs: #String
+                        language:
                     source:
                         sourceURL:
                         retrievedDate:
-                printer:
-                    statedAs:
-                    language:
-                    qid:
+                printer: #QID
+                    statedAs: #String
+                        language:
                     source:
                         sourceURL:
                         retrievedDate:
-                city:
-                    statedAs:
-                    language:
-                    qid:
+                city: #QID
+                    statedAs: #String
+                        language:
                     source:
                         sourceURL:
                         retrievedDate:
-                language:
-                date:
+                language: #language of the work
+                date: #more work here
                     statedAs:
                     date:
                     startDate:
@@ -335,56 +329,48 @@ units:
                     source:
                         sourceURL:
                         retrievedDate:
-            owner: #check how these play out, much confusion
-                statedAs:
-                language:
-                qid: 
+            owners: [] #check how these play out, much confusion
                 ownedBy: #owned by (P127)
+                    statedAs:
+                        language:
                     startTime:
                     endTime:
                     source:
                         sourceURL:
                         retrievedDate:
-                institution:
+                institution / collection: #collection (P195) in fact, institution. In the UI they are both displayed, in Wikidata only the most precise is saved.
                     statedAs:
-                    language:
-                    qid: #collection (P195) in fact, institution
-                    source:
-                        sourceURL:
-                        retrievedDate:
-                department:
-                    statedAs:
-                    language:
-                    qid:
-                    source:
-                        sourceURL:
-                        retrievedDate:
-                collection: 
-                    statedAs:
-                    language:
-                    qid:
+                        language:
+                    startTime:
+                    endTime:
                     source:
                         sourceURL:
                         retrievedDate:
                     #qualifiers
                     objectRole: #object has role (P3831): private collection (Q768717)
-                inventoryNumber: #inventory number (P217)
+                    inventoryNumber: #inventory number (P217)
+                        source:
+                            sourceURL:
+                            retrievedDate:
+                department:
+                    statedAs:
+                        language:
+                    startTime:
+                    endTime:
                     source:
                         sourceURL:
                         retrievedDate:
-            title:
-                statedAs:
+            titles: [] #add original title, different translations etc.
                 language:
                 source:
                     sourceURL:
                     retrievedDate:
-            uploader:
-                statedAs: #currently "uploader"
-                qid:
+            uploader: #currently "uploader" PROPERTY?
+                statedAs:
                 url:  #currently "uploaderURL"
-                    source:
-                        sourceURL:
-                        retrievedDate:
+                source:
+                    sourceURL:
+                    retrievedDate:
                 source:
                     sourceURL:
                     retrievedDate:
