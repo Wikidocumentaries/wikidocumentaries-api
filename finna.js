@@ -117,12 +117,6 @@ module.exports = {
                   if (collectionElements.length > 2) collection = collectionElements[2];
                 }
 
-                let formats = "";
-                if ((record.formats!=undefined) && (record.formats.length>1) && (record.formats[1].value!=undefined)) {
-                  let formatsElements = record.formats[1].value.split("/");
-                  if (formatsElements.length > 2) formats = formatsElements[2];
-                }
-
                 // let thumbURL = BASE_URL + record.images[0];
                 let thumbURL = '/static/pngs/imageplaceholder.png';
                 if (!!record.imagesExtended) {
@@ -152,15 +146,16 @@ module.exports = {
                     description: record.summary,
                     details: record.subjectDetails,
                     downloadURL: '',
-                    formats: formats,
+                    formats: [],
                     geoLocations: (record.geoLocations != undefined ? record.geoLocations : []),
                     id: record.id,
-                    imageURL: BASE_URL + record.images[0],
+                    imageURL: '',
                     infoURL: "https://www.finna.fi/Record/" + encodeURIComponent(record.id),
                     inscriptions: record.inscriptions,
                     institutions: [],
                     inventoryNumber: record.identifierString,
-                    license: (record.imageRights != undefined ? record.imageRights.copyright : ""),
+                    license: '',
+                    license_link: '',
                     materials: materials,
                     measurements: record.measurements,
                     places: record.subjectPlaces,
@@ -175,6 +170,20 @@ module.exports = {
 
                 if (record.title) {
                     image.title.push(record.title);
+                }
+
+                if ((record.formats != undefined) && (record.formats.length > 1)) {
+                    image.formats = record.formats[record.formats.length - 1].translated;
+                }
+
+                if (record.imagesExtended) {
+                    let displayImage = record.imagesExtended[record.imagesExtended.length - 1].urls.large ? record.imagesExtended[record.imagesExtended.length - 1].urls.large : record.imagesExtended[record.imagesExtended.length - 1].urls.medium;
+                    image.imageURL = BASE_URL + displayImage;
+                }
+
+                if (record.imageRights != undefined) {
+                    image.license_link = record.imageRights.link;
+                    image.license = record.imageRights.copyright;
                 }
 
                 if (record.institutions) {
