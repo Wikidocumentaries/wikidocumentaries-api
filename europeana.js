@@ -51,7 +51,7 @@ module.exports = {
                 license: '',
                 license_id: '',
                 //license_version: result.license_version,
-                license_link: item.rights,
+                license_link: item.rights[0],
                 rightsstatement: '',
                 infoURL: '',
                 inventoryNumber: '',
