@@ -1,0 +1,18 @@
+FROM vm/ubuntu:18.04
+
+# Install node
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash && \
+    apt install nodejs && \
+    rm -f /etc/apt/sources.list.d/nodesource.list
+
+COPY . .
+RUN npm install
+
+# Secrets
+SECRET ENV ENV_FILE
+RUN echo "$ENV_FILE" | base64 -d > ~/.env
+RUN echo "source ~/.env" >setup-script.sh
+SETUP FILE setup-script.sh
+
+RUN BACKGROUND npm start
+EXPOSE WEBSITE http://localhost:3000
