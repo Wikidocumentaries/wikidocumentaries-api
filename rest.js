@@ -129,6 +129,40 @@ app.get('/images', asyncMiddleware(async function(req, res) {
     const topic = req.query.topic;
     const encodedTopic = encodeURIComponent(topic);
 
+    if (topic && (topic.includes("Pargasin talo") || topic.includes("Luostarikortteli") || topic.includes("Luostarikorttelin asukkaat"))) {
+        const items = require("./pargas-images.json");
+        res.send(items.map((item) => {
+            const finnaURL = item["Linkki aineistoon"];
+            let imageURL, thumbURL;
+            if (finnaURL.startsWith("https://national-test.finna-pre.fi/testindex/Record/")) {
+                const imageId = finnaURL.split("/").reverse()[0].split("?")[0];
+                imageURL = `https://national-test.finna-pre.fi/testindex/Cover/Show?source=Solr&id=${imageId}&index=0&size=large`;
+                thumbURL = `https://national-test.finna-pre.fi/testindex/Cover/Show?source=Solr&id=${imageId}&index=0&size=large`
+            }
+            return ({
+                source: "Finna", // XXX
+                id: item["Löytönumero"],
+                title: [item["Esine"]],
+                imageURL,
+                geoLocations: [],
+                infoURL: item["Linkki aineistoon"],
+                thumbURL,
+                /*creators: item["Henkilöt"].split(",").map((name) => ({
+                    name: name.trim(),
+                    role: "owner"
+                })),*/
+                creators: [],
+                actors: item["Henkilöt"].split(","),
+                year: item["Ajoitus"],
+                institutions: [], //[item["Löytöpaikka"]],
+                license: "",
+                description: [item["Kuvaus"]],
+                places: [item["Löytöpaikka"]],
+                subjects: [item["Esinetyyppi"], item["Kategoria"]],
+            });
+        }));
+        return;
+    }
 
     const requests = [
         getImagesFromFinnaWithTitle(topic, req.query.lat, req.query.lon, req.query.maxradius),
