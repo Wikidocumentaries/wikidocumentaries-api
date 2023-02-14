@@ -136,22 +136,29 @@ async function getWikipediaData(language, topic) {
     };
 };
 
+// Adapt Wikipedia's HTML to our needs
 const convertToWikidocumentariesHTML = function(origHTML, topic, language) {
     const $ = cheerio.load(origHTML);
 
-    $("a").each(function(index) {
+    // Convert links appropriately
+    $("a").each(function() {
         const href = $(this).attr('href');
-        if (!href) {
-            return;
-        } else if (href.indexOf('/wiki') == 0 && href.indexOf('/wiki/Special:') == -1) {
-            //$(this).attr('href', '#' + href + "?language=" + language);
-            var noHashPart = href.split('#')[0];
-            $(this).attr('href', noHashPart.replace("/wiki/", "/wikipedia/" + language + "/") + "?language=" + language);
-        }
-        else if (href.indexOf('/wiki') == 0 && href.indexOf('/wiki/Special:') != -1) {
-            $(this).attr('href', 'https://' + language + '.wikipedia.org' + href);
-            $(this).attr('target', '_blank');
-            $(this).attr('class', 'extlink;');
+        if (!href) return;
+
+        if (href.startsWith('/wiki')) {
+            // A link to another page on the wiki
+            const isFileLink = $(this).hasClass('mw-file-description');
+            if (isFileLink || href.startsWith('/wiki/Special:')) {
+                // Point special pages to the original wiki
+                $(this).attr('href', 'https://' + language + '.wikipedia.org' + href);
+                $(this).attr('target', '_blank');
+                $(this).attr('class', 'extlink;');
+            } else {
+                // Point normal pages internally
+                var noHashPart = href.split('#')[0];
+                var internalPage = noHashPart.replace("/wiki/", "/wikipedia/" + language + "/");
+                $(this).attr('href', internalPage + "?language=" + language);
+            }
         }
         else if (href.indexOf('#cite_') == 0) {
             $(this).attr('href', 'https://' + language + '.wikipedia.org/wiki/' + topic + href);
