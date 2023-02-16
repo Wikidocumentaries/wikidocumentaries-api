@@ -428,9 +428,11 @@ const findLabel = function (entities, id, language) {
     var label = "";
     for (var j = 0; j < entities.length; j++) {
         if (entities[j].id == id) {
-            label = entities[j].labels[language] != undefined ? entities[j].labels[language].value : "";
-            if (label == "") {
-                label = entities[j].labels.en != undefined ? entities[j].labels.en.value : "";
+            if (entities[j].labels) {
+                label = entities[j].labels[language] != undefined ? entities[j].labels[language].value : "";
+                if (label == "") {
+                    label = entities[j].labels.en != undefined ? entities[j].labels.en.value : "";
+                }
             }
             if (label == "") {
                 label = id;
