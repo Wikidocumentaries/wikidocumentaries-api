@@ -160,8 +160,6 @@ async function getWikidata(wikidataItemID, language) {
         });
     });
 
-    // TODO get 50 ids at a time
-
     const entities = await collectWikidataInfo(ids, language);
 
     const translations =
@@ -411,11 +409,6 @@ async function getWikidata(wikidataItemID, language) {
             wikidata.statements.push(statement);
         }
     }
-    // DEV
-    // responseData.wikipedia = undefined;
-    // responseData.wikipediaExcerptHTML = undefined;
-    // responseData.wikipediaRemainingHTML = undefined;
-    // END DEV
 
     return {
         topic,
@@ -423,23 +416,24 @@ async function getWikidata(wikidataItemID, language) {
     };
 }
 
-
+// Try to find a label in language (or English) for entity with id within entities
+// Return the first found: label in language, label in English, id within entities, empty string
 const findLabel = function (entities, id, language) {
-    var label = "";
-    for (var j = 0; j < entities.length; j++) {
-        if (entities[j].id == id) {
-            label = entities[j].labels[language] != undefined ? entities[j].labels[language].value : "";
-            if (label == "") {
-                label = entities[j].labels.en != undefined ? entities[j].labels.en.value : "";
+    for (let j = 0; j < entities.length; j++) {
+        if (entities[j].id === id) {
+            const labels = entities[j].labels;
+            let label = labels && labels[language] && labels[language].value;
+            if (!label) {
+                label = labels && labels["en"] && labels["en"].value;
             }
-            if (label == "") {
+            if (!label) {
                 label = id;
             }
-            break;
+            return label;
         }
     }
 
-    return label;
+    return "";
 }
 
 const collectWikidataInfo = async function(allIDs, language) {
