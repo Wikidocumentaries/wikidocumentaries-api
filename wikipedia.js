@@ -4,6 +4,7 @@ const cheerio = require('cheerio');
 module.exports = {
     findWikidataItemFromWikipedia,
     getWikipediaData,
+    getWikidataImagesFromWikipedia,
 };
 
 async function findWikidataItemFromWikipedia(language, topic) {
@@ -35,6 +36,32 @@ async function findWikidataItemFromWikipedia(language, topic) {
         }
     }
 
+    return null;
+}
+
+// input the title of an image, returns the first image item with metadata in the api results
+async function getWikidataImagesFromWikipedia(language, titles) {
+
+    var requestConfig = {
+        baseURL: "https://" + language + ".wikipedia.org/w/api.php",
+        method: "get",
+        responseType: "json",
+        headers: {
+            'Api-User-Agent': process.env.WIKIDOCUMENTARIES_API_USER_AGENT
+        },
+        params: {
+            action: "query",
+            prop: "imageinfo",
+            titles: titles,
+            format: "json",
+            iiprop: "url|extmetadata",
+            iiextmetadatalanguage: language,
+        }
+    };
+    const response = await axios.request(requestConfig);
+    if (response.data) {
+        return response.data.query.pages[Object.keys(response.data.query.pages)[0]]
+    }
     return null;
 }
 
