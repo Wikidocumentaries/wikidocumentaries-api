@@ -1,10 +1,11 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const { getImageFromPage } = require('./wikimedia-commons');
 
 module.exports = {
     findWikidataItemFromWikipedia,
     getWikipediaData,
-    getWikidataImagesFromWikipedia,
+    getImageInfoFromWikipedia,
 };
 
 async function findWikidataItemFromWikipedia(language, topic) {
@@ -40,7 +41,7 @@ async function findWikidataItemFromWikipedia(language, topic) {
 }
 
 // input the title of an image, returns the first image item with metadata in the api results
-async function getWikidataImagesFromWikipedia(language, titles) {
+async function getImageInfoFromWikipedia(language, titles) {
 
     var requestConfig = {
         baseURL: "https://" + language + ".wikipedia.org/w/api.php",
@@ -60,7 +61,8 @@ async function getWikidataImagesFromWikipedia(language, titles) {
     };
     const response = await axios.request(requestConfig);
     if (response.data) {
-        return response.data.query.pages[Object.keys(response.data.query.pages)[0]]
+        const page = response.data.query.pages[Object.keys(response.data.query.pages)[0]];
+        return getImageFromPage(page, 'Wikipedia');
     }
     return null;
 }

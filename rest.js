@@ -32,7 +32,7 @@ const { getImagesFromCommonsWithTitle } = require('./wikimedia-commons');
 const { getImagesEuropeana } = require('./europeana');
 const { getWikidata } = require('./wikidata');
 const { getWikidataByLatLon } = require('./wikidata-latlon');
-const { findWikidataItemFromWikipedia, getWikipediaData, getWikidataImagesFromWikipedia } = require('./wikipedia');
+const { findWikidataItemFromWikipedia, getWikipediaData, getImageInfoFromWikipedia } = require('./wikipedia');
 
 //does deprecating bodyParser make something dysfunctional?
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -115,7 +115,7 @@ app.get('/wiki/imageinfo', asyncMiddleware(async function(req, res) {
     const language = req.query.language;
     const titles = req.query.titles;
 
-    const wikiImageInfo = await getWikidataImagesFromWikipedia(language, titles);
+    const wikiImageInfo = await getImageInfoFromWikipedia(language, titles);
 
     res.send({
         wikiImageInfo
