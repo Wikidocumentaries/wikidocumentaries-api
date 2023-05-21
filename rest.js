@@ -65,7 +65,7 @@ axios.defaults.timeout = 5000;
 app.get('/sparql', asyncMiddleware(async function(req, res) {
     const response = await axios.request({
         // TODO switch from dev to production when supported
-        baseURL: "https://wikidocumentaries-query.wmflabs.org/proxy/wdqs/bigdata/namespace/wdq/sparql",
+        baseURL: "https://wikidocumentaries-query.wmcloud.org/proxy/wdqs/bigdata/namespace/wdq/sparql",
         params: {
             query: req.query.query,
             format: req.query.format,
@@ -79,7 +79,7 @@ app.post('/sparql', urlencodedParser, asyncMiddleware(async function(req, res) {
     const response = await axios.request({
         method: "post",
         // TODO switch from dev to production when supported
-        baseURL: "https://wikidocumentaries-query.wmflabs.org/proxy/wdqs/bigdata/namespace/wdq/sparql",
+        baseURL: "https://wikidocumentaries-query.wmcloud.org/proxy/wdqs/bigdata/namespace/wdq/sparql",
         data: querystring.stringify({
             query: req.body.query,
             format: req.body.format,
