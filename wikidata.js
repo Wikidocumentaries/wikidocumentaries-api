@@ -237,7 +237,7 @@ async function getWikidata(wikidataItemID, language) {
                 else if (mainsnak.property == 'P625') { // coordinates
                     var value = {
                         value: mainsnak.datavalue.value.latitude + ", " + mainsnak.datavalue.value.longitude,
-                        url: 'https://tools.wmflabs.org/geohack/geohack.php?params=' + mainsnak.datavalue.value.latitude + '_N_' + mainsnak.datavalue.value.longitude + '_E_globe:earth&language=' + language
+                        url: 'https://geohack.toolforge.org/geohack.php?params=' + mainsnak.datavalue.value.latitude + '_N_' + mainsnak.datavalue.value.longitude + '_E_globe:earth&language=' + language
                     }
 
                     statement.values.push(value);
