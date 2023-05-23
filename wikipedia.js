@@ -1,3 +1,6 @@
+const oauth2 = require('./oauth2');
+const buffer = require('buffer');
+
 const axios = require('axios');
 const cheerio = require('cheerio');
 const { getImageFromPage } = require('./wikimedia-commons');
@@ -43,6 +46,17 @@ async function findWikidataItemFromWikipedia(language, topic) {
 // input the title of an image, returns the first image item with metadata in the api results
 async function getImageInfoFromWikipedia(language, titles) {
 
+    // console.log(oauth2.ajax);
+    // console.log(oauth2.startLogin());
+    console.log(12121)
+    titleString = titles.join("|");
+    console.log(titleString)
+    // There is a bug when title contains latin1 characters.
+    // const latin1Buffer = buffer.transcode(Buffer.from(titleString), "utf8", "latin1");
+    // const latin1TitleString = latin1Buffer.toString("latin1");
+    // console.log(Buffer.from(titleString).toString("latin1"));
+    
+
     var requestConfig = {
         baseURL: "https://" + language + ".wikipedia.org/w/api.php",
         method: "get",
@@ -53,7 +67,7 @@ async function getImageInfoFromWikipedia(language, titles) {
         params: {
             action: "query",
             prop: "imageinfo",
-            titles: titles,
+            titles: titleString,
             format: "json",
             iiprop: "url|extmetadata",
             iiextmetadatalanguage: language,
@@ -61,6 +75,9 @@ async function getImageInfoFromWikipedia(language, titles) {
     };
     const response = await axios.request(requestConfig);
     if (response.data) {
+        console.log(99999);
+        console.log(response.data.query.pages[Object.keys(response.data.query.pages)[1]]["title"].replace(/\s/g, "_"));
+        
         const page = response.data.query.pages[Object.keys(response.data.query.pages)[0]];
         return getImageFromPage(page, 'Wikipedia');
     }

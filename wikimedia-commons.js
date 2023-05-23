@@ -23,6 +23,8 @@ module.exports = {
 
 function getImageFromPage(page, source){
     const extMetadata = page.imageinfo[0].extmetadata;
+    // console.log(12345);
+    // console.log(page.imageinfo[0].url);
     let image = {
         id: page.pageid,
         source: source,
