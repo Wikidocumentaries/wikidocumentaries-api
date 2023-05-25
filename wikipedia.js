@@ -1,6 +1,3 @@
-const oauth2 = require('./oauth2');
-const buffer = require('buffer');
-
 const axios = require('axios');
 const cheerio = require('cheerio');
 const { getImageFromPage } = require('./wikimedia-commons');
