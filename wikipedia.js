@@ -69,12 +69,7 @@ async function getImageInfoFromWikipedia(language, titles) {
         for (var title of titles){
             title = decodeURIComponent(title);
             for (var key of keys){
-                let currImgTitle = pages[key]['title'];
-                for (var titleChange of titleChanges){
-                    if (currImgTitle === titleChange.to) {
-                        currImgTitle = titleChange.from;
-                }
-                }
+                let currImgTitle = pages[key]['title'].replace(/\s/g, '_');
                 if (currImgTitle === title){
                     orderedPages.push(pages[key]);
                 }
