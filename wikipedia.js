@@ -63,17 +63,27 @@ async function getImageInfoFromWikipedia(language, titles) {
     const response = await axios.request(requestConfig);
     if (response.data) {
         let titleChanges = response.data.query.normalized;
+        const titleChangesMap = new Map();
+        for (var titleChange of titleChanges){
+            titleChangesMap.set(titleChange.to, titleChange.from);
+        }
         const keys = [Object.keys(response.data.query.pages)][0];
         const pages = response.data.query.pages;
-        const orderedPages = [];
+        const orderedPages = Array(titles.length);
+        const decodeTitle = [];
         for (var title of titles){
             title = decodeURIComponent(title);
-            for (var key of keys){
-                let currImgTitle = pages[key]['title'].replace(/\s/g, '_');
-                if (currImgTitle === title){
-                    orderedPages.push(pages[key]);
-                }
+            decodeTitle.push(title);
+        }
+        for (var key of keys){
+            let currImgTitle = pages[key]["title"];
+            if (titleChangesMap.has(currImgTitle)){
+                currImgTitle = titleChangesMap.get(currImgTitle);
             }
+            let index = decodeTitle.indexOf(currImgTitle);
+
+            orderedPages[index] = pages[key];
+
         }
         const images = [];
         for (var page of orderedPages){
