@@ -1,0 +1,756 @@
+{
+  "resultCount": 57948,
+  "records": [
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=kansallisgalleria.7AC49AE700587A441E57215FB08F01FB&index=0&size=large",
+            "small": "/Cover/Show?source=Solr&id=kansallisgalleria.7AC49AE700587A441E57215FB08F01FB&index=0&size=small",
+            "medium": "/Cover/Show?source=Solr&id=kansallisgalleria.7AC49AE700587A441E57215FB08F01FB&index=0&size=medium"
+          },
+          "rights": {
+            "copyright": "CC0",
+            "link": "http://creativecommons.org/publicdomain/zero/1.0/deed.fi",
+            "creditLine": "Kansallisgalleria / Nina Pätilä"
+          },
+          "highResolution": [],
+          "identifier": "311086",
+          "downloadable": 1
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "small": "/Cover/Show?source=Solr&id=tmk.161019355999100&index=0&size=small",
+            "medium": "/Cover/Show?source=Solr&id=tmk.161019355999100&index=0&size=medium",
+            "large": "/Cover/Show?source=Solr&id=tmk.161019355999100&index=0&size=large"
+          },
+          "rights": {
+            "copyright": "PDM",
+            "link": "https://creativecommons.org/publicdomain/mark/1.0/deed.fi",
+            "rightsHolders": [
+              {
+                "name": "Turun museokeskus"
+              }
+            ],
+            "creditLine": "Turun museokeskus/ kuvaaja tuntematon",
+            "description": [
+              "Henkilökuvien käyttö markkinoinnissa ja mainonnassa on kielletty ilman kuvassa olevan henkilön suostumusta. Kuvaa käytettäessä mainitaan alkuperäisen aineiston tekijä ja aineistosta vastaava organisaatio."
+            ]
+          },
+          "highResolution": {
+            "original": [
+              {
+                "data": {
+                  "width": {
+                    "unit": "pixel",
+                    "value": "800"
+                  },
+                  "height": {
+                    "unit": "pixel",
+                    "value": "575"
+                  },
+                  "size": {
+                    "unit": "tavu",
+                    "value": "196040"
+                  }
+                },
+                "url": "https://museo.disec.fi/Yksa4/download/161019355999100/file/c82c639e-22f3-4101-a42a-190c0963af9d/",
+                "format": "jpg",
+                "params": {
+                  "id": "tmk.161019355999100",
+                  "index": 0,
+                  "size": "original",
+                  "format": "jpg",
+                  "key": 0,
+                  "type": "highresimg"
+                }
+              }
+            ]
+          },
+          "resourceDescription": "VSO:385\nReprokuva: Turun museokeskus/ Teemu Mäkinen",
+          "downloadable": 1
+        },
+        {
+          "urls": {
+            "master": "/Cover/Show?source=Solr&id=tmk.161019355999100&index=1&size=master",
+            "large": "/Cover/Show?source=Solr&id=tmk.161019355999100&index=1&size=large",
+            "small": "/Cover/Show?source=Solr&id=tmk.161019355999100&index=1&size=small",
+            "medium": "/Cover/Show?source=Solr&id=tmk.161019355999100&index=1&size=medium"
+          },
+          "rights": {
+            "copyright": "PDM",
+            "link": "https://creativecommons.org/publicdomain/mark/1.0/deed.fi",
+            "rightsHolders": [
+              {
+                "name": "Turun museokeskus"
+              }
+            ],
+            "creditLine": "Turun museokeskus/ kuvaaja tuntematon",
+            "description": [
+              "Henkilökuvien käyttö markkinoinnissa ja mainonnassa on kielletty ilman kuvassa olevan henkilön suostumusta. Kuvaa käytettäessä mainitaan alkuperäisen aineiston tekijä ja aineistosta vastaava organisaatio."
+            ]
+          },
+          "highResolution": {
+            "original": [
+              {
+                "data": {
+                  "width": {
+                    "unit": "pixel",
+                    "value": "4961"
+                  },
+                  "height": {
+                    "unit": "pixel",
+                    "value": "3564"
+                  },
+                  "size": {
+                    "unit": "tavu",
+                    "value": "53090608"
+                  }
+                },
+                "url": "https://museo.disec.fi/Yksa4/download/161019355999100/file/395965fb-851e-432a-95ee-712c288c92c7/",
+                "format": "tif",
+                "params": {
+                  "id": "tmk.161019355999100",
+                  "index": 1,
+                  "size": "original",
+                  "format": "tif",
+                  "key": 0,
+                  "type": "highresimg"
+                }
+              }
+            ],
+            "master": [
+              {
+                "data": {
+                  "width": {
+                    "unit": "pixel",
+                    "value": "3507"
+                  },
+                  "height": {
+                    "unit": "pixel",
+                    "value": "2519"
+                  },
+                  "size": {
+                    "unit": "tavu",
+                    "value": "951656"
+                  }
+                },
+                "url": "https://museo.disec.fi/Yksa4/download/161019355999100/file/cb5c0aa2-7c35-46e7-b018-99212d5564a0/",
+                "format": "jpg",
+                "params": {
+                  "id": "tmk.161019355999100",
+                  "index": 1,
+                  "size": "master",
+                  "format": "jpg",
+                  "key": 0,
+                  "type": "highresimg"
+                }
+              }
+            ]
+          },
+          "resourceDescription": "VSO:385\nReprokuva: Turun museokeskus/ Teemu Mäkinen",
+          "downloadable": 1
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=ktm.urn%3Auuid%3AB9E978A7-EEED-4EEA-9A66-8F468782F96A&index=0&size=large",
+            "medium": "/Cover/Show?source=Solr&id=ktm.urn%3Auuid%3AB9E978A7-EEED-4EEA-9A66-8F468782F96A&index=0&size=medium",
+            "small": "/Cover/Show?source=Solr&id=ktm.urn%3Auuid%3AB9E978A7-EEED-4EEA-9A66-8F468782F96A&index=0&size=small"
+          },
+          "rights": {
+            "rightsHolders": [
+              {
+                "name": "AKK"
+              }
+            ],
+            "creditLine": "Kouvolan taidemuseo/AKK",
+            "description": [
+              "valokuvaaja"
+            ],
+            "copyright": "Kuvaan voi liittyä käytön rajoituksia."
+          },
+          "highResolution": [],
+          "type": "zoomview"
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=kansallisgalleria.7B1C756DE1DB189507346B723EBB69B6&index=0&size=large",
+            "small": "/Cover/Show?source=Solr&id=kansallisgalleria.7B1C756DE1DB189507346B723EBB69B6&index=0&size=small",
+            "medium": "/Cover/Show?source=Solr&id=kansallisgalleria.7B1C756DE1DB189507346B723EBB69B6&index=0&size=medium"
+          },
+          "rights": {
+            "copyright": "InC",
+            "link": "https://rightsstatements.org/page/InC/1.0/?language=fi",
+            "creditLine": "Kansallisgalleria / Pirje Mykkänen",
+            "description": [
+              "Tällä kuvalla tekijänoikeudet ovat voimassa. Kuvan käyttö vaatii luvan Kansallisgallerialta ja taideteoksen tekijänoikeuden haltijalta. Lisätietoja ja yhteystiedot: https://www.kansallisgalleria.fi/fi/kuvien-kayttooikeudet."
+            ]
+          },
+          "highResolution": [],
+          "identifier": "242195"
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=kansallisgalleria.5ABFFF381717DAF8925A3D7FC554A2AE&index=0&size=large",
+            "small": "/Cover/Show?source=Solr&id=kansallisgalleria.5ABFFF381717DAF8925A3D7FC554A2AE&index=0&size=small",
+            "medium": "/Cover/Show?source=Solr&id=kansallisgalleria.5ABFFF381717DAF8925A3D7FC554A2AE&index=0&size=medium"
+          },
+          "rights": {
+            "copyright": "InC",
+            "link": "https://rightsstatements.org/page/InC/1.0/?language=fi",
+            "creditLine": "Kansallisgalleria / Hannu Karjalainen",
+            "description": [
+              "Tällä kuvalla tekijänoikeudet ovat voimassa. Kuvan käyttö vaatii luvan Kansallisgallerialta ja taideteoksen tekijänoikeuden haltijalta. Lisätietoja ja yhteystiedot: https://www.kansallisgalleria.fi/fi/kuvien-kayttooikeudet."
+            ]
+          },
+          "highResolution": [],
+          "identifier": "241680"
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=emma.6348F8D1A7F747FBB9B276A1575D1A13&index=0&size=large",
+            "small": "/Cover/Show?source=Solr&id=emma.6348F8D1A7F747FBB9B276A1575D1A13&index=0&size=small",
+            "medium": "/Cover/Show?source=Solr&id=emma.6348F8D1A7F747FBB9B276A1575D1A13&index=0&size=medium"
+          },
+          "rights": {
+            "copyright": "InC",
+            "link": "https://rightsstatements.org/page/InC/1.0/?language=fi",
+            "description": [
+              "EMMAn julkaisemien teoskuvien käyttö vaatii luvan museolta ja taideteoksen tekijänoikeuden haltijalta. Tekijänoikeuden alaiset teokset on merkitty. Valokuvaajan nimi ja EMMA on mainittava aina kuvien yhteydessä. Voimassa olevat kuvalainaehdot löytyvät EMMAn kotisivuilta: emmamuseum.fi/kuvalainat."
+            ]
+          },
+          "highResolution": [],
+          "identifier": "1283425"
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=sa-kuva.sa-kuva-76996&index=0&size=large",
+            "medium": "/Cover/Show?source=Solr&id=sa-kuva.sa-kuva-76996&index=0&size=medium",
+            "small": "/Cover/Show?source=Solr&id=sa-kuva.sa-kuva-76996&index=0&size=small"
+          },
+          "rights": {
+            "copyright": "CC BY 4.0",
+            "link": "http://creativecommons.org/licenses/by/4.0/deed.fi",
+            "description": [
+              "SA-kuvat ovat lisensoitu Nimeä 4.0 Kansainvälinen (CC BY 4.0) -lisenssillä ja ne ovat vapaasti käytettävissä ja julkaistavissa. Kuvat ovat nähtävissä myös www.sa-kuva.fi -palvelussa."
+            ]
+          },
+          "highResolution": [],
+          "downloadable": 1
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=sibelius.FEC66838E8994155AC13CB9425FE1277&index=0&size=large",
+            "small": "/Cover/Show?source=Solr&id=sibelius.FEC66838E8994155AC13CB9425FE1277&index=0&size=small",
+            "medium": "/Cover/Show?source=Solr&id=sibelius.FEC66838E8994155AC13CB9425FE1277&index=0&size=medium"
+          },
+          "rights": {
+            "copyright": "CC BY 4.0",
+            "link": "http://creativecommons.org/licenses/by/4.0/deed.fi",
+            "description": [
+              "Tiedostoa voi käyttää vapaasti myös kaupallisesti. Tiedoston yhteydessä on mainittava tekijä ja/tai kuvaaja sekä kokoelman ja organisaation nimi. Käyttöohjeet: Käyttäjä vastaa tekijänoikeuksien ja yksityisyyden suojan kunnioittamisesta sekä siitä, että tiedot ovat oikein. Henkilökuvien käyttö markkinoinnissa ja mainonnassa on kielletty ilman kuvassa olevan henkilön suostumusta. Käyttäjä vastaa lupien hankkimisesta tiedostoissa esiintyvien henkilöiden, teosten ja tavaramerkkien osalta. Käyttäjä vastaa käyttötarkoituksen mukaisesta tiedostonkäsittelystä. Pyydämme toimittamaan Sibelius-museoon vapaakappaleen painetusta julkaisusta, jossa tiedostoa on käytetty. Jos haluat parempilaatuisen tiedoston, ota yhteyttä Sibelius-museon arkistoon (sibmusarkiv@stiftelsenabo.fi)."
+            ]
+          },
+          "highResolution": {
+            "original": [
+              {
+                "data": {
+                  "width": {
+                    "unit": "pixel",
+                    "value": "4204"
+                  },
+                  "height": {
+                    "unit": "pixel",
+                    "value": "2768"
+                  }
+                },
+                "url": "http://museoliittorepox.vserver.fi:8080/mpthumbnailhelper/download?id=1651476&size=original&key=T3st1&orgid=57095",
+                "format": "jpg",
+                "resourceID": "1651476",
+                "params": {
+                  "id": "sibelius.FEC66838E8994155AC13CB9425FE1277",
+                  "index": 0,
+                  "size": "original",
+                  "format": "jpg",
+                  "key": 0,
+                  "type": "highresimg"
+                }
+              }
+            ]
+          },
+          "identifier": "1651476",
+          "resourceName": "895.jpg",
+          "downloadable": 1
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "master": "/Cover/Show?source=Solr&id=tmk.168257884073800&index=0&size=master",
+            "large": "/Cover/Show?source=Solr&id=tmk.168257884073800&index=0&size=large",
+            "small": "/Cover/Show?source=Solr&id=tmk.168257884073800&index=0&size=small",
+            "medium": "/Cover/Show?source=Solr&id=tmk.168257884073800&index=0&size=medium"
+          },
+          "rights": {
+            "copyright": "PDM",
+            "link": "https://creativecommons.org/publicdomain/mark/1.0/deed.fi",
+            "rightsHolders": [
+              {
+                "name": "Uudenkaupungin museo"
+              }
+            ]
+          },
+          "highResolution": {
+            "original": [
+              {
+                "data": {
+                  "width": {
+                    "unit": "pixel",
+                    "value": "1976"
+                  },
+                  "height": {
+                    "unit": "pixel",
+                    "value": "2756"
+                  },
+                  "size": {
+                    "unit": "tavu",
+                    "value": "1494893"
+                  }
+                },
+                "url": "https://museo.disec.fi/Yksa4/download/168257884073800/file/70648777-7691-4abd-b5ca-027605b90eaa/",
+                "format": "jpg",
+                "params": {
+                  "id": "tmk.168257884073800",
+                  "index": 0,
+                  "size": "original",
+                  "format": "jpg",
+                  "key": 0,
+                  "type": "highresimg"
+                }
+              }
+            ],
+            "master": [
+              {
+                "data": {
+                  "width": {
+                    "unit": "pixel",
+                    "value": "1976"
+                  },
+                  "height": {
+                    "unit": "pixel",
+                    "value": "2756"
+                  },
+                  "size": {
+                    "unit": "tavu",
+                    "value": "867762"
+                  }
+                },
+                "url": "https://museo.disec.fi/Yksa4/download/168257884073800/file/e0adda42-491d-425c-ae90-9c874fd8edef/",
+                "format": "jpg",
+                "params": {
+                  "id": "tmk.168257884073800",
+                  "index": 0,
+                  "size": "master",
+                  "format": "jpg",
+                  "key": 0,
+                  "type": "highresimg"
+                }
+              }
+            ]
+          },
+          "downloadable": 1
+        },
+        {
+          "urls": {
+            "master": "/Cover/Show?source=Solr&id=tmk.168257884073800&index=1&size=master",
+            "large": "/Cover/Show?source=Solr&id=tmk.168257884073800&index=1&size=large",
+            "small": "/Cover/Show?source=Solr&id=tmk.168257884073800&index=1&size=small",
+            "medium": "/Cover/Show?source=Solr&id=tmk.168257884073800&index=1&size=medium"
+          },
+          "rights": {
+            "copyright": "PDM",
+            "link": "https://creativecommons.org/publicdomain/mark/1.0/deed.fi",
+            "rightsHolders": [
+              {
+                "name": "Uudenkaupungin museo"
+              }
+            ]
+          },
+          "highResolution": {
+            "original": [
+              {
+                "data": {
+                  "width": {
+                    "unit": "pixel",
+                    "value": "2060"
+                  },
+                  "height": {
+                    "unit": "pixel",
+                    "value": "3200"
+                  },
+                  "size": {
+                    "unit": "tavu",
+                    "value": "1042112"
+                  }
+                },
+                "url": "https://museo.disec.fi/Yksa4/download/168257884073800/file/b915d2a1-8d20-4feb-a3fc-953b4f977c7c/",
+                "format": "jpg",
+                "params": {
+                  "id": "tmk.168257884073800",
+                  "index": 1,
+                  "size": "original",
+                  "format": "jpg",
+                  "key": 0,
+                  "type": "highresimg"
+                }
+              }
+            ],
+            "master": [
+              {
+                "data": {
+                  "width": {
+                    "unit": "pixel",
+                    "value": "2060"
+                  },
+                  "height": {
+                    "unit": "pixel",
+                    "value": "3200"
+                  },
+                  "size": {
+                    "unit": "tavu",
+                    "value": "565323"
+                  }
+                },
+                "url": "https://museo.disec.fi/Yksa4/download/168257884073800/file/30a65f56-6f3f-41bb-a2f4-bee86fbfb1d0/",
+                "format": "jpg",
+                "params": {
+                  "id": "tmk.168257884073800",
+                  "index": 1,
+                  "size": "master",
+                  "format": "jpg",
+                  "key": 0,
+                  "type": "highresimg"
+                }
+              }
+            ]
+          },
+          "downloadable": 1
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=kansallisgalleria.4462997594449BA3787060DEF6A0A992&index=0&size=large",
+            "small": "/Cover/Show?source=Solr&id=kansallisgalleria.4462997594449BA3787060DEF6A0A992&index=0&size=small",
+            "medium": "/Cover/Show?source=Solr&id=kansallisgalleria.4462997594449BA3787060DEF6A0A992&index=0&size=medium"
+          },
+          "rights": {
+            "copyright": "InC",
+            "link": "https://rightsstatements.org/page/InC/1.0/?language=fi",
+            "creditLine": "Kansallisgalleria / Sakari Viika",
+            "description": [
+              "Tällä kuvalla tekijänoikeudet ovat voimassa. Kuvan käyttö vaatii luvan Kansallisgallerialta ja taideteoksen tekijänoikeuden haltijalta. Lisätietoja ja yhteystiedot: https://www.kansallisgalleria.fi/fi/kuvien-kayttooikeudet."
+            ]
+          },
+          "highResolution": [],
+          "identifier": "289069"
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=kansallisgalleria.EFE0E89A44A6CA0486E545CEF9F72476&index=0&size=large",
+            "small": "/Cover/Show?source=Solr&id=kansallisgalleria.EFE0E89A44A6CA0486E545CEF9F72476&index=0&size=small",
+            "medium": "/Cover/Show?source=Solr&id=kansallisgalleria.EFE0E89A44A6CA0486E545CEF9F72476&index=0&size=medium"
+          },
+          "rights": {
+            "copyright": "InC",
+            "link": "https://rightsstatements.org/page/InC/1.0/?language=fi",
+            "creditLine": "Kansallisgalleria / Ainur Nasretdin",
+            "description": [
+              "Tällä kuvalla tekijänoikeudet ovat voimassa. Kuvan käyttö vaatii luvan Kansallisgallerialta ja taideteoksen tekijänoikeuden haltijalta. Lisätietoja ja yhteystiedot: https://www.kansallisgalleria.fi/fi/kuvien-kayttooikeudet."
+            ]
+          },
+          "highResolution": [],
+          "identifier": "1234969"
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "small": "/Cover/Show?source=Solr&id=varkaudenmuseot.pju-45867&index=0&size=small",
+            "large": "/Cover/Show?source=Solr&id=varkaudenmuseot.pju-45867&index=0&size=large",
+            "medium": "/Cover/Show?source=Solr&id=varkaudenmuseot.pju-45867&index=0&size=medium"
+          },
+          "rights": {
+            "copyright": "CNE",
+            "link": "https://rightsstatements.org/page/CNE/1.0/?language=fi",
+            "description": [
+              "Tekijänoikeudellinen status on tuntematon, eikä organisaatio ole yrittänyt määrittää sitä."
+            ]
+          },
+          "highResolution": [],
+          "identifier": "urn:pju:177119"
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=museovirasto.3E54074E91442971ED10FA7DC4D706B4&index=0&size=large",
+            "small": "/Cover/Show?source=Solr&id=museovirasto.3E54074E91442971ED10FA7DC4D706B4&index=0&size=small",
+            "medium": "/Cover/Show?source=Solr&id=museovirasto.3E54074E91442971ED10FA7DC4D706B4&index=0&size=medium"
+          },
+          "rights": {
+            "copyright": "CC BY 4.0",
+            "link": "http://creativecommons.org/licenses/by/4.0/deed.fi",
+            "description": [
+              "Tiedostoa voi käyttää vapaasti myös kaupallisesti. Tiedoston yhteydessä on mainittava tekijä ja/tai kuvaaja sekä kokoelman ja organisaation nimi. \n\nKäyttöohjeet:\nKäyttäjä vastaa tekijänoikeuksien ja yksityisyyden suojan kunnioittamisesta sekä siitä, että tiedot ovat oikein. Henkilökuvien käyttö markkinoinnissa ja mainonnassa on kielletty ilman kuvassa olevan henkilön suostumusta. Käyttäjä vastaa lupien hankkimisesta tiedostoissa esiintyvien henkilöiden, teosten ja tavaramerkkien osalta. Käyttäjä vastaa käyttötarkoituksen mukaisesta tiedostonkäsittelystä. Pyydämme toimittamaan Museoviraston kirjastoon vapaakappaleen painetusta julkaisusta, jossa tiedostoa on käytetty. Jos ladattavan tiedoston ominaisuudet eivät ole riittävät, ota yhteyttä Museoviraston Kuvakokoelmiin (kuvakokoelmat@museovirasto.fi). \n\n3D: FINNA-palvelussa on julkaistu 3D mallista verkkoesittämiseen soveltuva kevennetty versio."
+            ]
+          },
+          "highResolution": {
+            "original": [
+              {
+                "data": [],
+                "url": "http://museoliittorepox.vserver.fi:8080/mpthumbnailhelper/download?id=978120&size=original&key=T3st1&orgid=43094",
+                "format": "jpg",
+                "resourceID": "978120",
+                "params": {
+                  "id": "museovirasto.3E54074E91442971ED10FA7DC4D706B4",
+                  "index": 0,
+                  "size": "original",
+                  "format": "jpg",
+                  "key": 0,
+                  "type": "highresimg"
+                }
+              }
+            ]
+          },
+          "identifier": "978120",
+          "resourceName": "00006794.jpg",
+          "downloadable": 1
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=raami.urn%3Anbn%3Afi-aalto%3Aw_http%253A%252F%252Fwww.profium.com%252Ftaikarchivedobject%252F2BB2215C-E171-DCF9-803F-72C7A1BA92CB&index=0&size=large",
+            "medium": "/Cover/Show?source=Solr&id=raami.urn%3Anbn%3Afi-aalto%3Aw_http%253A%252F%252Fwww.profium.com%252Ftaikarchivedobject%252F2BB2215C-E171-DCF9-803F-72C7A1BA92CB&index=0&size=medium",
+            "small": "/Cover/Show?source=Solr&id=raami.urn%3Anbn%3Afi-aalto%3Aw_http%253A%252F%252Fwww.profium.com%252Ftaikarchivedobject%252F2BB2215C-E171-DCF9-803F-72C7A1BA92CB&index=0&size=small"
+          },
+          "rights": {
+            "copyright": "Jatkokäyttö luvanvaraista",
+            "description": [
+              "Finna-palvelussa julkaistuja Aalto-yliopiston kuva-aineistoja voi käyttää lisenssin mukaisesti. Kaupallinen käyttö on mahdollista lisenssin niin salliessa. Kuvan yhteydessä on suositeltavaa mainita kuvaaja ja tekijä (jos tiedossa) ja Aalto-yliopiston arkisto. Palvelussa näytettävät kuvat eivät ole painolaatuisia. Jos tarvitset painolaatuisen kuvan, ota yhteyttä arkisto@aalto.fi"
+            ]
+          },
+          "highResolution": []
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=jtm.158774462600400&index=0&size=large",
+            "small": "/Cover/Show?source=Solr&id=jtm.158774462600400&index=0&size=small",
+            "medium": "/Cover/Show?source=Solr&id=jtm.158774462600400&index=0&size=medium"
+          },
+          "rights": {
+            "copyright": "InC",
+            "link": "https://rightsstatements.org/page/InC/1.0/?language=fi",
+            "rightsHolders": [
+              {
+                "name": "Suomen taidegraafikot ry, Jyväskylän taidemuseo"
+              }
+            ],
+            "creditLine": "Kuskelin, Jari",
+            "description": [
+              "Jyväskylän taidemuseo on liittynyt Suomen museoliiton ja Kuvaston sopimukseen, jolla museo saa rajattomat verkkovälitysoikeudet kaikkiin tekijänoikeuden alaisiin kokoelmateoksiinsa."
+            ]
+          },
+          "highResolution": []
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=kansallisgalleria.027EBD9A52DB1D8382AA8A90BC954D1A&index=0&size=large",
+            "small": "/Cover/Show?source=Solr&id=kansallisgalleria.027EBD9A52DB1D8382AA8A90BC954D1A&index=0&size=small",
+            "medium": "/Cover/Show?source=Solr&id=kansallisgalleria.027EBD9A52DB1D8382AA8A90BC954D1A&index=0&size=medium"
+          },
+          "rights": {
+            "copyright": "InC",
+            "link": "https://rightsstatements.org/page/InC/1.0/?language=fi",
+            "creditLine": "Kansallisgalleria / Petri Virtanen",
+            "description": [
+              "Tällä kuvalla tekijänoikeudet ovat voimassa. Kuvan käyttö vaatii luvan Kansallisgallerialta ja taideteoksen tekijänoikeuden haltijalta. Lisätietoja ja yhteystiedot: https://www.kansallisgalleria.fi/fi/kuvien-kayttooikeudet."
+            ]
+          },
+          "highResolution": [],
+          "identifier": "242276"
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=skm.158577509618400&index=0&size=large",
+            "small": "/Cover/Show?source=Solr&id=skm.158577509618400&index=0&size=small",
+            "medium": "/Cover/Show?source=Solr&id=skm.158577509618400&index=0&size=medium"
+          },
+          "rights": {
+            "copyright": "InC",
+            "link": "https://rightsstatements.org/page/InC/1.0/?language=fi",
+            "rightsHolders": [
+              {
+                "name": "Suomen käsityön museo"
+              }
+            ],
+            "creditLine": "Suomen Käsityön Ystävät",
+            "description": [
+              "Kuvassa olevan tekstiilin tiedot ovat osa Suomen käsityön museon tietopalvelun tekstiilitietokantaa. Tietokanta sisältää eri lähteistä koottuja mallitietoja. Kuva on julkaistu kuvan omistajan Suomen Käsityön Ystävät ry:n luvalla."
+            ]
+          },
+          "highResolution": []
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "small": "/Cover/Show?source=Solr&id=varkaudenmuseot.pju-46316&index=0&size=small",
+            "large": "/Cover/Show?source=Solr&id=varkaudenmuseot.pju-46316&index=0&size=large",
+            "medium": "/Cover/Show?source=Solr&id=varkaudenmuseot.pju-46316&index=0&size=medium"
+          },
+          "rights": {
+            "copyright": "CNE",
+            "link": "https://rightsstatements.org/page/CNE/1.0/?language=fi",
+            "description": [
+              "Tekijänoikeudellinen status on tuntematon, eikä organisaatio ole yrittänyt määrittää sitä."
+            ]
+          },
+          "highResolution": [],
+          "identifier": "urn:pju:133472"
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=museovirasto.F7A74F8EED7B10B2813CD7ABD274FC77&index=0&size=large",
+            "small": "/Cover/Show?source=Solr&id=museovirasto.F7A74F8EED7B10B2813CD7ABD274FC77&index=0&size=small",
+            "medium": "/Cover/Show?source=Solr&id=museovirasto.F7A74F8EED7B10B2813CD7ABD274FC77&index=0&size=medium"
+          },
+          "rights": {
+            "copyright": "CC BY 4.0",
+            "link": "http://creativecommons.org/licenses/by/4.0/deed.fi",
+            "description": [
+              "Tiedostoa voi käyttää vapaasti myös kaupallisesti. Tiedoston yhteydessä on mainittava tekijä ja/tai kuvaaja sekä kokoelman ja organisaation nimi. \n\nKäyttöohjeet:\nKäyttäjä vastaa tekijänoikeuksien ja yksityisyyden suojan kunnioittamisesta sekä siitä, että tiedot ovat oikein. Henkilökuvien käyttö markkinoinnissa ja mainonnassa on kielletty ilman kuvassa olevan henkilön suostumusta. Käyttäjä vastaa lupien hankkimisesta tiedostoissa esiintyvien henkilöiden, teosten ja tavaramerkkien osalta. Käyttäjä vastaa käyttötarkoituksen mukaisesta tiedostonkäsittelystä. Pyydämme toimittamaan Museoviraston kirjastoon vapaakappaleen painetusta julkaisusta, jossa tiedostoa on käytetty. Jos ladattavan tiedoston ominaisuudet eivät ole riittävät, ota yhteyttä Museoviraston Kuvakokoelmiin (kuvakokoelmat@museovirasto.fi). \n\n3D: FINNA-palvelussa on julkaistu 3D mallista verkkoesittämiseen soveltuva kevennetty versio."
+            ]
+          },
+          "highResolution": {
+            "original": [
+              {
+                "data": {
+                  "size": {
+                    "unit": "byte",
+                    "value": "180206946"
+                  },
+                  "width": {
+                    "unit": "pixel",
+                    "value": "7313"
+                  },
+                  "height": {
+                    "unit": "pixel",
+                    "value": "4107"
+                  }
+                },
+                "url": "http://museoliittorepox.vserver.fi:8080/mpthumbnailhelper/download?id=1144013&size=original&key=T3st1&orgid=43094",
+                "format": "tif",
+                "resourceID": "1144013",
+                "params": {
+                  "id": "museovirasto.F7A74F8EED7B10B2813CD7ABD274FC77",
+                  "index": 0,
+                  "size": "original",
+                  "format": "tif",
+                  "key": 0,
+                  "type": "highresimg"
+                }
+              }
+            ]
+          },
+          "identifier": "1144013",
+          "resourceName": "HK19611222_1.tif",
+          "downloadable": 1
+        }
+      ]
+    },
+    {
+      "imagesExtended": [
+        {
+          "urls": {
+            "large": "/Cover/Show?source=Solr&id=jarvenpaantaidemuseo.urn%3Auuid%3A5AEFB0CC-AAD6-4AAE-85B0-3A28AFD01A78&index=0&size=large",
+            "medium": "/Cover/Show?source=Solr&id=jarvenpaantaidemuseo.urn%3Auuid%3A5AEFB0CC-AAD6-4AAE-85B0-3A28AFD01A78&index=0&size=medium",
+            "small": "/Cover/Show?source=Solr&id=jarvenpaantaidemuseo.urn%3Auuid%3A5AEFB0CC-AAD6-4AAE-85B0-3A28AFD01A78&index=0&size=small"
+          },
+          "rights": {
+            "copyright": "InC",
+            "link": "https://rightsstatements.org/page/InC/1.0/?language=fi",
+            "creditLine": "Matias Uusikylä / Järvenpään taidemuseo, 2007",
+            "description": [
+              "Kuva: Matias Uusikylä / Järvenpään taidemuseo, 2007"
+            ]
+          },
+          "highResolution": [],
+          "type": "zoomview"
+        }
+      ]
+    }
+  ],
+  "status": "OK"
+}
