@@ -1,9 +1,11 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const { getImageFromPage } = require('./wikimedia-commons');
 
 module.exports = {
     findWikidataItemFromWikipedia,
     getWikipediaData,
+    getImageInfoFromWikipedia,
 };
 
 async function findWikidataItemFromWikipedia(language, topic) {
@@ -35,6 +37,60 @@ async function findWikidataItemFromWikipedia(language, topic) {
         }
     }
 
+    return null;
+}
+
+// input the title of an image, returns the first image item with metadata in the api results
+async function getImageInfoFromWikipedia(language, titles) {
+
+    titleString = decodeURIComponent(titles.join("|"));
+    var requestConfig = {
+        baseURL: "https://" + language + ".wikipedia.org/w/api.php",
+        method: "get",
+        responseType: "json",
+        headers: {
+            'Api-User-Agent': process.env.WIKIDOCUMENTARIES_API_USER_AGENT
+        },
+        params: {
+            action: "query",
+            prop: "imageinfo",
+            titles: titleString,
+            format: "json",
+            iiprop: "url|extmetadata",
+            iiextmetadatalanguage: language,
+        }
+    };
+    const response = await axios.request(requestConfig);
+    if (response.data) {
+        let titleChanges = response.data.query.normalized;
+        const titleChangesMap = new Map();
+        for (var titleChange of titleChanges){
+            titleChangesMap.set(titleChange.to, titleChange.from);
+        }
+        const keys = [Object.keys(response.data.query.pages)][0];
+        const pages = response.data.query.pages;
+        const orderedPages = Array(titles.length);
+        const decodeTitle = [];
+        for (var title of titles){
+            title = decodeURIComponent(title);
+            decodeTitle.push(title);
+        }
+        for (var key of keys){
+            let currImgTitle = pages[key]["title"];
+            if (titleChangesMap.has(currImgTitle)){
+                currImgTitle = titleChangesMap.get(currImgTitle);
+            }
+            let index = decodeTitle.indexOf(currImgTitle);
+
+            orderedPages[index] = pages[key];
+
+        }
+        const images = [];
+        for (var page of orderedPages){
+            images.push(getImageFromPage(page, 'Wikipedia'));
+        }
+        return images;
+    }
     return null;
 }
 
