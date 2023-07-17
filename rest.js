@@ -33,6 +33,7 @@ const { getImagesEuropeana } = require('./europeana');
 const { getWikidata } = require('./wikidata');
 const { getWikidataByLatLon } = require('./wikidata-latlon');
 const { findWikidataItemFromWikipedia, getWikipediaData } = require('./wikipedia');
+const { upload, getCsrfToken } = require('./upload');
 
 //does deprecating bodyParser make something dysfunctional?
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -73,6 +74,38 @@ app.get('/sparql', asyncMiddleware(async function(req, res) {
         timeout: 60*1000, // 1 minute
     });
     res.send(response.data);
+}));
+
+app.get('/upload', asyncMiddleware(async function(req, res) {
+    console.log(req.originalUrl);
+
+    console.log(1111111111111111111111111111111)
+    console.log(req.query.token);
+    const access_token = req.query.token;
+
+    // const titles = req.query.titles;
+
+    const tokenresponse = await upload(access_token);
+
+    res.send({
+        tokenresponse
+    });
+}));
+
+app.get('/csrfToken', asyncMiddleware(async function(req, res) {
+    console.log(req.originalUrl);
+
+    console.log(22222222222222222222222222222)
+    console.log(req.query.token);
+    const access_token = req.query.token;
+
+    // const titles = req.query.titles;
+
+    const uploadResponse = await getCsrfToken(access_token);
+
+    res.send({
+        uploadResponse
+    });
 }));
 
 app.post('/sparql', urlencodedParser, asyncMiddleware(async function(req, res) {

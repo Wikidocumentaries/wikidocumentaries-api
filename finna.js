@@ -165,7 +165,8 @@ module.exports = {
                     subjects: subjects,
                     thumbURL: thumbURL,
                     title: [],
-                    year: ''
+                    year: '',
+                    downloadScale: '',
                 }
 
                 if (record.title) {
@@ -177,8 +178,33 @@ module.exports = {
                 }
 
                 if (record.imagesExtended) {
-                    let displayImage = record.imagesExtended[record.imagesExtended.length - 1].urls.large ? record.imagesExtended[record.imagesExtended.length - 1].urls.large : record.imagesExtended[record.imagesExtended.length - 1].urls.medium;
+                    let imagesExtendedContent = record.imagesExtended[record.imagesExtended.length - 1];
+                    let displayImage = imagesExtendedContent.urls.large ? imagesExtendedContent.urls.large : imagesExtendedContent.urls.medium;
                     image.imageURL = BASE_URL + displayImage;
+                    if (imagesExtendedContent.highResolution){
+                        let highResolution = imagesExtendedContent.highResolution;
+                        if (highResolution.original) {
+                            image.downloadURL = highResolution.original[highResolution.original.length - 1].url;
+                            image.downloadScale = 'highResolution.original';
+                        }
+                        else if (highResolution.master) {
+                            image.downloadURL = highResolution.master[highResolution.master.length - 1].url;
+                            image.downloadScale = 'highResolution.master';
+                        }
+                        else {
+                            image.downloadURL = image.imageURL;
+                            image.downloadScale = 'displayUrl';
+                        }
+                        
+                    }
+                    else if (imagesExtendedContent.urls.master) {
+                        image.downloadURL = imagesExtendedContent.urls.master;
+                        image.downloadScale = 'master';
+                    }
+                    else {
+                        image.downloadURL = image.imageURL;
+                        image.downloadScale = 'displayUrl';
+                    }
                 }
 
                 if (record.imageRights != undefined) {
