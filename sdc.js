@@ -1,18 +1,175 @@
+const axios = require('axios');
 var fs = require('fs'),
     request = require('request').defaults({jar: true}),
     url = "https://commons.wikimedia.org/w/api.php";
 
-    function getCsrfToken() {
-        var access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyY2Y3ZjMyZGFkODljMzMxODYzYzFmYzNhNTI0NjNiMCIsImp0aSI6ImMwNWQ1YzliNDAwNDU2ZTRhNmI2YzNkZWRlZWU4NjVlMWJjZTVmMzBjNmI1NWUzZjBiMTAyYzBjZGZkOTA5MTAwZDEyODBhZGZhZjhkZDMxIiwiaWF0IjoxNjg4OTQ0NzE1LjIyNzM4NSwibmJmIjoxNjg4OTQ0NzE1LjIyNzM4OCwiZXhwIjozMzI0NTg1MzUxNS4yMjI4OTMsInN1YiI6IjcyOTEzNDYyIiwiaXNzIjoiaHR0cHM6Ly9tZXRhLndpa2ltZWRpYS5vcmciLCJyYXRlbGltaXQiOnsicmVxdWVzdHNfcGVyX3VuaXQiOjUwMDAsInVuaXQiOiJIT1VSIn0sInNjb3BlcyI6WyJiYXNpYyIsImVkaXRwYWdlIiwiZWRpdG15Y3NzanMiLCJlZGl0bXlvcHRpb25zIiwiZWRpdGludGVyZmFjZSIsImVkaXRzaXRlY29uZmlnIiwiY3JlYXRlZWRpdG1vdmVwYWdlIiwidXBsb2FkZmlsZSIsInVwbG9hZGVkaXRtb3ZlZmlsZSJdfQ.s0ogB5NFmdri4scCoDHupx3iSnw68_6ntaBaoqRo7L8MHE5k0zoB-LmQFcrJbF0mv2KLXHom2zjOuMIDs4vyLnYPSd4-ZOuDzKfViir6GrbQjqDqkSkfuBPDt5P-mIiLknYEnesqbontLd_u1pdOr0DBttEKBx1WSvJ_0s5v9G_uX7UfsbUxPmmmiu2IekAIA-HT8iRy94ukvtgeTrCC_rzxx2S5HEakq-OpHWgySEZH0SRLVxv5RMCNo9PYQtMDw9sREfS2YWWmZYRSkEgJaygHygDxyxKgj9yuR7HRvXs0czjTSVJ2RoL228aomjgCE7whi1tjZrZ0P9Pr6YZ4eCgPB1gy0ZVTeE2yUuyeF7D0cLZEMMroZSgBtK76zJBhLdWZ6uCgC9jBsdrNR5TWSLAzWd8YD27FZRV54mTrpI-bsGpl53Qqtu6jQDjmyyNFo5TrPfJKmlgNsRvHp7Q9I0xMXYssNUGWUqARQT-jMjms4nUD5YD-xBXPZ7lmWZfHe7tR1SMu3xQsOKqG5I2iOX1Bc7SXWAu0f3I8opwQTU1Uv9hxLoZtRqzmOXcKkynwKRroWikNfzeaeNFpJYha6ji2snDWPJ20zma-ZbVxXlxZ7kr1HSSVUWa_RzbcmJ1f-wm1izLg2SIv0C36ODjPvj4hHqB0XN81nyitx9p9DOE";
+module.exports = {
+    getPageID,
+    depict
+};
+
+async function getPageID(title){
+    var params = {
+        action: "query",
+        titles: title,
+        format: "json"
+    };
+
+    return new Promise((resolve) => {
+        request.get({ url: url, qs: params}, 
+        (error, response, body) => {
+            var body = JSON.parse(body);
+            if(body.query.pages){
+                return resolve(body.query.pages[Object.keys(body.query.pages)[0]].pageid);
+            }
+            return "";
+        });
+  });
+}
+
+async function depict(csrftoken, access_token, MID, depictId){
+    console.log(MID);
+    console.log(depictId);
+
+    let value = {'entity-type':'item',id: depictId} ;
+    let data = {claims:[{mainsnak:{snaktype:"value",property:'P180',datavalue:{value:value,type:'wikibase-entityid'}},type:"statement",rank:"normal"}]} ;
+    var paramsForDepicts = {
+        action : 'wbeditentity',
+        format :'json',
+        id : MID,
+        data : JSON.stringify(data),
+        summary : '#wikidocumentaries',
+        token : csrftoken,
+        };
+        const requestConfig = {
+            baseURL: url,
+            method: "post",
+            responseType: "json",
+            headers: {
+                "Authorization": 'Bearer ' + access_token,
+               "content-type": "application/json"
+            },
+            body: JSON.stringify(paramsForDepicts)
+        };
+        const response = await axios.request(requestConfig);
+        if (response.status === 200) {
+            console.log(response.data)
+            return response.data;
+        }
+        return;
+
+    // return new Promise((resolve) => {
+    //     request.post({ url: url, headers: {
+    //         "Authorization": 'Bearer ' + access_token
+    //         },qs: paramsForDepicts, body:{"token" : csrftoken}, json: true}, 
+    //     (error, response, body) => {
+    //         return resolve(response);
+    //     });
+    // });
+    
+}
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// request.post({ url: url, headers: {
+//     "Authorization": 'Bearer ' + access_token
+//     },qs: paramsForDepicts, body:{"token" : csrftoken}}, function (error, res, body) {
+//     console.log('Depict response')
+//     body = JSON.parse(body);
+//     console.log(body);
+// });
+
+// return request.post({ url: url, headers: {
+//     "Authorization": 'Bearer ' + access_token
+//     },body:{ "token" : csrftoken},qs: paramsForDepicts, json: true}, function (error, res, body) {
+//     console.log('Depict response')
+//     console.log(body);
+// });    
+
+// request.get({     url: url,  qs: params }, function(error, res, body) {
+//     if (error) {
+//         console.log("error")
+//         return;
+//     }
+//     var data = JSON.parse(body);
+//     console.log(data.query.pages[Object.keys(data.query.pages)[0]].pageid)
+//     let pageID = data.query.pages[Object.keys(data.query.pages)[0]].pageid;
+//     var MID = `M${pageID}`;
+//     console.log(MID);
+// });
+    // getCsrfToken1();
+// getPageID();
+// var params_3 = {
+//     action: "wbgetentities",
+//     token: csrftoken,
+//     format: "json",
+//     ids: MID
+// };
+// request.post({ url: url, form: params_3,headers: {
+//     "Authorization": 'Bearer ' + access_token
+//   }}, function (error, res, body) {
+
+// console.log(4);
+// body = JSON.parse(body);
+// console.log(body);
+// }); 
+
+    function getLoginToken() {
+        var params_0 = {
+            action: "query",
+            meta: "tokens",
+            type: "login",
+            format: "json"
+        };
+    
+        request.get({ url: url, qs: params_0 }, function (error, res, body) {
+            if (error) {
+                console.log("getLoginToken error");
+                return;
+            }
+            var data = JSON.parse(body);
+            console.log(1);
+            console.log(data.query.tokens.logintoken);
+            loginRequest(data.query.tokens.logintoken);
+        });
+    }
+    
+    // Step 2: POST request to log in. 
+    // Use of main account for login is not
+    // supported. Obtain credentials via Special:BotPasswords
+    // (https://www.mediawiki.org/wiki/Special:BotPasswords) for lgname & lgpassword
+    //The new password to log in with Zexi.gong721@abcd is u8fv58pjgqtdv33e4e6d27ua9jc0g8at. Please record this for future reference.
+    // (For old bots which require the login name to be the same as the eventual username, you can also use Zexi.gong721 as username and abcd@u8fv58pjgqtdv33e4e6d27ua9jc0g8at as password.)
+    function loginRequest(login_token) {
+        var params_1 = {
+            action: "login",
+            lgname: "Zexi.gong721",
+            lgpassword: "abcd@u8fv58pjgqtdv33e4e6d27ua9jc0g8at",
+            lgtoken: login_token,
+            format: "json"
+        };
+    
+        request.post({ url: url, form: params_1 }, function (error, res, body) {
+            if (error) {
+                console.log("loginRequest error");
+                return;
+            }
+            console.log(2);
+            var data = JSON.parse(body);
+            console.log(data);
+            getCsrfToken();
+        });
+    }
+    
+    // Step 3: GET request to fetch CSRF token
+    function getCsrfToken(access_token) {
         var params_2 = {
             action: "query",
             meta: "tokens",
             format: "json"
         };
     
-        request.get({     url: url,    headers: {
-            "Authorization": 'Bearer ' + access_token
-          }, qs: params_2 }, function(error, res, body) {
+        request.get({     url: url, qs: params_2 }, function(error, res, body) {
             if (error) {
                 console.log("getCsrfToken error")
                 return;
@@ -20,24 +177,33 @@ var fs = require('fs'),
             var data = JSON.parse(body);
             console.log(3);
             console.log(data);
-            sdc(data.query.tokens.csrftoken, access_token);
+            sdc(data.query.tokens.csrftoken);
         });
     }
+    // getLoginToken();
 
-    function sdc(csrftoken, access_token){
-        var params_3 = {
-            action: "wbgetentities",
-            token: csrftoken,
-            format: "json",
-            ids: "M134309660"
-        };
-        request.post({ url: url, headers: {
-            "Authorization": 'Bearer ' + access_token
-          },qs: params_3 }, function (error, res, body) {
-            console.log(body);
-            body = JSON.parse(body);
-            console.log(body);
-        });
-    }
+    // function get_token( callback ) {
+    //     $.post ( 'https://commons.wikimedia.org/w/api.php' , {
+    //         action : 'query' ,
+    //         meta : 'tokens' ,
+    //         format : 'json' ,
+    //     } , function ( d ) {
+    //         callback(d.query.tokens.csrftoken);
+    //     } ) ;
+    // } 
 
-    getCsrfToken();
+    // get_token ( function ( token ) {
+    //     let value = {'entity-type':'item',id: 'Q80151'} ;
+	// 	let data = {claims:[{mainsnak:{snaktype:"value",property:'P180',datavalue:{value:value,type:'wikibase-entityid'}},type:"statement",rank:"normal"}]} ;
+    //     let params = {
+    //         action:'wbeditentity',
+    //         id:"M134309660",
+    //         data:JSON.stringify(data),
+    //         token:token,
+    //         summary:"summary",
+    //         format:'json'
+    //     } ;
+    //     $.post('/w/api.php',params,function(d){
+    //         callback(true);
+    //     },'json');
+    // } );

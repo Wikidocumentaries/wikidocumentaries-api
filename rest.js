@@ -34,6 +34,7 @@ const { getWikidata } = require('./wikidata');
 const { getWikidataByLatLon } = require('./wikidata-latlon');
 const { findWikidataItemFromWikipedia, getWikipediaData } = require('./wikipedia');
 const { upload, getCsrfToken } = require('./upload');
+const { getPageID, depict } = require('./sdc');
 
 //does deprecating bodyParser make something dysfunctional?
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -76,35 +77,60 @@ app.get('/sparql', asyncMiddleware(async function(req, res) {
     res.send(response.data);
 }));
 
-app.get('/upload', asyncMiddleware(async function(req, res) {
+app.get('/upload', asyncMiddleware(async function(req, res, body) {
     console.log(req.originalUrl);
-
-    console.log(1111111111111111111111111111111)
-    console.log(req.query.token);
     const access_token = req.query.token;
+    const csrf_token = req.query.csrf_token;
+    const text = req.query.text;
+    const filename = req.query.filename;
+    const downloadURL = req.query.downloadURL;
 
-    // const titles = req.query.titles;
-
-    const tokenresponse = await upload(access_token);
+    const uploadResponse = await upload(csrf_token, access_token,filename, text, downloadURL);
+    console.log(1111111111111111110000000)
+    console.log(uploadResponse);
 
     res.send({
-        tokenresponse
+        uploadResponse
     });
 }));
 
 app.get('/csrfToken', asyncMiddleware(async function(req, res) {
-    console.log(req.originalUrl);
 
     console.log(22222222222222222222222222222)
-    console.log(req.query.token);
+    console.log(req.query);
     const access_token = req.query.token;
+    const text = req.query.text;
+    const filename = req.query.filename;
+    const downloadURL = req.query.downloadURL;
 
     // const titles = req.query.titles;
 
-    const uploadResponse = await getCsrfToken(access_token);
+    const csrf_token = await getCsrfToken(access_token);
+    // const uploadResponse = await upload(csrf_token, access_token,filename, text, downloadURL);
 
     res.send({
-        uploadResponse
+        csrf_token
+    });
+}));
+
+app.get('/depict', asyncMiddleware(async function(req, res, body) {
+    console.log(req.originalUrl);
+    const access_token = req.query.token;
+    const title = req.query.title;
+    const depictId = req.query.depictId;
+
+    console.log("get pageid")
+    const pageId = await getPageID(title);
+    console.log(pageId);
+
+    const MID = `M${pageId}`
+    console.log(MID);
+    const csrf_token = await getCsrfToken(access_token);
+    console.log(csrf_token);
+    const depictResponse = await depict(csrf_token, access_token, MID, depictId);
+
+    res.send({
+        depictResponse
     });
 }));
 
