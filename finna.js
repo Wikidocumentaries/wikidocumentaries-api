@@ -156,6 +156,7 @@ module.exports = {
                     inventoryNumber: record.identifierString,
                     license: '',
                     license_link: '',
+                    licenseTemplate: '',
                     materials: materials,
                     measurements: record.measurements,
                     places: record.subjectPlaces,
@@ -210,6 +211,20 @@ module.exports = {
                 if (record.imageRights != undefined) {
                     image.license_link = record.imageRights.link;
                     image.license = record.imageRights.copyright;
+                    switch (image.license) {
+                        case 'CC BY 4.0':
+                            image.licenseTemplate = '{{Cc-by-4.0}}';
+                            break;
+                        case 'CC BY-SA 4.0':
+                            image.licenseTemplate = '{{Cc-by-sa-4.0}}';
+                            break;
+                        case 'CC0':
+                            image.licenseTemplate = '{{Cc-zero}}';
+                            break;
+                        case 'PDM':
+                            image.licenseTemplate = '{{PD-old}}';
+                            break;
+                    }
                 }
 
                 if (record.institutions) {
