@@ -33,7 +33,7 @@ const { getImagesEuropeana } = require('./europeana');
 const { getWikidata } = require('./wikidata');
 const { getWikidataByLatLon } = require('./wikidata-latlon');
 const { findWikidataItemFromWikipedia, getWikipediaData } = require('./wikipedia');
-const { upload, getCsrfToken } = require('./upload');
+const { uploadWithFinnaId, getCsrfToken, downloadWithFinnaId, deleteFileWithFinnaId } = require('./upload');
 const { getPageID, depict } = require('./sdc');
 
 //does deprecating bodyParser make something dysfunctional?
@@ -76,27 +76,47 @@ app.get('/sparql', asyncMiddleware(async function(req, res) {
     });
     res.send(response.data);
 }));
+// add comment for functions and update on readme
+app.get('/download', asyncMiddleware(async function(req, res, body) {
+    console.log(req.originalUrl);
+    const finnaId = req.query.finnaId;
+
+    const downloadResponse = await downloadWithFinnaId(finnaId);
+    console.log(downloadResponse);
+
+    res.send({
+        downloadResponse
+    });
+}));
 
 app.get('/upload', asyncMiddleware(async function(req, res, body) {
     console.log(req.originalUrl);
     const access_token = req.query.token;
     const csrf_token = req.query.csrf_token;
     const text = req.query.text;
-    const filename = req.query.filename;
-    const downloadURL = req.query.downloadURL;
+    const finnaId = req.query.finnaId;
 
-    const uploadResponse = await upload(csrf_token, access_token,filename, text, downloadURL);
-    console.log(1111111111111111110000000)
+    const uploadResponse = await uploadWithFinnaId(csrf_token, access_token, finnaId, text);
     console.log(uploadResponse);
+    const deleteUploadedFile = deleteFileWithFinnaId(finnaId);
 
     res.send({
         uploadResponse
     });
 }));
 
+app.get('/deleteFile', asyncMiddleware(async function(req, res, body) {
+    console.log(req.originalUrl);
+    const finnaId = req.query.finnaId;
+    const deleteUploadedFile = deleteFileWithFinnaId(finnaId);
+
+    res.send({
+        deleteUploadedFile
+    });
+}));
+
 app.get('/csrfToken', asyncMiddleware(async function(req, res) {
 
-    console.log(22222222222222222222222222222)
     console.log(req.query);
     const access_token = req.query.token;
     const text = req.query.text;
