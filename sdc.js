@@ -1,6 +1,6 @@
-const axios = require('axios');
-var fs = require('fs'),
-    request = require('request').defaults({jar: true}),
+// The sdc.js provides utility functions for making structure data with the Wikimedia API.
+// It includes functions to fetch a page's ID and depict an item.
+var request = require('request').defaults({jar: true}),
     url = "https://commons.wikimedia.org/w/api.php";
 
 module.exports = {

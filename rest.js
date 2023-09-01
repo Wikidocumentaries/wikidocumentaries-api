@@ -76,7 +76,8 @@ app.get('/sparql', asyncMiddleware(async function(req, res) {
     });
     res.send(response.data);
 }));
-// add comment for functions and update on readme
+
+// download image with finnaId
 app.get('/download', asyncMiddleware(async function(req, res, body) {
     console.log(req.originalUrl);
     const finnaId = req.query.finnaId;
@@ -89,6 +90,7 @@ app.get('/download', asyncMiddleware(async function(req, res, body) {
     });
 }));
 
+// upload image to wikicommons with finnaId
 app.get('/upload', asyncMiddleware(async function(req, res, body) {
     console.log(req.originalUrl);
     const access_token = req.query.token;
@@ -98,6 +100,7 @@ app.get('/upload', asyncMiddleware(async function(req, res, body) {
 
     const uploadResponse = await uploadWithFinnaId(csrf_token, access_token, finnaId, text);
     console.log(uploadResponse);
+    // delete the image after upload finished to remove image file from the server
     const deleteUploadedFile = deleteFileWithFinnaId(finnaId);
 
     res.send({
@@ -105,6 +108,7 @@ app.get('/upload', asyncMiddleware(async function(req, res, body) {
     });
 }));
 
+// delete the image file with finnaId
 app.get('/deleteFile', asyncMiddleware(async function(req, res, body) {
     console.log(req.originalUrl);
     const finnaId = req.query.finnaId;
@@ -115,24 +119,20 @@ app.get('/deleteFile', asyncMiddleware(async function(req, res, body) {
     });
 }));
 
+// get csrf token from wikicommons
 app.get('/csrfToken', asyncMiddleware(async function(req, res) {
 
     console.log(req.query);
     const access_token = req.query.token;
-    const text = req.query.text;
-    const filename = req.query.filename;
-    const downloadURL = req.query.downloadURL;
-
-    // const titles = req.query.titles;
 
     const csrf_token = await getCsrfToken(access_token);
-    // const uploadResponse = await upload(csrf_token, access_token,filename, text, downloadURL);
 
     res.send({
         csrf_token
     });
 }));
 
+// add depict structure data for image
 app.get('/depict', asyncMiddleware(async function(req, res, body) {
     console.log(req.originalUrl);
     const access_token = req.query.token;

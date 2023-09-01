@@ -1,3 +1,6 @@
+// The Upload.js provides a set of utility functions for completing the image upload process with the Wikimedia API.
+// The image upload process includes: retrieving CSRF tokens, downloading files with Finna Id,
+// uploading files with associated text, and deleting files based on Finna Id.
 const axios = require('axios');
 var fs = require('fs'),
 request = require('request').defaults({jar: true}),
@@ -89,6 +92,7 @@ async function downloadWithFinnaId(finnaId) {
 
 }
 
+// This is a helper function that generate the image filename with its finna Id.
 async function getFilenameWithFinnaId(finnaId) {
     var params = {
         id: finnaId,
