@@ -155,7 +155,7 @@ The main API endpoints:
     * access_token
     * csrf_token
     * finnaId
-    * text
+    * text (wikitext includes image info)
   * Response:
     * upload response from wikicommons
 
