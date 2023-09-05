@@ -155,7 +155,8 @@ async function uploadWithFinnaId(csrf_token, access_token, finnaId, text) {
         ignorewarnings: "1",
         token: csrf_token,
         format: "json",
-        text: text
+        text: text,
+        comment: `Uploaded with Wikidocumentaries from https://finna.fi/Record/${finnaId}`,
     };
 
     console.log("in upload")
