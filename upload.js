@@ -32,10 +32,14 @@ async function getCsrfToken(access_token) {
     };
     const response = await axios.request(requestConfig);
     if (response.status === 200) {
-        console.log(response.data.query.tokens.csrftoken)
-        return response.data.query.tokens.csrftoken;
-
+        const data = response.data;
+        if (data.query && data.query.tokens && data.query.tokens.csrftoken) {
+            console.log(data.query.tokens.csrftoken);
+            return data.query.tokens.csrftoken;
+        }
+        console.error("Response to CSRF request", data);
     }
+    console.error("Failed to get a CSRF token for upload.");
     return;
 }
 
