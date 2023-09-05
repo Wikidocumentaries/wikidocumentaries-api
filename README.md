@@ -143,3 +143,38 @@ The main API endpoints:
     * query
     * format
   * Response depending on format
+
+* /download
+  * Parameters:
+    * finnaId
+  * Response:
+    * download finished
+
+* /upload
+  * Parameters:
+    * access_token
+    * csrf_token
+    * finnaId
+    * text (wikitext includes image info)
+  * Response:
+    * upload response from wikicommons
+
+* /delete
+  * Parameters:
+    * finnaId
+  * Response:
+    * file deleted
+
+* /csrfToken
+  * Parameters:
+    * access_token
+  * Response:
+    * csrf_token from wikicommons
+
+* /depict
+  * Parameters:
+    * access_token
+    * title
+    * depictId
+  * Response:
+    * depict response from wikicommons

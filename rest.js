@@ -33,6 +33,8 @@ const { getImagesEuropeana } = require('./europeana');
 const { getWikidata } = require('./wikidata');
 const { getWikidataByLatLon } = require('./wikidata-latlon');
 const { findWikidataItemFromWikipedia, getWikipediaData } = require('./wikipedia');
+const { uploadWithFinnaId, getCsrfToken, downloadWithFinnaId, deleteFileWithFinnaId } = require('./upload');
+const { getPageID, depict } = require('./sdc');
 
 //does deprecating bodyParser make something dysfunctional?
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -73,6 +75,83 @@ app.get('/sparql', asyncMiddleware(async function(req, res) {
         timeout: 60*1000, // 1 minute
     });
     res.send(response.data);
+}));
+
+// download image with finnaId
+app.get('/download', asyncMiddleware(async function(req, res, body) {
+    console.log(req.originalUrl);
+    const finnaId = req.query.finnaId;
+
+    const downloadResponse = await downloadWithFinnaId(finnaId);
+    console.log(downloadResponse);
+
+    res.send({
+        downloadResponse
+    });
+}));
+
+// upload image to wikicommons with finnaId
+app.get('/upload', asyncMiddleware(async function(req, res, body) {
+    console.log(req.originalUrl);
+    const access_token = req.query.token;
+    const csrf_token = req.query.csrf_token;
+    const text = req.query.text;
+    const finnaId = req.query.finnaId;
+
+    const uploadResponse = await uploadWithFinnaId(csrf_token, access_token, finnaId, text);
+    console.log(uploadResponse);
+    // delete the image after upload finished to remove image file from the server
+    const deleteUploadedFile = deleteFileWithFinnaId(finnaId);
+
+    res.send({
+        uploadResponse
+    });
+}));
+
+// delete the image file with finnaId
+app.get('/deleteFile', asyncMiddleware(async function(req, res, body) {
+    console.log(req.originalUrl);
+    const finnaId = req.query.finnaId;
+    const deleteUploadedFile = deleteFileWithFinnaId(finnaId);
+
+    res.send({
+        deleteUploadedFile
+    });
+}));
+
+// get csrf token from wikicommons
+app.get('/csrfToken', asyncMiddleware(async function(req, res) {
+
+    console.log(req.query);
+    const access_token = req.query.token;
+
+    const csrf_token = await getCsrfToken(access_token);
+
+    res.send({
+        csrf_token
+    });
+}));
+
+// add depict structure data for image
+app.get('/depict', asyncMiddleware(async function(req, res, body) {
+    console.log(req.originalUrl);
+    const access_token = req.query.token;
+    const title = req.query.title;
+    const depictId = req.query.depictId;
+
+    console.log("get pageid")
+    const pageId = await getPageID(title);
+    console.log(pageId);
+
+    const MID = `M${pageId}`
+    console.log(MID);
+    const csrf_token = await getCsrfToken(access_token);
+    console.log(csrf_token);
+    const depictResponse = await depict(csrf_token, access_token, MID, depictId);
+
+    res.send({
+        depictResponse
+    });
 }));
 
 app.post('/sparql', urlencodedParser, asyncMiddleware(async function(req, res) {
