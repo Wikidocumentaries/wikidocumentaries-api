@@ -58,12 +58,11 @@ async function getWikipediaData(language, topic) {
     };
 
     const wikipediaHTMLPromise = function() {
-
         const requestConfig = {
-            baseURL: "https://" + language + ".wikipedia.org/api/rest_v1/",
-            url: "/page/mobile-sections/" + encodedTopic,
+            baseURL: "https://" + language + ".wikipedia.org/w/rest.php/v1/page/",
+            url: encodedTopic + "/html",
             method: "get",
-            responseType: "json",
+            responseType: "text",
             headers: {
                 "Api-User-Agent": process.env.WIKIDOCUMENTARIES_API_USER_AGENT
             },
@@ -72,65 +71,38 @@ async function getWikipediaData(language, topic) {
         else return axios.request(requestConfig);
     };
 
-    const [wikipediaSummaryResponse, wikipediaHTMLResponse]
-        = await axios.all([wikipediaSummaryPromise(), wikipediaHTMLPromise()]);
+    const [summaryRes, htmlRes] = await Promise.allSettled([
+        wikipediaSummaryPromise(),
+        wikipediaHTMLPromise()
+    ]);
 
-    if (wikipediaHTMLResponse.data == undefined ) {
-        // No wikipedia article
-        excerptHTML="";
-        remainingHTML=null;
-    }
-    else {
-        var origHTML = wikipediaHTMLResponse.data.lead.sections[0].text;
-        var remainingHTML = null;
+    const wikipediaSummaryResponse = summaryRes.status === "fulfilled" ? summaryRes.value : null;
+    const wikipediaHTMLResponse = htmlRes.status === "fulfilled" ? htmlRes.value : null;
 
-        if (wikipediaHTMLResponse.data.lead.disambiguation != undefined && wikipediaHTMLResponse.data.lead.disambiguation == true) {
-            wikipediaHTMLResponse.data.remaining.sections.forEach(section => {
-                origHTML += section.text;
-            });
+    let excerptHTML = "";
+    let remainingHTML = null;
+
+    if (wikipediaHTMLResponse && wikipediaHTMLResponse.data != null && typeof wikipediaHTMLResponse.data === 'string') {
+        let rawHTML = wikipediaHTMLResponse.data;
+
+        const bodyMatch = rawHTML.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+        if (bodyMatch) {
+            rawHTML = bodyMatch[1];
         }
-        else {
-            var remainingOrigHTML = "";
 
-            wikipediaHTMLResponse.data.remaining.sections.forEach(section => {
-                if (section.isReferenceSection == undefined) {
-                    var sectionHeaderStartTag = "";
-                    var sectionHeaderEndTag = "";
-                    switch(section.toclevel) {
-                    case 1:
-                        sectionHeaderStartTag = "<h2 class='h2'>";
-                        sectionHeaderEndTag = "</h2>";
-                        break;
-                    case 2:
-                        sectionHeaderStartTag = "<h3 class='h3'>";
-                        sectionHeaderEndTag = "</h3>";
-                        break;
-                    case 3:
-                        sectionHeaderStartTag = "<h4 class='h4'>";
-                        sectionHeaderEndTag = "</h4>";
-                        break;
-                    case 4:
-                        sectionHeaderStartTag = "<h5 class='h5'>";
-                        sectionHeaderEndTag = "</h5>";
-                        break;
-                    }
-                    remainingOrigHTML += sectionHeaderStartTag + section.line + sectionHeaderEndTag;
-                    remainingOrigHTML += section.text;
-                }
-            });
+        const splitIndex = rawHTML.search(/<h2[\s>]/i);
+        const origHTML = splitIndex > -1 ? rawHTML.substring(0, splitIndex) : rawHTML;
 
-/*             if (remainingOrigHTML.length > 3000) { */ // Small count of HTML should be with the leading section
+        if (splitIndex > -1) {
+            const remainingOrigHTML = rawHTML.substring(splitIndex);
             remainingHTML = convertToWikidocumentariesHTML(remainingOrigHTML, topic, language);
-/*             }
-            else {
-                origHTML += remainingOrigHTML;
-            } */
         }
-        var excerptHTML = convertToWikidocumentariesHTML(origHTML, topic, language);
+
+        excerptHTML = convertToWikidocumentariesHTML(origHTML, topic, language);
     }
 
     return {
-        wikipedia: wikipediaSummaryResponse.data,
+        wikipedia: wikipediaSummaryResponse ? wikipediaSummaryResponse.data : null,
         excerptHTML,
         remainingHTML,
     };
@@ -172,25 +144,7 @@ const convertToWikidocumentariesHTML = function(origHTML, topic, language) {
             //$(this).replaceWith($(this).html());
         }
     });
-/*     $("table").each(function(index) {
-        $(this).remove();
-    });
-    $("figure").each(function(index) {
-        $(this).remove();
-    });
-    $("figure-inline").each(function(index) {
-        $(this).remove();
-    });
-    $("sup").each(function(index) {
-        $(this).remove();
-    });
-    
-    $("div").each(function(index) {
-        var div_class = $(this).attr('class');
-        if (div_class == undefined || div_class != 'noprint') {
-            $(this).remove();
-        }
-    }); */
+
     $("table").each(function(index) { //Remove English Wikipedia infobox
         var div_class = $(this).attr('class');
         if (div_class != undefined && div_class.indexOf('infobox') != -1) {
@@ -217,4 +171,4 @@ const convertToWikidocumentariesHTML = function(origHTML, topic, language) {
     });
 
     return $.html();
-}
+};
